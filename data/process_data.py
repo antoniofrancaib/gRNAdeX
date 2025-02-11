@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import torch
+import yaml
 
 import biotite
 from Bio.Seq import Seq
@@ -37,28 +38,28 @@ keep_pseudoknots = False
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--expt_name', dest='expt_name', default='process_data', type=str)
-    parser.add_argument('--tags', nargs='+', dest='tags', default=[])
+    parser.add_argument('--config', required=True, type=str, help='Path to config YAML')  # <-- MUST BE FIRST
+    parser.add_argument('--expt_name', default='process_data', type=str)
+    parser.add_argument('--tags', nargs='+', default=[])
     parser.add_argument('--no_wandb', action="store_true")
-    args, unknown = parser.parse_known_args()
+    args = parser.parse_args()
 
-    # Initialise wandb
+    # Load config file
+    with open(args.config) as f:
+        config = yaml.safe_load(f)
+
+    # Initialize wandb with loaded config
     if args.no_wandb:
-        wandb.init(
-            project=os.environ.get("WANDB_PROJECT"), 
-            entity=os.environ.get("WANDB_ENTITY"), 
-            config=args.config, 
-            name=args.expt_name, 
-            mode='disabled'
-        )
+        wandb.init(mode="disabled")
     else:
         wandb.init(
-            project=os.environ.get("WANDB_PROJECT"), 
-            entity=os.environ.get("WANDB_ENTITY"), 
-            config=args.config, 
-            name=args.expt_name, 
+            project=os.environ["WANDB_PROJECT"],
+            entity=os.environ["WANDB_ENTITY"],
+            config=config,  # Loaded config dict
+            name=args.expt_name,
             tags=args.tags,
-            mode='online'
+            # Let WandB handle WANDB_DIR internally
+            settings=wandb.Settings(_disable_stats=True)     
         )
 
     ##########################

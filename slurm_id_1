@@ -1,0 +1,52 @@
+#!/bin/bash
+#!
+#! Example SLURM job script for Ice Lake (CPU‑only)
+#! Last updated: [Your Date]
+#!
+
+####### SBATCH directives begin here ###############################
+#SBATCH -J gRNAde_id_1
+#SBATCH -A MLMI-jaf98-SL2-CPU
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1    
+#SBATCH --time=10:00:00
+#SBATCH --mail-type=NONE
+#SBATCH -p icelake    
+####### SBATCH directives end here ###############################
+
+# Application options and environment
+options="--config configs/data_config.yaml --tags hpc_csd3 --expt_name rna_processing_v1"
+
+# Environment setup
+. /etc/profile.d/modules.sh
+module purge
+module load rhel8/default-icl   # Updated for Ice Lake nodes
+
+source /home/${USER}/.bashrc
+source /miniforge3/bin/activate
+mamba activate rna
+
+# Optionally update OMP_NUM_THREADS to use all 4 CPUs
+export OMP_NUM_THREADS=1
+
+# Full path to application executable:
+application="python -u data/process_data.py"
+
+# Work directory
+workdir="$SLURM_SUBMIT_DIR"
+
+cd $workdir
+echo -e "Changed directory to `pwd`.\n"
+mkdir -p logs
+JOBID=$SLURM_JOB_ID
+CMD="$application $options > logs/out.id_1"
+
+echo -e "JobID: $JOBID\n======"
+echo "Time: `date`"
+echo "Running on master node: `hostname`"
+echo "Current directory: `pwd`"
+
+echo -e "\nExecuting command:\n==================\n$CMD\n"
+
+eval $CMD

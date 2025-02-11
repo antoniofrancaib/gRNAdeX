@@ -16,7 +16,7 @@ save:
 
 # Data configurations
 data_path:
-  value: "./data/"
+  value: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/"  # Absolute HPC path, prev: "./data/"
   desc: Data directory (preprocessed and raw)
 radius:
   value: 4.5

@@ -1,0 +1,17 @@
+# configs/data_config.yaml
+raw_data_dir: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/raw"
+processed_path: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/processed.pt"
+rfam_table_path: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/RFAM_families_27062023.csv"
+
+
+# HPC-specific tool paths (verify with `module avail`)
+usalign_path: "/usr/local/bin/usalign"  
+cdhit_path: "/usr/local/bin/cd-hit"
+
+# Clustering thresholds (match paper values)
+sequence_identity_threshold: 0.8
+structure_similarity_threshold: 0.45
+
+# Runtime config
+num_workers: 8  # Match CSD3 node cores
+batch_size: 32

@@ -11,7 +11,8 @@ from Bio.SeqRecord import SeqRecord
 
 import biotite
 from biotite.structure.io import load_structure
-from biotite.structure import dot_bracket_from_structure
+import biotite.structure as struc
+from biotite.structure import dot_bracket_from_structure, base_pairs
 
 from src.constants import (
     PROJECT_PATH,
@@ -44,10 +45,27 @@ def pdb_to_sec_struct(
         try:
             # get secondary structure using biotite
             atom_array = load_structure(pdb_file_path)
+            pairs = base_pairs(atom_array)
+            print(f"Detected base pairs: {pairs}")
             sec_struct = dot_bracket_from_structure(atom_array)[0]
+            print(f"Secondary structure: '{sec_struct}'")
+
+            print("Sequence length:", len(sequence))
+            print("Number of residues:", struc.get_residue_count(atom_array))
+            print("Chain IDs:", np.unique(atom_array.chain_id))
+            print("Base atoms present:", np.unique(atom_array.atom_name))
+
             if not keep_pseudoknots:
                 # replace all characters that are not '.', '(', ')' with '.'
                 sec_struct = "".join([dotbrac if dotbrac in ['.', '(', ')'] else '.' for dotbrac in sec_struct])
+
+            # added by Martina - to use x3dna when sec_struc is none because of single-stranded regions
+            if not sec_struct or sec_struct.strip() == "":
+                print("No base pairs detected by biotite, trying X3DNA...")
+                sec_struct = x3dna_to_sec_struct(
+                    pdb_to_x3dna(pdb_file_path, x3dna_path), 
+                    sequence
+                )
         
         except Exception as e:
             # biotite fails for very short seqeunces
@@ -58,6 +76,7 @@ def pdb_to_sec_struct(
                 pdb_to_x3dna(pdb_file_path, x3dna_path), 
                 sequence
             )
+            print('Sec struct x3dna:', sec_struct)
 
     else:
         # get secondary structure using x3dna find_pair tool
@@ -66,6 +85,7 @@ def pdb_to_sec_struct(
             pdb_to_x3dna(pdb_file_path, x3dna_path), 
             sequence
         )
+        print('Sec struct x3dna:', sec_struct)
     
     return sec_struct
 

@@ -1,0 +1,3071 @@
+zap
+load nmrpdb hel_regions.pdb
+# load /rds/user/ml2169/hpc-work/geometric-rna-design/data/raw/8GLP_1_L5-L8.pdb
+# restrict not (protein or water)
+
+
+#------Helix #1, color: red------
+select 4:A, 430:B
+color red
+select 5:A, 429:B
+color red
+select 6:A, 428:B
+color red
+select 7:A, 427:B
+color red
+select 8:A, 426:B
+color red
+select 9:A, 425:B
+color red
+select 10:A, 424:B
+color red
+select 11:A, 423:B
+color red
+select 12:A, 422:B
+color red
+select 13:A, 421:B
+color red
+select 15:A, 419:B
+color red
+select 16:A, 418:B
+color red
+select 17:A, 417:B
+color red
+select 18:A, 416:B
+color red
+select 19:A, 415:B
+color red
+select 20:A, 380:B
+color red
+select 21:A, 379:B
+color red
+select 22:A, 353:B
+color red
+select 360:B, 352:B
+color red
+select 24:A, 351:B
+color red
+select 25:A, 350:B
+color red
+select 26:A, 348:B
+color red
+select 27:A, 347:B
+color red
+select 28:A, 346:B
+color red
+select 29:A, 345:B
+color red
+select 30:A, 344:B
+color red
+select 31:A, 343:B
+color red
+select 32:A, 342:B
+color red
+select 33:A, 339:B
+color red
+select 58:B, 25:B
+color red
+select 57:B, 26:B
+color red
+select 27:B, 55:B
+color red
+select 28:B, 54:B
+color red
+select 29:B, 53:B
+color red
+select 30:B, 52:B
+color red
+select 31:B, 51:B
+color red
+select 32:B, 50:B
+color red
+select 33:B, 49:B
+color red
+select 34:B, 47:B
+color red
+select 35:B, 46:B
+color red
+select 36:B, 45:B
+color red
+select 37:B, 44:B
+color red
+select 93:B, 43:B
+color red
+select 91:B, 41:B
+color red
+
+#------Helix #2, color: green------
+select 35:A, 21:B
+color green
+
+#------Helix #3, color: blue------
+select 54:A, 48:A
+color blue
+select 56:A, 47:A
+color blue
+select 57:A, 46:A
+color blue
+select 58:A, 45:A
+color blue
+select 99:A, 44:A
+color blue
+select 100:A, 43:A
+color blue
+select 101:A, 42:A
+color blue
+select 102:A, 41:A
+color blue
+select 104:A, 40:A
+color blue
+select 103:A, 39:A
+color blue
+select 37:A, 105:A
+color blue
+select 138:A, 19:B
+color blue
+select 139:A, 18:B
+color blue
+select 140:A, 17:B
+color blue
+select 141:A, 16:B
+color blue
+select 142:A, 15:B
+color blue
+select 143:A, 14:B
+color blue
+select 144:A, 12:B
+color blue
+select 145:A, 11:B
+color blue
+select 146:A, 10:B
+color blue
+select 147:A, 9:B
+color blue
+select 148:A, 8:B
+color blue
+select 149:A, 7:B
+color blue
+select 151:A, 6:B
+color blue
+select 152:A, 5:B
+color blue
+select 153:A, 4:B
+color blue
+select 154:A, 3:B
+color blue
+select 155:A, 2:B
+color blue
+select 156:A, 1:B
+color blue
+
+#------Helix #4, color: yellow------
+select 49:A, 76:A
+color yellow
+
+#------Helix #5, color: cyan------
+select 60:A, 96:A
+color cyan
+select 64:A, 95:A
+color cyan
+select 65:A, 93:A
+color cyan
+select 66:A, 92:A
+color cyan
+select 67:A, 91:A
+color cyan
+select 68:A, 90:A
+color cyan
+select 70:A, 88:A
+color cyan
+select 71:A, 87:A
+color cyan
+
+#------Helix #6, color: magenta------
+select 112:A, 107:A
+color magenta
+select 113:A, 106:A
+color magenta
+select 114:A, 136:A
+color magenta
+select 115:A, 135:A
+color magenta
+select 116:A, 134:A
+color magenta
+select 117:A, 133:A
+color magenta
+select 118:A, 132:A
+color magenta
+select 119:A, 131:A
+color magenta
+select 120:A, 130:A
+color magenta
+select 121:A, 129:A
+color magenta
+select 122:A, 128:A
+color magenta
+select 124:A, 127:A
+color magenta
+
+#------Helix #7, color: orange------
+select 59:B, 337:B
+color orange
+
+#------Helix #8, color: purple------
+select 65:B, 75:B
+color purple
+select 67:B, 74:B
+color purple
+select 68:B, 73:B
+color purple
+select 69:B, 71:B
+color purple
+
+#------Helix #9, color: violet------
+select 94:B, 90:B
+color violet
+select 95:B, 89:B
+color violet
+select 96:B, 88:B
+color violet
+select 97:B, 87:B
+color violet
+select 98:B, 86:B
+color violet
+select 99:B, 84:B
+color violet
+select 100:B, 83:B
+color violet
+select 101:B, 82:B
+color violet
+select 102:B, 81:B
+color violet
+select 103:B, 80:B
+color violet
+select 104:B, 79:B
+color violet
+select 105:B, 78:B
+color violet
+select 336:B, 77:B
+color violet
+select 76:B, 335:B
+color violet
+select 63:B, 334:B
+color violet
+select 64:B, 333:B
+color violet
+select 109:B, 332:B
+color violet
+select 110:B, 331:B
+color violet
+select 111:B, 330:B
+color violet
+select 112:B, 278:B
+color violet
+select 113:B, 157:B
+color violet
+select 114:B, 156:B
+color violet
+select 116:B, 155:B
+color violet
+select 117:B, 154:B
+color violet
+select 118:B, 153:B
+color violet
+select 121:B, 152:B
+color violet
+select 151:B, 120:B
+color violet
+
+#------Helix #10, color: red------
+select 122:B, 147:B
+color red
+select 123:B, 146:B
+color red
+select 124:B, 145:B
+color red
+select 125:B, 144:B
+color red
+select 126:B, 142:B
+color red
+select 127:B, 141:B
+color red
+select 128:B, 140:B
+color red
+select 129:B, 139:B
+color red
+select 130:B, 138:B
+color red
+select 131:B, 137:B
+color red
+
+#------Helix #11, color: green------
+select 158:B, 276:B
+color green
+select 160:B, 275:B
+color green
+select 161:B, 274:B
+color green
+select 162:B, 273:B
+color green
+select 163:B, 272:B
+color green
+select 164:B, 271:B
+color green
+select 165:B, 270:B
+color green
+select 166:B, 269:B
+color green
+select 167:B, 268:B
+color green
+select 168:B, 267:B
+color green
+select 169:B, 266:B
+color green
+
+#------Helix #12, color: blue------
+select 172:B, 264:B
+color blue
+select 173:B, 263:B
+color blue
+select 174:B, 262:B
+color blue
+select 175:B, 261:B
+color blue
+select 176:B, 260:B
+color blue
+select 177:B, 259:B
+color blue
+select 178:B, 258:B
+color blue
+select 179:B, 257:B
+color blue
+select 180:B, 256:B
+color blue
+select 182:B, 255:B
+color blue
+select 183:B, 254:B
+color blue
+select 185:B, 253:B
+color blue
+select 189:B, 252:B
+color blue
+select 190:B, 251:B
+color blue
+select 191:B, 250:B
+color blue
+select 192:B, 249:B
+color blue
+select 193:B, 248:B
+color blue
+select 194:B, 247:B
+color blue
+select 195:B, 246:B
+color blue
+select 196:B, 244:B
+color blue
+select 225:B, 242:B
+color blue
+
+#------Helix #13, color: yellow------
+select 200:B, 235:B
+color yellow
+select 238:B, 230:B
+color yellow
+select 239:B, 229:B
+color yellow
+select 240:B, 228:B
+color yellow
+select 241:B, 227:B
+color yellow
+
+#------Helix #14, color: cyan------
+select 208:B, 2304:B
+color cyan
+select 209:B, 205:B
+color cyan
+select 211:B, 204:B
+color cyan
+select 212:B, 203:B
+color cyan
+select 213:B, 202:B
+color cyan
+select 214:B, 201:B
+color cyan
+select 215:B, 199:B
+color cyan
+select 220:B, 237:B
+color cyan
+select 221:B, 236:B
+color cyan
+select 222:B, 226:B
+color cyan
+
+#------Helix #15, color: magenta------
+select 279:B, 307:B
+color magenta
+select 281:B, 306:B
+color magenta
+select 282:B, 305:B
+color magenta
+select 283:B, 304:B
+color magenta
+select 284:B, 303:B
+color magenta
+select 285:B, 302:B
+color magenta
+select 286:B, 301:B
+color magenta
+select 287:B, 300:B
+color magenta
+select 288:B, 299:B
+color magenta
+select 289:B, 298:B
+color magenta
+select 290:B, 297:B
+color magenta
+select 291:B, 293:B
+color magenta
+
+#------Helix #16, color: orange------
+select 292:B, 315:B
+color orange
+
+#------Helix #17, color: purple------
+select 310:B, 327:B
+color purple
+select 311:B, 326:B
+color purple
+select 312:B, 325:B
+color purple
+select 313:B, 324:B
+color purple
+select 314:B, 323:B
+color purple
+select 4355:B, 322:B
+color purple
+select 4356:B, 321:B
+color purple
+select 4357:B, 320:B
+color purple
+select 4358:B, 319:B
+color purple
+select 4359:B, 318:B
+color purple
+select 4360:B, 317:B
+color purple
+select 295:B, 316:B
+color purple
+
+#------Helix #18, color: violet------
+select 363:B, 377:B
+color violet
+select 365:B, 376:B
+color violet
+select 366:B, 375:B
+color violet
+select 367:B, 374:B
+color violet
+select 368:B, 373:B
+color violet
+select 369:B, 372:B
+color violet
+
+#------Helix #19, color: red------
+select 387:B, 414:B
+color red
+select 385:B, 408:B
+color red
+select 386:B, 410:B
+color red
+select 384:B, 407:B
+color red
+select 383:B, 406:B
+color red
+select 207:B, 232:B
+color red
+
+#------Helix #20, color: green------
+select 392:B, 399:B
+color green
+select 390:B, 401:B
+color green
+select 388:B, 402:B
+color green
+select 411:B, 403:B
+color green
+
+#------Helix #21, color: blue------
+select 394:B, 397:B
+color blue
+
+#------Helix #22, color: yellow------
+select 435:B, 1312:B
+color yellow
+select 436:B, 1311:B
+color yellow
+select 437:B, 1310:B
+color yellow
+select 438:B, 1309:B
+color yellow
+select 439:B, 1308:B
+color yellow
+select 440:B, 1307:B
+color yellow
+select 441:B, 1306:B
+color yellow
+select 442:B, 1305:B
+color yellow
+select 443:B, 1304:B
+color yellow
+select 444:B, 2313:B
+color yellow
+select 445:B, 1301:B
+color yellow
+select 446:B, 1300:B
+color yellow
+select 447:B, 1299:B
+color yellow
+select 448:B, 1298:B
+color yellow
+select 450:B, 1297:B
+color yellow
+select 451:B, 1296:B
+color yellow
+select 1294:B, 1295:B
+color yellow
+
+#------Helix #23, color: cyan------
+select 453:B, 1293:B
+color cyan
+select 705:B, 1292:B
+color cyan
+select 706:B, 1291:B
+color cyan
+select 707:B, 1290:B
+color cyan
+select 708:B, 1289:B
+color cyan
+select 709:B, 1288:B
+color cyan
+select 710:B, 1286:B
+color cyan
+select 711:B, 1285:B
+color cyan
+select 712:B, 1284:B
+color cyan
+select 713:B, 955:B
+color cyan
+select 714:B, 954:B
+color cyan
+select 715:B, 953:B
+color cyan
+select 716:B, 952:B
+color cyan
+select 717:B, 951:B
+color cyan
+select 718:B, 950:B
+color cyan
+select 719:B, 949:B
+color cyan
+select 720:B, 948:B
+color cyan
+select 721:B, 947:B
+color cyan
+select 722:B, 946:B
+color cyan
+select 723:B, 945:B
+color cyan
+select 724:B, 942:B
+color cyan
+select 725:B, 941:B
+color cyan
+select 726:B, 940:B
+color cyan
+select 727:B, 939:B
+color cyan
+select 728:B, 932:B
+color cyan
+select 731:B, 938:B
+color cyan
+select 732:B, 937:B
+color cyan
+select 733:B, 930:B
+color cyan
+select 734:B, 929:B
+color cyan
+select 735:B, 928:B
+color cyan
+select 736:B, 927:B
+color cyan
+select 737:B, 926:B
+color cyan
+select 740:B, 924:B
+color cyan
+select 741:B, 923:B
+color cyan
+select 742:B, 922:B
+color cyan
+select 743:B, 921:B
+color cyan
+select 744:B, 920:B
+color cyan
+select 745:B, 919:B
+color cyan
+select 746:B, 918:B
+color cyan
+select 913:B, 747:B
+color cyan
+select 914:B, 917:B
+color cyan
+
+#------Helix #24, color: magenta------
+select 454:B, 702:B
+color magenta
+select 455:B, 701:B
+color magenta
+select 456:B, 700:B
+color magenta
+select 457:B, 699:B
+color magenta
+select 458:B, 698:B
+color magenta
+select 459:B, 697:B
+color magenta
+select 460:B, 695:B
+color magenta
+select 461:B, 694:B
+color magenta
+select 462:B, 693:B
+color magenta
+select 463:B, 692:B
+color magenta
+select 464:B, 691:B
+color magenta
+select 465:B, 690:B
+color magenta
+select 466:B, 689:B
+color magenta
+select 468:B, 688:B
+color magenta
+
+#------Helix #25, color: orange------
+select 470:B, 684:B
+color orange
+select 471:B, 683:B
+color orange
+select 472:B, 682:B
+color orange
+select 473:B, 681:B
+color orange
+select 474:B, 680:B
+color orange
+select 475:B, 679:B
+color orange
+select 476:B, 678:B
+color orange
+select 477:B, 677:B
+color orange
+select 478:B, 676:B
+color orange
+select 479:B, 675:B
+color orange
+select 480:B, 674:B
+color orange
+select 481:B, 673:B
+color orange
+select 482:B, 672:B
+color orange
+select 485:B, 671:B
+color orange
+select 486:B, 670:B
+color orange
+select 487:B, 669:B
+color orange
+select 488:B, 665:B
+color orange
+select 489:B, 664:B
+color orange
+select 490:B, 663:B
+color orange
+select 492:B, 662:B
+color orange
+select 493:B, 661:B
+color orange
+select 494:B, 660:B
+color orange
+select 495:B, 659:B
+color orange
+select 496:B, 658:B
+color orange
+select 497:B, 657:B
+color orange
+select 498:B, 656:B
+color orange
+select 499:B, 655:B
+color orange
+select 504:B, 654:B
+color orange
+select 505:B, 653:B
+color orange
+select 506:B, 652:B
+color orange
+select 507:B, 651:B
+color orange
+select 508:B, 650:B
+color orange
+select 510:B, 649:B
+color orange
+select 511:B, 648:B
+color orange
+select 512:B, 647:B
+color orange
+select 515:B, 646:B
+color orange
+select 516:B, 645:B
+color orange
+select 517:B, 644:B
+color orange
+
+#------Helix #26, color: purple------
+select 750:B, 915:B
+color purple
+select 751:B, 912:B
+color purple
+select 752:B, 911:B
+color purple
+select 753:B, 910:B
+color purple
+select 754:B, 909:B
+color purple
+select 755:B, 908:B
+color purple
+select 756:B, 907:B
+color purple
+select 757:B, 906:B
+color purple
+select 758:B, 905:B
+color purple
+select 759:B, 904:B
+color purple
+select 760:B, 903:B
+color purple
+
+#------Helix #27, color: violet------
+select 962:B, 2096:B
+color violet
+select 963:B, 2095:B
+color violet
+select 964:B, 2094:B
+color violet
+select 965:B, 2092:B
+color violet
+select 2257:B, 2261:B
+color violet
+
+#------Helix #28, color: red------
+select 972:B, 1282:B
+color red
+select 974:B, 1281:B
+color red
+select 975:B, 1279:B
+color red
+select 976:B, 1278:B
+color red
+select 977:B, 1277:B
+color red
+select 978:B, 1276:B
+color red
+select 979:B, 1275:B
+color red
+select 980:B, 1274:B
+color red
+select 981:B, 1273:B
+color red
+
+#------Helix #29, color: green------
+select 982:B, 1071:B
+color green
+select 983:B, 1070:B
+color green
+select 984:B, 1069:B
+color green
+select 985:B, 1068:B
+color green
+select 986:B, 1067:B
+color green
+select 987:B, 1066:B
+color green
+select 988:B, 1065:B
+color green
+select 989:B, 1064:B
+color green
+
+#------Helix #30, color: blue------
+select 1072:B, 1240:B
+color blue
+select 1073:B, 1239:B
+color blue
+select 1074:B, 1237:B
+color blue
+select 1075:B, 1236:B
+color blue
+select 1076:B, 1235:B
+color blue
+select 1077:B, 1234:B
+color blue
+
+#------Helix #31, color: yellow------
+select 1079:B, 1220:B
+color yellow
+select 1080:B, 1219:B
+color yellow
+select 1081:B, 1218:B
+color yellow
+select 1082:B, 1217:B
+color yellow
+select 1083:B, 1216:B
+color yellow
+select 1084:B, 1213:B
+color yellow
+select 1085:B, 1212:B
+color yellow
+select 1086:B, 1211:B
+color yellow
+select 1087:B, 1209:B
+color yellow
+select 1088:B, 1208:B
+color yellow
+select 1089:B, 1207:B
+color yellow
+select 1090:B, 1206:B
+color yellow
+select 1091:B, 1205:B
+color yellow
+select 1092:B, 1204:B
+color yellow
+select 1093:B, 1203:B
+color yellow
+select 1094:B, 1202:B
+color yellow
+select 1095:B, 1201:B
+color yellow
+select 1096:B, 1200:B
+color yellow
+select 1097:B, 1198:B
+color yellow
+select 1098:B, 1197:B
+color yellow
+select 1099:B, 1196:B
+color yellow
+select 1100:B, 1195:B
+color yellow
+select 1101:B, 1194:B
+color yellow
+select 1168:B, 1193:B
+color yellow
+select 1169:B, 1192:B
+color yellow
+select 1170:B, 1191:B
+color yellow
+select 1171:B, 1190:B
+color yellow
+select 1172:B, 1189:B
+color yellow
+select 1173:B, 1188:B
+color yellow
+select 1174:B, 1187:B
+color yellow
+select 1175:B, 1186:B
+color yellow
+select 1176:B, 1185:B
+color yellow
+select 1177:B, 1184:B
+color yellow
+select 1178:B, 1183:B
+color yellow
+
+#------Helix #32, color: cyan------
+select 1243:B, 1268:B
+color cyan
+select 1244:B, 1267:B
+color cyan
+select 1245:B, 1265:B
+color cyan
+select 1246:B, 1264:B
+color cyan
+select 1247:B, 1263:B
+color cyan
+select 1248:B, 1262:B
+color cyan
+select 1249:B, 1261:B
+color cyan
+select 1250:B, 1260:B
+color cyan
+select 1251:B, 1259:B
+color cyan
+select 1252:B, 1258:B
+color cyan
+select 1253:B, 1257:B
+color cyan
+
+#------Helix #33, color: magenta------
+select 1271:B, 2107:B
+color magenta
+select 1439:B, 2106:B
+color magenta
+select 1440:B, 2105:B
+color magenta
+select 1441:B, 2104:B
+color magenta
+select 1442:B, 2103:B
+color magenta
+select 1443:B, 2102:B
+color magenta
+select 1444:B, 2101:B
+color magenta
+select 1445:B, 2100:B
+color magenta
+select 1446:B, 2099:B
+color magenta
+
+#------Helix #34, color: orange------
+select 1328:B, 1315:B
+color orange
+select 1329:B, 1314:B
+color orange
+select 3865:B, 3881:B
+color orange
+select 3866:B, 3880:B
+color orange
+
+#------Helix #35, color: purple------
+select 1319:B, 3876:B
+color purple
+
+#------Helix #36, color: violet------
+select 1320:B, 1891:B
+color violet
+
+#------Helix #37, color: red------
+select 1323:B, 3875:B
+color red
+select 1313:B, 3879:B
+color red
+select 3882:B, 3873:B
+color red
+select 3883:B, 3872:B
+color red
+select 3885:B, 3870:B
+color red
+select 2046:B, 2045:B
+color red
+
+#------Helix #38, color: green------
+select 1325:B, 4518:B
+color green
+
+#------Helix #39, color: blue------
+select 2352:B, 1334:B
+color blue
+select 2353:B, 1333:B
+color blue
+select 2354:B, 1332:B
+color blue
+select 2355:B, 1331:B
+color blue
+select 2356:B, 1330:B
+color blue
+select 2357:B, 3864:B
+color blue
+select 2358:B, 3863:B
+color blue
+select 2359:B, 3862:B
+color blue
+select 1596:B, 3861:B
+color blue
+select 4560:B, 3860:B
+color blue
+
+#------Helix #40, color: yellow------
+select 1337:B, 2346:B
+color yellow
+select 2349:B, 1336:B
+color yellow
+
+#------Helix #41, color: cyan------
+select 1338:B, 1659:B
+color cyan
+select 1519:B, 1658:B
+color cyan
+select 1520:B, 1657:B
+color cyan
+select 1521:B, 1656:B
+color cyan
+
+#------Helix #42, color: magenta------
+select 1339:B, 1518:B
+color magenta
+select 1341:B, 1515:B
+color magenta
+select 1342:B, 1514:B
+color magenta
+select 1343:B, 1513:B
+color magenta
+select 1344:B, 1512:B
+color magenta
+select 1345:B, 1511:B
+color magenta
+select 1346:B, 1510:B
+color magenta
+select 1347:B, 1509:B
+color magenta
+select 1348:B, 1508:B
+color magenta
+select 1349:B, 1507:B
+color magenta
+select 1350:B, 1506:B
+color magenta
+select 1351:B, 1505:B
+color magenta
+select 1352:B, 1504:B
+color magenta
+
+#------Helix #43, color: orange------
+select 1354:B, 1385:B
+color orange
+select 1355:B, 1384:B
+color orange
+select 1356:B, 1383:B
+color orange
+select 1357:B, 1382:B
+color orange
+select 1380:B, 1381:B
+color orange
+select 1377:B, 1358:B
+color orange
+select 1379:B, 1360:B
+color orange
+select 1361:B, 1376:B
+color orange
+select 1362:B, 1375:B
+color orange
+select 1363:B, 1374:B
+color orange
+select 1364:B, 1373:B
+color orange
+
+#------Helix #44, color: purple------
+select 1388:B, 1395:B
+color purple
+select 1389:B, 1394:B
+color purple
+select 1390:B, 1393:B
+color purple
+
+#------Helix #45, color: violet------
+select 1399:B, 1418:B
+color violet
+select 1400:B, 1417:B
+color violet
+select 1401:B, 1416:B
+color violet
+select 1402:B, 1415:B
+color violet
+select 1403:B, 1414:B
+color violet
+select 1404:B, 1413:B
+color violet
+select 1405:B, 1412:B
+color violet
+select 1406:B, 1411:B
+color violet
+
+#------Helix #46, color: red------
+select 1421:B, 1464:B
+color red
+select 1422:B, 1463:B
+color red
+select 1423:B, 1462:B
+color red
+select 1424:B, 1461:B
+color red
+select 1425:B, 1460:B
+color red
+select 1426:B, 1459:B
+color red
+select 1427:B, 1457:B
+color red
+select 1428:B, 1456:B
+color red
+select 1429:B, 1455:B
+color red
+select 1430:B, 1454:B
+color red
+select 1431:B, 1453:B
+color red
+select 1432:B, 1452:B
+color red
+select 1433:B, 1451:B
+color red
+select 1434:B, 1450:B
+color red
+select 1435:B, 1449:B
+color red
+select 1436:B, 1448:B
+color red
+
+#------Helix #47, color: green------
+select 1466:B, 1499:B
+color green
+select 1467:B, 1498:B
+color green
+select 1468:B, 1496:B
+color green
+select 1469:B, 1495:B
+color green
+select 1470:B, 1494:B
+color green
+select 1471:B, 1493:B
+color green
+select 1472:B, 1492:B
+color green
+select 1473:B, 1491:B
+color green
+select 1474:B, 1490:B
+color green
+select 1476:B, 1489:B
+color green
+select 1477:B, 1488:B
+color green
+select 1478:B, 1487:B
+color green
+select 1479:B, 1486:B
+color green
+select 1480:B, 1484:B
+color green
+
+#------Helix #48, color: blue------
+select 1523:B, 1652:B
+color blue
+
+#------Helix #49, color: yellow------
+select 1525:B, 1649:B
+color yellow
+select 1526:B, 1648:B
+color yellow
+select 1527:B, 1647:B
+color yellow
+select 1528:B, 1646:B
+color yellow
+select 1529:B, 1645:B
+color yellow
+select 1530:B, 1644:B
+color yellow
+select 1531:B, 1643:B
+color yellow
+select 1624:B, 1640:B
+color yellow
+select 1626:B, 1636:B
+color yellow
+select 1627:B, 1635:B
+color yellow
+select 1628:B, 1634:B
+color yellow
+select 1629:B, 1632:B
+color yellow
+
+#------Helix #50, color: cyan------
+select 1535:B, 3642:B
+color cyan
+
+#------Helix #51, color: magenta------
+select 1537:B, 1622:B
+color magenta
+select 1538:B, 1621:B
+color magenta
+select 1539:B, 1620:B
+color magenta
+select 1540:B, 1619:B
+color magenta
+select 1541:B, 1618:B
+color magenta
+select 1542:B, 1617:B
+color magenta
+select 1543:B, 1616:B
+color magenta
+select 1544:B, 1615:B
+color magenta
+select 1545:B, 1614:B
+color magenta
+select 1546:B, 1612:B
+color magenta
+
+#------Helix #52, color: orange------
+select 1565:B, 1562:B
+color orange
+select 1566:B, 1561:B
+color orange
+select 1567:B, 1560:B
+color orange
+select 1568:B, 1559:B
+color orange
+select 1569:B, 1558:B
+color orange
+select 1570:B, 1557:B
+color orange
+select 1571:B, 1556:B
+color orange
+select 1572:B, 1555:B
+color orange
+select 1573:B, 1554:B
+color orange
+select 1574:B, 1553:B
+color orange
+select 1575:B, 1552:B
+color orange
+select 1576:B, 1551:B
+color orange
+select 1578:B, 1550:B
+color orange
+select 1579:B, 1549:B
+color orange
+select 1580:B, 1548:B
+color orange
+select 1581:B, 1547:B
+color orange
+select 1583:B, 1610:B
+color orange
+select 1584:B, 1609:B
+color orange
+select 1585:B, 1608:B
+color orange
+select 1586:B, 1607:B
+color orange
+select 1588:B, 1606:B
+color orange
+select 1589:B, 1605:B
+color orange
+select 1590:B, 1604:B
+color orange
+select 1592:B, 1603:B
+color orange
+select 1593:B, 1602:B
+color orange
+select 1594:B, 1599:B
+color orange
+
+#------Helix #53, color: purple------
+select 1577:B, 3636:B
+color purple
+select 3651:B, 1613:B
+color purple
+select 3638:B, 3650:B
+color purple
+
+#------Helix #54, color: violet------
+select 1601:B, 4555:B
+color violet
+
+#------Helix #55, color: red------
+select 1638:B, 3643:B
+color red
+
+#------Helix #56, color: green------
+select 1680:B, 1675:B
+color green
+select 1681:B, 1674:B
+color green
+select 1682:B, 1673:B
+color green
+select 1684:B, 1671:B
+color green
+select 1685:B, 1852:B
+color green
+select 1686:B, 1851:B
+color green
+select 1687:B, 1849:B
+color green
+select 1688:B, 1848:B
+color green
+select 1689:B, 1847:B
+color green
+select 1690:B, 1846:B
+color green
+select 1691:B, 1845:B
+color green
+select 1692:B, 1844:B
+color green
+select 1693:B, 1843:B
+color green
+select 1694:B, 1842:B
+color green
+
+#------Helix #57, color: blue------
+select 1700:B, 1704:B
+color blue
+
+#------Helix #58, color: yellow------
+select 1721:B, 1841:B
+color yellow
+select 1722:B, 1840:B
+color yellow
+select 1723:B, 1839:B
+color yellow
+select 1725:B, 1838:B
+color yellow
+select 1726:B, 1837:B
+color yellow
+select 1727:B, 1802:B
+color yellow
+select 1728:B, 1801:B
+color yellow
+select 1729:B, 1800:B
+color yellow
+select 1730:B, 1799:B
+color yellow
+select 1731:B, 1798:B
+color yellow
+select 1732:B, 1797:B
+color yellow
+select 1733:B, 1796:B
+color yellow
+select 4214:B, 1795:B
+color yellow
+select 1735:B, 1794:B
+color yellow
+select 1736:B, 1793:B
+color yellow
+select 1738:B, 1790:B
+color yellow
+select 1739:B, 1789:B
+color yellow
+select 1740:B, 1786:B
+color yellow
+select 1745:B, 1785:B
+color yellow
+select 1746:B, 1784:B
+color yellow
+select 1747:B, 1783:B
+color yellow
+
+#------Helix #59, color: cyan------
+select 1750:B, 1780:B
+color cyan
+select 1752:B, 1778:B
+color cyan
+select 1753:B, 1777:B
+color cyan
+select 1754:B, 1755:B
+color cyan
+select 1756:B, 1776:B
+color cyan
+select 1757:B, 1775:B
+color cyan
+select 1758:B, 1774:B
+color cyan
+select 1759:B, 1773:B
+color cyan
+select 1760:B, 1772:B
+color cyan
+select 1761:B, 1771:B
+color cyan
+select 1762:B, 1770:B
+color cyan
+select 1763:B, 1769:B
+color cyan
+select 1764:B, 1768:B
+color cyan
+select 1765:B, 1767:B
+color cyan
+
+#------Helix #60, color: magenta------
+select 1822:B, 1817:B
+color magenta
+select 1823:B, 1816:B
+color magenta
+select 1824:B, 1814:B
+color magenta
+select 1825:B, 1813:B
+color magenta
+select 1826:B, 1812:B
+color magenta
+select 1827:B, 1811:B
+color magenta
+select 1828:B, 1810:B
+color magenta
+select 1829:B, 1809:B
+color magenta
+select 1830:B, 1808:B
+color magenta
+select 1831:B, 1807:B
+color magenta
+select 1832:B, 1806:B
+color magenta
+select 1804:B, 1836:B
+color magenta
+
+#------Helix #61, color: orange------
+select 1873:B, 1861:B
+color orange
+select 1875:B, 1859:B
+color orange
+select 1876:B, 1858:B
+color orange
+select 1877:B, 1857:B
+color orange
+select 1878:B, 1856:B
+color orange
+select 1879:B, 1855:B
+color orange
+select 1880:B, 1670:B
+color orange
+select 2281:B, 1668:B
+color orange
+select 2282:B, 1667:B
+color orange
+select 2283:B, 1666:B
+color orange
+select 2284:B, 1665:B
+color orange
+select 2285:B, 1664:B
+color orange
+select 2286:B, 1663:B
+color orange
+select 2287:B, 1662:B
+color orange
+select 2288:B, 1661:B
+color orange
+select 2290:B, 2345:B
+color orange
+select 2291:B, 2344:B
+color orange
+select 2292:B, 2342:B
+color orange
+select 2293:B, 2341:B
+color orange
+select 2294:B, 2340:B
+color orange
+select 2295:B, 2339:B
+color orange
+select 2296:B, 2338:B
+color orange
+select 2297:B, 2337:B
+color orange
+select 2298:B, 2336:B
+color orange
+select 2299:B, 2335:B
+color orange
+select 2301:B, 2334:B
+color orange
+select 2302:B, 2333:B
+color orange
+
+#------Helix #62, color: purple------
+select 1864:B, 1870:B
+color purple
+select 1865:B, 1868:B
+color purple
+
+#------Helix #63, color: violet------
+select 1882:B, 1897:B
+color violet
+select 1883:B, 1896:B
+color violet
+select 1884:B, 1895:B
+color violet
+select 1885:B, 1894:B
+color violet
+select 1886:B, 1893:B
+color violet
+select 1937:B, 1887:B
+color violet
+select 1938:B, 1890:B
+color violet
+
+#------Helix #64, color: red------
+select 1898:B, 2070:B
+color red
+
+#------Helix #65, color: green------
+select 1917:B, 1915:B
+color green
+select 2049:B, 1914:B
+color green
+select 2050:B, 1913:B
+color green
+select 2051:B, 1912:B
+color green
+select 2052:B, 1934:B
+color green
+select 2053:B, 1933:B
+color green
+select 2054:B, 1929:B
+color green
+select 2056:B, 1927:B
+color green
+select 2058:B, 1926:B
+color green
+select 2059:B, 1925:B
+color green
+select 2060:B, 1924:B
+color green
+select 2061:B, 1923:B
+color green
+select 2062:B, 1922:B
+color green
+select 2063:B, 1920:B
+color green
+select 2064:B, 1918:B
+color green
+select 2065:B, 1911:B
+color green
+select 2066:B, 1910:B
+color green
+select 2067:B, 1909:B
+color green
+select 2068:B, 1908:B
+color green
+select 2069:B, 1906:B
+color green
+select 2071:B, 1905:B
+color green
+select 2072:B, 1904:B
+color green
+select 2073:B, 1903:B
+color green
+select 2074:B, 1902:B
+color green
+select 2075:B, 1901:B
+color green
+select 2076:B, 1900:B
+color green
+select 2077:B, 1899:B
+color green
+select 2078:B, 2278:B
+color green
+select 2079:B, 2277:B
+color green
+select 2080:B, 2276:B
+color green
+select 2081:B, 2275:B
+color green
+select 2082:B, 2274:B
+color green
+select 2083:B, 2273:B
+color green
+select 2085:B, 2272:B
+color green
+select 2086:B, 2271:B
+color green
+select 2087:B, 2270:B
+color green
+
+#------Helix #66, color: blue------
+select 1942:B, 2040:B
+color blue
+select 1943:B, 2039:B
+color blue
+select 1944:B, 2038:B
+color blue
+select 1945:B, 2037:B
+color blue
+select 1946:B, 2036:B
+color blue
+select 1948:B, 2035:B
+color blue
+select 1949:B, 2034:B
+color blue
+select 1950:B, 2033:B
+color blue
+select 1951:B, 2032:B
+color blue
+select 1952:B, 2031:B
+color blue
+select 1953:B, 2030:B
+color blue
+select 1954:B, 2029:B
+color blue
+select 1955:B, 2028:B
+color blue
+select 1956:B, 2027:B
+color blue
+select 1957:B, 2026:B
+color blue
+
+#------Helix #67, color: yellow------
+select 1961:B, 2025:B
+color yellow
+select 1962:B, 2024:B
+color yellow
+select 1964:B, 2022:B
+color yellow
+
+#------Helix #68, color: cyan------
+select 1963:B, 4694:B
+color cyan
+
+#------Helix #69, color: magenta------
+select 1966:B, 2021:B
+color magenta
+select 1967:B, 2020:B
+color magenta
+select 1968:B, 2019:B
+color magenta
+select 1969:B, 2018:B
+color magenta
+select 1970:B, 2017:B
+color magenta
+
+#------Helix #70, color: orange------
+select 2306:B, 2332:B
+color orange
+select 2307:B, 2331:B
+color orange
+select 2308:B, 2330:B
+color orange
+select 2309:B, 2329:B
+color orange
+select 2310:B, 2328:B
+color orange
+select 2311:B, 2327:B
+color orange
+select 2312:B, 2326:B
+color orange
+select 2314:B, 2325:B
+color orange
+select 2315:B, 2324:B
+color orange
+select 2316:B, 2323:B
+color orange
+select 2317:B, 2322:B
+color orange
+select 2318:B, 2321:B
+color orange
+
+#------Helix #71, color: purple------
+select 2367:B, 2788:B
+color purple
+
+#------Helix #72, color: violet------
+select 2425:B, 2378:B
+color violet
+select 2381:B, 2377:B
+color violet
+select 2384:B, 2376:B
+color violet
+select 2385:B, 2375:B
+color violet
+select 2386:B, 2374:B
+color violet
+select 2387:B, 2373:B
+color violet
+select 2388:B, 2372:B
+color violet
+select 2389:B, 2371:B
+color violet
+select 2390:B, 2825:B
+color violet
+select 2391:B, 2826:B
+color violet
+select 2392:B, 2823:B
+color violet
+select 2393:B, 2822:B
+color violet
+select 2397:B, 2821:B
+color violet
+select 2395:B, 2820:B
+color violet
+select 2807:B, 2819:B
+color violet
+select 2808:B, 2818:B
+color violet
+select 2809:B, 2817:B
+color violet
+select 2810:B, 2816:B
+color violet
+
+#------Helix #73, color: red------
+select 2399:B, 2805:B
+color red
+
+#------Helix #74, color: green------
+select 2402:B, 2802:B
+color green
+select 2404:B, 2786:B
+color green
+select 2405:B, 2785:B
+color green
+select 2406:B, 2784:B
+color green
+select 2783:B, 2409:B
+color green
+select 2436:B, 2408:B
+color green
+
+#------Helix #75, color: blue------
+select 2410:B, 2434:B
+color blue
+select 2411:B, 2433:B
+color blue
+select 2412:B, 2432:B
+color blue
+select 2413:B, 2431:B
+color blue
+select 2414:B, 2430:B
+color blue
+select 2418:B, 2429:B
+color blue
+select 2419:B, 2427:B
+color blue
+select 2420:B, 2426:B
+color blue
+
+#------Helix #76, color: yellow------
+select 2438:B, 2782:B
+color yellow
+select 2441:B, 2781:B
+color yellow
+select 2442:B, 2780:B
+color yellow
+select 2443:B, 2779:B
+color yellow
+
+#------Helix #77, color: cyan------
+select 2444:B, 2516:B
+color cyan
+select 2445:B, 2515:B
+color cyan
+select 2446:B, 2514:B
+color cyan
+select 2447:B, 2511:B
+color cyan
+select 2449:B, 2510:B
+color cyan
+select 2450:B, 2509:B
+color cyan
+select 2452:B, 2507:B
+color cyan
+select 2467:B, 2453:B
+color cyan
+select 2468:B, 2473:B
+color cyan
+select 2469:B, 2471:B
+color cyan
+
+#------Helix #78, color: magenta------
+select 2455:B, 2466:B
+color magenta
+select 2456:B, 2465:B
+color magenta
+select 2457:B, 2464:B
+color magenta
+select 2458:B, 2463:B
+color magenta
+
+#------Helix #79, color: orange------
+select 2476:B, 2501:B
+color orange
+select 2477:B, 2500:B
+color orange
+select 2479:B, 2499:B
+color orange
+select 2480:B, 2498:B
+color orange
+select 2481:B, 2497:B
+color orange
+select 2482:B, 2496:B
+color orange
+select 2483:B, 2495:B
+color orange
+select 2484:B, 2494:B
+color orange
+select 2485:B, 2493:B
+color orange
+select 2486:B, 2492:B
+color orange
+select 2487:B, 2491:B
+color orange
+
+#------Helix #80, color: purple------
+select 2529:B, 2524:B
+color purple
+select 2532:B, 2523:B
+color purple
+select 2533:B, 2522:B
+color purple
+select 2534:B, 2521:B
+color purple
+select 2535:B, 2520:B
+color purple
+select 2536:B, 2519:B
+color purple
+select 2537:B, 2440:B
+color purple
+select 2538:B, 2439:B
+color purple
+select 2539:B, 2777:B
+color purple
+select 2540:B, 2776:B
+color purple
+select 2541:B, 2775:B
+color purple
+select 2542:B, 2774:B
+color purple
+select 2543:B, 2773:B
+color purple
+select 2547:B, 2772:B
+color purple
+select 2548:B, 2771:B
+color purple
+select 2549:B, 2770:B
+color purple
+select 2550:B, 2768:B
+color purple
+select 2551:B, 2767:B
+color purple
+select 2552:B, 2766:B
+color purple
+select 2553:B, 2765:B
+color purple
+select 2554:B, 2764:B
+color purple
+select 2574:B, 2762:B
+color purple
+select 2573:B, 2761:B
+color purple
+select 2555:B, 2572:B
+color purple
+select 2556:B, 2571:B
+color purple
+select 2557:B, 2570:B
+color purple
+select 2558:B, 2569:B
+color purple
+select 2559:B, 2568:B
+color purple
+select 2560:B, 2567:B
+color purple
+select 2561:B, 2566:B
+color purple
+
+#------Helix #81, color: violet------
+select 2525:B, 2527:B
+color violet
+
+#------Helix #82, color: red------
+select 2575:B, 2757:B
+color red
+select 2589:B, 2756:B
+color red
+select 2590:B, 2755:B
+color red
+select 2591:B, 2754:B
+color red
+select 2592:B, 4126:B
+color red
+select 2593:B, 2752:B
+color red
+select 2594:B, 2751:B
+color red
+select 2595:B, 2750:B
+color red
+select 2596:B, 2749:B
+color red
+select 2597:B, 2748:B
+color red
+select 2598:B, 2747:B
+color red
+select 2599:B, 2746:B
+color red
+select 2600:B, 2745:B
+color red
+select 2601:B, 2744:B
+color red
+
+#------Helix #83, color: green------
+select 2576:B, 2585:B
+color green
+select 2577:B, 2584:B
+color green
+select 2578:B, 2583:B
+color green
+select 2579:B, 2582:B
+color green
+
+#------Helix #84, color: blue------
+select 2633:B, 2623:B
+color blue
+select 2634:B, 2622:B
+color blue
+select 2635:B, 2621:B
+color blue
+select 2636:B, 2620:B
+color blue
+select 2637:B, 2619:B
+color blue
+select 2719:B, 2618:B
+color blue
+select 2720:B, 2617:B
+color blue
+select 2721:B, 2616:B
+color blue
+select 2722:B, 2615:B
+color blue
+select 2724:B, 2614:B
+color blue
+select 2726:B, 2613:B
+color blue
+select 2727:B, 2612:B
+color blue
+select 2728:B, 2611:B
+color blue
+select 2729:B, 2610:B
+color blue
+select 2730:B, 2609:B
+color blue
+select 2731:B, 2608:B
+color blue
+select 2732:B, 2607:B
+color blue
+select 2733:B, 2606:B
+color blue
+select 2734:B, 2605:B
+color blue
+select 2735:B, 2604:B
+color blue
+select 2736:B, 2603:B
+color blue
+select 2737:B, 2602:B
+color blue
+select 2738:B, 2742:B
+color blue
+
+#------Helix #85, color: yellow------
+select 2627:B, 4649:B
+color yellow
+select 2628:B, 4648:B
+color yellow
+select 2629:B, 4647:B
+color yellow
+
+#------Helix #86, color: cyan------
+select 2675:B, 2659:B
+color cyan
+select 2676:B, 2658:B
+color cyan
+select 2677:B, 2657:B
+color cyan
+select 2678:B, 2656:B
+color cyan
+select 2679:B, 2655:B
+color cyan
+select 2680:B, 2654:B
+color cyan
+select 2681:B, 2653:B
+color cyan
+select 2682:B, 2651:B
+color cyan
+select 2683:B, 2650:B
+color cyan
+select 2684:B, 2649:B
+color cyan
+select 2685:B, 2648:B
+color cyan
+select 2686:B, 2647:B
+color cyan
+select 2688:B, 2646:B
+color cyan
+select 2689:B, 2645:B
+color cyan
+select 2690:B, 2644:B
+color cyan
+select 2691:B, 2643:B
+color cyan
+select 2692:B, 2642:B
+color cyan
+select 2693:B, 2641:B
+color cyan
+select 2694:B, 2640:B
+color cyan
+select 2695:B, 2639:B
+color cyan
+select 2697:B, 2638:B
+color cyan
+select 2698:B, 2718:B
+color cyan
+select 2699:B, 2717:B
+color cyan
+select 2700:B, 2716:B
+color cyan
+select 2701:B, 2715:B
+color cyan
+select 2702:B, 2714:B
+color cyan
+select 2703:B, 2713:B
+color cyan
+select 2704:B, 2712:B
+color cyan
+select 2705:B, 2710:B
+color cyan
+
+#------Helix #87, color: magenta------
+select 2662:B, 2672:B
+color magenta
+select 2663:B, 2671:B
+color magenta
+select 2664:B, 2670:B
+color magenta
+select 2665:B, 2669:B
+color magenta
+select 2666:B, 2668:B
+color magenta
+
+#------Helix #88, color: orange------
+select 2791:B, 2800:B
+color orange
+select 2792:B, 2799:B
+color orange
+
+#------Helix #89, color: purple------
+select 2829:B, 3856:B
+color purple
+select 2830:B, 3855:B
+color purple
+select 2831:B, 3854:B
+color purple
+
+#------Helix #90, color: violet------
+select 2836:B, 3852:B
+color violet
+select 2838:B, 3850:B
+color violet
+select 2840:B, 3848:B
+color violet
+select 2841:B, 3847:B
+color violet
+select 2842:B, 3846:B
+color violet
+
+#------Helix #91, color: red------
+select 2845:B, 3843:B
+color red
+select 2846:B, 3842:B
+color red
+
+#------Helix #92, color: green------
+select 3840:B, 2850:B
+color green
+select 3838:B, 2849:B
+color green
+select 2855:B, 3837:B
+color green
+
+#------Helix #93, color: blue------
+select 2852:B, 2854:B
+color blue
+
+#------Helix #94, color: yellow------
+select 2863:B, 2887:B
+color yellow
+select 2864:B, 2886:B
+color yellow
+select 2865:B, 2885:B
+color yellow
+select 2866:B, 2884:B
+color yellow
+select 2867:B, 2883:B
+color yellow
+select 2868:B, 2882:B
+color yellow
+select 2869:B, 2881:B
+color yellow
+select 2870:B, 2879:B
+color yellow
+select 2871:B, 2878:B
+color yellow
+select 2872:B, 2877:B
+color yellow
+
+#------Helix #95, color: cyan------
+select 3605:B, 2896:B
+color cyan
+select 3606:B, 2895:B
+color cyan
+select 3607:B, 2894:B
+color cyan
+select 3608:B, 2893:B
+color cyan
+select 3609:B, 2892:B
+color cyan
+select 3610:B, 2891:B
+color cyan
+select 3611:B, 2890:B
+color cyan
+select 3612:B, 2889:B
+color cyan
+select 3613:B, 2888:B
+color cyan
+select 3614:B, 3618:B
+color cyan
+
+#------Helix #96, color: magenta------
+select 2897:B, 3602:B
+color magenta
+select 2898:B, 3601:B
+color magenta
+select 2899:B, 3600:B
+color magenta
+select 2900:B, 3599:B
+color magenta
+select 2901:B, 3598:B
+color magenta
+
+#------Helix #97, color: orange------
+select 3626:B, 3835:B
+color orange
+
+#------Helix #98, color: purple------
+select 3628:B, 3833:B
+color purple
+select 3629:B, 3832:B
+color purple
+select 3630:B, 3831:B
+color purple
+select 3632:B, 3829:B
+color purple
+select 3633:B, 3827:B
+color purple
+select 3634:B, 3826:B
+color purple
+
+#------Helix #99, color: violet------
+select 3635:B, 3824:B
+color violet
+select 3692:B, 2874:B
+color violet
+select 3693:B, 3822:B
+color violet
+select 3694:B, 3821:B
+color violet
+select 3696:B, 3819:B
+color violet
+select 3697:B, 3817:B
+color violet
+
+#------Helix #100, color: red------
+select 3640:B, 3647:B
+color red
+select 3641:B, 3646:B
+color red
+
+#------Helix #101, color: green------
+select 3645:B, 4553:B
+color green
+select 4533:B, 4554:B
+color green
+
+#------Helix #102, color: blue------
+select 3653:B, 3691:B
+color blue
+select 3654:B, 3690:B
+color blue
+select 3655:B, 3689:B
+color blue
+select 3656:B, 3688:B
+color blue
+select 3657:B, 3687:B
+color blue
+select 3658:B, 3686:B
+color blue
+select 3659:B, 3685:B
+color blue
+select 3660:B, 3684:B
+color blue
+
+#------Helix #103, color: yellow------
+select 3661:B, 3681:B
+color yellow
+select 3662:B, 3680:B
+color yellow
+select 3664:B, 3678:B
+color yellow
+select 3665:B, 3677:B
+color yellow
+select 3666:B, 3676:B
+color yellow
+select 3667:B, 3675:B
+color yellow
+select 3668:B, 3674:B
+color yellow
+select 3669:B, 3672:B
+color yellow
+
+#------Helix #104, color: cyan------
+select 3737:B, 3716:B
+color cyan
+select 3739:B, 3714:B
+color cyan
+select 3740:B, 3713:B
+color cyan
+select 3741:B, 3710:B
+color cyan
+select 3742:B, 3708:B
+color cyan
+select 3743:B, 3707:B
+color cyan
+select 3745:B, 3705:B
+color cyan
+select 3748:B, 3704:B
+color cyan
+select 3749:B, 3703:B
+color cyan
+select 3750:B, 3700:B
+color cyan
+select 3751:B, 3699:B
+color cyan
+select 3752:B, 3698:B
+color cyan
+select 3778:B, 3816:B
+color cyan
+select 3779:B, 3815:B
+color cyan
+select 3780:B, 3814:B
+color cyan
+select 3781:B, 3811:B
+color cyan
+
+#------Helix #105, color: magenta------
+select 3720:B, 3733:B
+color magenta
+select 3721:B, 3732:B
+color magenta
+select 3722:B, 3731:B
+color magenta
+
+#------Helix #106, color: orange------
+select 3725:B, 3728:B
+color orange
+
+#------Helix #107, color: purple------
+select 3766:B, 3765:B
+color purple
+select 3767:B, 3757:B
+color purple
+select 3769:B, 3755:B
+color purple
+select 3771:B, 3753:B
+color purple
+select 3772:B, 3776:B
+color purple
+select 3773:B, 3775:B
+color purple
+
+#------Helix #108, color: violet------
+select 3783:B, 3790:B
+color violet
+select 3787:B, 3789:B
+color violet
+
+#------Helix #109, color: red------
+select 3793:B, 3807:B
+color red
+select 3794:B, 3806:B
+color red
+select 3795:B, 3805:B
+color red
+select 3796:B, 3804:B
+color red
+select 3797:B, 3803:B
+color red
+
+#------Helix #110, color: green------
+select 3799:B, 4506:B
+color green
+select 4495:B, 4505:B
+color green
+select 4496:B, 4504:B
+color green
+select 4497:B, 4503:B
+color green
+select 3802:B, 4502:B
+color green
+
+#------Helix #111, color: blue------
+select 3890:B, 4570:B
+color blue
+select 3892:B, 4568:B
+color blue
+select 3893:B, 4567:B
+color blue
+select 3894:B, 4566:B
+color blue
+select 3895:B, 4565:B
+color blue
+select 3896:B, 4564:B
+color blue
+select 3898:B, 4563:B
+color blue
+select 3897:B, 4562:B
+color blue
+select 3900:B, 4561:B
+color blue
+
+#------Helix #112, color: yellow------
+select 3902:B, 4558:B
+color yellow
+select 3903:B, 4557:B
+color yellow
+
+#------Helix #113, color: cyan------
+select 4449:B, 3908:B
+color cyan
+select 4397:B, 3907:B
+color cyan
+select 3909:B, 4396:B
+color cyan
+
+#------Helix #114, color: magenta------
+select 4398:B, 4446:B
+color magenta
+
+#------Helix #115, color: orange------
+select 3911:B, 4391:B
+color orange
+select 3912:B, 4390:B
+color orange
+select 3913:B, 4389:B
+color orange
+select 3915:B, 4388:B
+color orange
+select 3916:B, 4387:B
+color orange
+select 3917:B, 4384:B
+color orange
+select 3918:B, 4383:B
+color orange
+select 3919:B, 4382:B
+color orange
+select 4189:B, 4381:B
+color orange
+select 3923:B, 4188:B
+color orange
+select 3924:B, 4187:B
+color orange
+select 4183:B, 4186:B
+color orange
+select 3926:B, 4185:B
+color orange
+select 3927:B, 4184:B
+color orange
+select 3928:B, 4182:B
+color orange
+select 3929:B, 4181:B
+color orange
+select 3930:B, 4180:B
+color orange
+select 3931:B, 4179:B
+color orange
+select 3932:B, 4178:B
+color orange
+select 3933:B, 4177:B
+color orange
+select 3934:B, 4176:B
+color orange
+select 3935:B, 4175:B
+color orange
+select 3936:B, 4174:B
+color orange
+select 3937:B, 4173:B
+color orange
+select 3938:B, 4172:B
+color orange
+
+#------Helix #116, color: purple------
+select 3914:B, 4378:B
+color purple
+
+#------Helix #117, color: violet------
+select 4065:B, 3948:B
+color violet
+select 4066:B, 3947:B
+color violet
+select 4067:B, 3946:B
+color violet
+select 4068:B, 3945:B
+color violet
+select 4070:B, 3943:B
+color violet
+select 4071:B, 3942:B
+color violet
+select 4072:B, 3941:B
+color violet
+select 4073:B, 3940:B
+color violet
+select 4074:B, 3939:B
+color violet
+select 4075:B, 4170:B
+color violet
+select 4077:B, 4169:B
+color violet
+select 4078:B, 4168:B
+color violet
+select 4079:B, 4167:B
+color violet
+select 4080:B, 4166:B
+color violet
+select 4081:B, 4165:B
+color violet
+select 4082:B, 4164:B
+color violet
+select 4083:B, 4085:B
+color violet
+
+#------Helix #118, color: red------
+select 4088:B, 4161:B
+color red
+select 4089:B, 4160:B
+color red
+select 4090:B, 4159:B
+color red
+select 4091:B, 4158:B
+color red
+
+#------Helix #119, color: green------
+select 4093:B, 4115:B
+color green
+select 4094:B, 4114:B
+color green
+select 4095:B, 4113:B
+color green
+select 4097:B, 4112:B
+color green
+select 4098:B, 4111:B
+color green
+select 4099:B, 4110:B
+color green
+select 4100:B, 4109:B
+color green
+select 4101:B, 4108:B
+color green
+select 4102:B, 4106:B
+color green
+
+#------Helix #120, color: blue------
+select 4127:B, 4157:B
+color blue
+select 4128:B, 4156:B
+color blue
+select 4129:B, 4155:B
+color blue
+select 4130:B, 4154:B
+color blue
+select 4131:B, 4153:B
+color blue
+select 4132:B, 4152:B
+color blue
+select 4133:B, 4151:B
+color blue
+select 4134:B, 4150:B
+color blue
+select 4135:B, 4149:B
+color blue
+select 4136:B, 4148:B
+color blue
+select 4137:B, 4147:B
+color blue
+select 4138:B, 4146:B
+color blue
+select 4139:B, 4145:B
+color blue
+select 4140:B, 4144:B
+color blue
+select 4142:B, 4143:B
+color blue
+
+#------Helix #121, color: yellow------
+select 4162:B, 4163:B
+color yellow
+
+#------Helix #122, color: cyan------
+select 4191:B, 4204:B
+color cyan
+select 4192:B, 4202:B
+color cyan
+select 4193:B, 4201:B
+color cyan
+select 4221:B, 4200:B
+color cyan
+
+#------Helix #123, color: magenta------
+select 4206:B, 4226:B
+color magenta
+select 4207:B, 4225:B
+color magenta
+select 4208:B, 4224:B
+color magenta
+select 4209:B, 4223:B
+color magenta
+select 4210:B, 4222:B
+color magenta
+select 4212:B, 4219:B
+color magenta
+select 4213:B, 4218:B
+color magenta
+
+#------Helix #124, color: orange------
+select 4233:B, 4290:B
+color orange
+select 4235:B, 4289:B
+color orange
+select 4236:B, 4288:B
+color orange
+select 4237:B, 4287:B
+color orange
+select 4238:B, 4286:B
+color orange
+select 4239:B, 4285:B
+color orange
+select 4240:B, 4284:B
+color orange
+select 4241:B, 4283:B
+color orange
+select 4242:B, 4281:B
+color orange
+select 4269:B, 4278:B
+color orange
+select 4270:B, 4277:B
+color orange
+select 4332:B, 4276:B
+color orange
+select 4333:B, 4275:B
+color orange
+select 4334:B, 4274:B
+color orange
+select 4336:B, 4272:B
+color orange
+select 4229:B, 4271:B
+color orange
+select 4230:B, 4331:B
+color orange
+select 4231:B, 4330:B
+color orange
+
+#------Helix #125, color: purple------
+select 4243:B, 4267:B
+color purple
+select 4244:B, 4264:B
+color purple
+select 4245:B, 4263:B
+color purple
+select 4246:B, 4262:B
+color purple
+select 4247:B, 4261:B
+color purple
+select 4248:B, 4260:B
+color purple
+select 4249:B, 4259:B
+color purple
+select 4250:B, 4258:B
+color purple
+
+#------Helix #126, color: violet------
+select 4254:B, 4257:B
+color violet
+
+#------Helix #127, color: red------
+select 4313:B, 4297:B
+color red
+select 4315:B, 4295:B
+color red
+select 4316:B, 4294:B
+color red
+select 4318:B, 4291:B
+color red
+select 4319:B, 4328:B
+color red
+select 4320:B, 4327:B
+color red
+select 4321:B, 4326:B
+color red
+select 4322:B, 4325:B
+color red
+
+#------Helix #128, color: green------
+select 4300:B, 4310:B
+color green
+select 4301:B, 4309:B
+color green
+select 4302:B, 4307:B
+color green
+
+#------Helix #129, color: blue------
+select 4337:B, 4373:B
+color blue
+
+#------Helix #130, color: yellow------
+select 4338:B, 4377:B
+color yellow
+select 4339:B, 4372:B
+color yellow
+select 4340:B, 4371:B
+color yellow
+
+#------Helix #131, color: cyan------
+select 4343:B, 4369:B
+color cyan
+select 4344:B, 4368:B
+color cyan
+select 4345:B, 4367:B
+color cyan
+select 4346:B, 4366:B
+color cyan
+select 4347:B, 4365:B
+color cyan
+select 4350:B, 4364:B
+color cyan
+select 4351:B, 4363:B
+color cyan
+select 4352:B, 4362:B
+color cyan
+
+#------Helix #132, color: magenta------
+select 4444:B, 4400:B
+color magenta
+select 4450:B, 4399:B
+color magenta
+
+#------Helix #133, color: orange------
+select 4402:B, 4441:B
+color orange
+select 1866:B, 4440:B
+color orange
+select 4405:B, 4439:B
+color orange
+select 4406:B, 4438:B
+color orange
+select 4407:B, 4435:B
+color orange
+select 4408:B, 4434:B
+color orange
+select 4409:B, 4433:B
+color orange
+select 4410:B, 4432:B
+color orange
+
+#------Helix #134, color: purple------
+select 4412:B, 4430:B
+color purple
+select 4413:B, 4429:B
+color purple
+select 4414:B, 4428:B
+color purple
+select 4415:B, 4427:B
+color purple
+select 4416:B, 4426:B
+color purple
+select 4417:B, 4425:B
+color purple
+select 4418:B, 4424:B
+color purple
+select 4475:B, 4421:B
+color purple
+
+#------Helix #135, color: violet------
+select 4451:B, 4556:B
+color violet
+
+#------Helix #136, color: red------
+select 4453:B, 4528:B
+color red
+select 4454:B, 4526:B
+color red
+select 4455:B, 4525:B
+color red
+
+#------Helix #137, color: green------
+select 4458:B, 4520:B
+color green
+select 4459:B, 4517:B
+color green
+select 4460:B, 4516:B
+color green
+select 4461:B, 4515:B
+color green
+select 4462:B, 4514:B
+color green
+select 4463:B, 4513:B
+color green
+select 4466:B, 4491:B
+color green
+select 4467:B, 4490:B
+color green
+select 4468:B, 4489:B
+color green
+select 4708:B, 4487:B
+color green
+select 4469:B, 4486:B
+color green
+select 4470:B, 4485:B
+color green
+
+#------Helix #138, color: blue------
+select 4472:B, 4483:B
+color blue
+select 4473:B, 4482:B
+color blue
+select 4474:B, 4481:B
+color blue
+
+#------Helix #139, color: yellow------
+select 4607:B, 4477:B
+color yellow
+select 4608:B, 4603:B
+color yellow
+select 4609:B, 4602:B
+color yellow
+select 4610:B, 4601:B
+color yellow
+select 4611:B, 4599:B
+color yellow
+select 4612:B, 4598:B
+color yellow
+select 4613:B, 4597:B
+color yellow
+select 4614:B, 4596:B
+color yellow
+select 4615:B, 4595:B
+color yellow
+select 4616:B, 4594:B
+color yellow
+select 4617:B, 4593:B
+color yellow
+select 4619:B, 4591:B
+color yellow
+select 4621:B, 4676:B
+color yellow
+select 4622:B, 4675:B
+color yellow
+
+#------Helix #140, color: cyan------
+select 4508:B, 4512:B
+color cyan
+select 4509:B, 4511:B
+color cyan
+
+#------Helix #141, color: magenta------
+select 4535:B, 4551:B
+color magenta
+select 4537:B, 4549:B
+color magenta
+select 4538:B, 4547:B
+color magenta
+select 4539:B, 4546:B
+color magenta
+select 4540:B, 4545:B
+color magenta
+select 4541:B, 4544:B
+color magenta
+
+#------Helix #142, color: orange------
+select 4663:B, 4635:B
+color orange
+select 4664:B, 4633:B
+color orange
+select 4666:B, 4632:B
+color orange
+select 4667:B, 4631:B
+color orange
+select 4668:B, 4630:B
+color orange
+select 4669:B, 4629:B
+color orange
+select 4625:B, 4672:B
+color orange
+
+#------Helix #143, color: purple------
+select 4638:B, 4661:B
+color purple
+select 4639:B, 4660:B
+color purple
+select 4640:B, 4659:B
+color purple
+select 4641:B, 4658:B
+color purple
+select 4642:B, 4655:B
+color purple
+select 4643:B, 4654:B
+color purple
+select 4644:B, 4653:B
+color purple
+select 4645:B, 4652:B
+color purple
+select 4646:B, 4651:B
+color purple
+
+#------Helix #144, color: violet------
+select 4695:B, 4693:B
+color violet
+select 4696:B, 4692:B
+color violet
+select 4697:B, 4691:B
+color violet
+select 4700:B, 4690:B
+color violet
+select 4701:B, 4699:B
+color violet
+select 4702:B, 4688:B
+color violet
+select 4703:B, 4687:B
+color violet
+select 4704:B, 4686:B
+color violet
+select 4705:B, 4685:B
+color violet
+select 4706:B, 4684:B
+color violet
+select 4707:B, 4682:B
+color violet
+select 4709:B, 4681:B
+color violet
+select 4710:B, 4680:B
+color violet
+select 4711:B, 4679:B
+color violet
+select 4712:B, 4678:B
+color violet
+select 4588:B, 4714:B
+color violet
+select 4587:B, 4715:B
+color violet
+select 4716:B, 4586:B
+color violet
+select 4717:B, 4585:B
+color violet
+select 4718:B, 4584:B
+color violet
+select 4719:B, 4583:B
+color violet
+select 4721:B, 4582:B
+color violet
+select 4722:B, 4581:B
+color violet
+select 4723:B, 4580:B
+color violet
+select 4725:B, 4578:B
+color violet
+select 4726:B, 4577:B
+color violet
+select 4728:B, 4575:B
+color violet
+select 5068:B, 5069:B
+color violet
+
+#------Helix #145, color: red------
+select 4733:B, 4730:B
+color red
+select 4734:B, 4965:B
+color red
+select 4735:B, 4964:B
+color red
+select 4736:B, 4963:B
+color red
+select 4737:B, 4962:B
+color red
+select 4738:B, 4961:B
+color red
+select 4739:B, 4960:B
+color red
+select 4740:B, 4959:B
+color red
+select 4742:B, 4958:B
+color red
+select 4743:B, 4957:B
+color red
+select 4744:B, 4956:B
+color red
+select 4745:B, 4955:B
+color red
+select 4746:B, 4954:B
+color red
+select 4747:B, 4953:B
+color red
+select 4748:B, 4952:B
+color red
+select 4749:B, 4951:B
+color red
+select 4750:B, 4949:B
+color red
+select 4751:B, 4948:B
+color red
+select 4752:B, 4947:B
+color red
+
+#------Helix #146, color: green------
+select 4754:B, 4879:B
+color green
+select 4755:B, 4878:B
+color green
+select 4756:B, 4877:B
+color green
+
+#------Helix #147, color: blue------
+select 4765:B, 4869:B
+color blue
+select 4766:B, 4868:B
+color blue
+select 4767:B, 4867:B
+color blue
+select 4768:B, 4866:B
+color blue
+select 4769:B, 4865:B
+color blue
+select 4770:B, 4864:B
+color blue
+select 4771:B, 4863:B
+color blue
+select 4772:B, 4862:B
+color blue
+select 4773:B, 4861:B
+color blue
+select 4774:B, 4860:B
+color blue
+
+#------Helix #148, color: yellow------
+select 4883:B, 4936:B
+color yellow
+select 4884:B, 4935:B
+color yellow
+select 4885:B, 4934:B
+color yellow
+select 4886:B, 4933:B
+color yellow
+select 4887:B, 4932:B
+color yellow
+select 4888:B, 4931:B
+color yellow
+select 4889:B, 4930:B
+color yellow
+select 4890:B, 4929:B
+color yellow
+select 4891:B, 4928:B
+color yellow
+
+#------Helix #149, color: cyan------
+select 4896:B, 4924:B
+color cyan
+select 4897:B, 4923:B
+color cyan
+select 4898:B, 4922:B
+color cyan
+select 4899:B, 4921:B
+color cyan
+select 4901:B, 4920:B
+color cyan
+select 4902:B, 4919:B
+color cyan
+select 4903:B, 4918:B
+color cyan
+select 4904:B, 4917:B
+color cyan
+select 4905:B, 4916:B
+color cyan
+select 4906:B, 4915:B
+color cyan
+select 4907:B, 4914:B
+color cyan
+
+#------Helix #150, color: magenta------
+select 4966:B, 5067:B
+color magenta
+select 4967:B, 5066:B
+color magenta
+select 4968:B, 5065:B
+color magenta
+select 4969:B, 5064:B
+color magenta
+select 4970:B, 5063:B
+color magenta
+
+#------Helix #151, color: orange------
+select 4973:B, 4985:B
+color orange
+select 4974:B, 4984:B
+color orange
+select 4975:B, 4983:B
+color orange
+select 4977:B, 4982:B
+color orange
+
+#------Helix #152, color: purple------
+select 4990:B, 5061:B
+color purple
+select 4991:B, 5060:B
+color purple
+select 4992:B, 5059:B
+color purple
+select 4993:B, 5058:B
+color purple
+select 4994:B, 5057:B
+color purple
+select 4995:B, 5056:B
+color purple
+select 4996:B, 5055:B
+color purple
+select 4997:B, 5053:B
+color purple
+select 4998:B, 5052:B
+color purple
+select 4999:B, 5051:B
+color purple
+select 5000:B, 5050:B
+color purple
+
+#------Helix #153, color: violet------
+select 5002:B, 5045:B
+color violet
+select 5003:B, 5044:B
+color violet
+select 5004:B, 5043:B
+color violet
+select 5005:B, 5042:B
+color violet
+
+#------Helix #154, color: red------
+select 5006:B, 5041:B
+color red
+
+#------Helix #155, color: green------
+select 5008:B, 5040:B
+color green
+select 5009:B, 5039:B
+color green
+select 5011:B, 5037:B
+color green
+select 5012:B, 5036:B
+color green
+select 5014:B, 5035:B
+color green
+select 5015:B, 5034:B
+color green
+select 5016:B, 5033:B
+color green
+select 5017:B, 5032:B
+color green
+select 5018:B, 5031:B
+color green
+select 5019:B, 5030:B
+color green
+select 5020:B, 5029:B
+color green
+select 5021:B, 5028:B
+color green
+
+#------Helix #156, color: blue------
+select 2361:B, 2362:B
+color blue
+
+#------Helix #157, color: yellow------
+select 3798:B, 3800:B
+color yellow
+
+select all

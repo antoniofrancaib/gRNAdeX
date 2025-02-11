@@ -80,12 +80,16 @@ def pdb_to_tensor(
 
     # get 3D coordinates (centered at origin)
     coords = df_to_tensor(df, center=True)
+    print('Coords:', coords.shape[0])
+    print('Sequence:', sequence)
+    print('Len sequence:', len(sequence))
     assert coords.shape[0] == len(sequence), "Sequence and coordinates must be the same length"
     
     sec_struct = None
     if return_sec_struct:
         # get secondary structure
         sec_struct = pdb_to_sec_struct(filepath, sequence, keep_pseudoknots)
+        print(sec_struct)
         assert len(sec_struct) == len(sequence), "Sequence and secondary structure must be the same length"
 
     sasa = None

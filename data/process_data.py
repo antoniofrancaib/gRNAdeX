@@ -22,7 +22,7 @@ from MDAnalysis.analysis.rms import rmsd as get_rmsd
 
 from src.data.data_utils import pdb_to_tensor, get_c4p_coords
 from src.data.clustering_utils import cluster_sequence_identity, cluster_structure_similarity
-from src.constants import DATA_PATH
+from src.constants import DATA_PATH, PROJECT_PATH
 
 import warnings
 warnings.filterwarnings("ignore", category=biotite.structure.error.IncompleteStructureWarning)
@@ -40,6 +40,7 @@ if __name__ == "__main__":
     parser.add_argument('--expt_name', dest='expt_name', default='process_data', type=str)
     parser.add_argument('--tags', nargs='+', dest='tags', default=[])
     parser.add_argument('--no_wandb', action="store_true")
+    parser.add_argument('--config', type=str, default=os.path.join(PROJECT_PATH, "configs/default.yaml"), help="Path to config file")
     args, unknown = parser.parse_known_args()
 
     # Initialise wandb

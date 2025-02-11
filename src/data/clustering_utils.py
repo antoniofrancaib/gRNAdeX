@@ -111,7 +111,21 @@ def run_qtmclust(
     ]
     if output_cluster_filepath is not None:
         cmd += ["-o", output_cluster_filepath]
-    subprocess.run(" ".join(cmd), capture_output=True, shell=True)  # nosec
+    
+    # Verify executable exists before trying to run it
+    if not os.path.exists(qtmclust_exec_path):
+        raise FileNotFoundError(f"qTMclust executable not found at: {qtmclust_exec_path}")
+    
+    if not os.access(qtmclust_exec_path, os.X_OK):
+        raise PermissionError(f"qTMclust exists but is not executable: {qtmclust_exec_path}")
+
+    result = subprocess.run(" ".join(cmd), capture_output=True, shell=True)  # nosec
+    # checking if ran successfully
+    if result.returncode != 0:
+        print("Error running qTMclust:", result.stderr.decode())
+    else:
+        print("qTMclust ran successfully.")
+
     if output_cluster_filepath is not None:
         output_clusters = parse_qtmclust_cluster_file(output_cluster_filepath)
         return output_clusters
@@ -123,7 +137,9 @@ def cluster_structure_similarity(
         chain_list_filepath: str = "chain_list",
         output_cluster_filepath: str = "cluster.txt",
         chain_dir: str = os.path.join(DATA_PATH, "raw"),
-        qtmclust_exec_path: str = "~/USalign/qTMclust",
+        #qtmclust_exec_path: str = "~/USalign/qTMclust",
+        #qtmclust_exec_path: str = "~/rds/hpc-work/geometric-rna-design/USalign/qTMclust",
+        qtmclust_exec_path: str = "/home/ml2169/rds/hpc-work/geometric-rna-design/tools/USalign/qTMclust",
     ):
     """
     Cluster structures based on their structural similarity using qTMclust.

@@ -1,7 +1,6 @@
 import os
 import wandb
 
-
 PROJECT_PATH = os.environ.get("PROJECT_PATH")
 
 DATA_PATH = os.environ.get("DATA_PATH")

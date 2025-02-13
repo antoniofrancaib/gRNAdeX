@@ -13,8 +13,8 @@ from torch.distributions import Categorical
 
 def choose_nts(lgts, strategy='categorical', top_k=2, top_p=0.9, min_p=0.05, temperature=0.1):
     """
-    lgts: shape -- FIGURE THIS OUT
-    Returns: shape -- FIGURE THIS OUT TOO
+    lgts: tensor with shape batch_size, vocab_size
+    Returns: tensor of shape batch_size with the sampled probabilities
     """
     # First rescale with temperature -- is this right ? or should I rescale after filtering ?
     lgts = lgts / temperature
@@ -30,33 +30,19 @@ def choose_nts(lgts, strategy='categorical', top_k=2, top_p=0.9, min_p=0.05, tem
     elif strategy.lower() == 'top_k':
         # top-k logic
         filtered_lgts = top_k_filtering(lgts, top_k)
-        print(lgts.size())
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
-        print(next_token_probs.size())
-        a = torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
-        print(a.size())
         return torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
     
     elif strategy.lower() == 'top_p':
         # top-p logic
-        print(lgts.size())
         filtered_lgts = top_p_filtering(lgts, top_p)
-        print(filtered_lgts.size())
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
-        print(next_token_probs.size())
-        a = torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
-        print(a.size())
         return torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
 
     elif strategy.lower() == 'min_p':
         # min-p logic
-        print(lgts.size())
         filtered_lgts = min_p_sampling(lgts, min_p)
-        print(filtered_lgts.size())
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
-        print(next_token_probs.size())
-        a = torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
-        print(a.size())
         return torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
     
     else:
@@ -69,8 +55,6 @@ def top_k_filtering(logits, top_k=2, filter_value=-float('Inf')):
         Args:
             logits: logits distribution shape (vocabulary size)
             top_k >0: keep only top k tokens with highest probability (top-k filtering).
-            top_p >0.0: keep the top tokens with cumulative probability >= top_p (nucleus filtering).
-                Nucleus filtering is described in Holtzman et al. (http://arxiv.org/abs/1904.09751)
     """
     top_k = min(top_k, logits.size(-1))  # Safety check
     if top_k > 0:
@@ -85,7 +69,6 @@ def top_p_filtering(logits, top_p=0.9, filter_value=-float('Inf')):
     """ Filter a distribution of logits using top-k and/or nucleus (top-p) filtering
         Args:
             logits: logits distribution shape (vocabulary size)
-            top_k >0: keep only top k tokens with highest probability (top-k filtering).
             top_p >0.0: keep the top tokens with cumulative probability >= top_p (nucleus filtering).
                 Nucleus filtering is described in Holtzman et al. (http://arxiv.org/abs/1904.09751)
     """
@@ -107,8 +90,12 @@ def top_p_filtering(logits, top_p=0.9, filter_value=-float('Inf')):
 
 def min_p_sampling(logits, min_p=0.01, filter_value=-float('Inf')):
     """
-    logits: shape [, ] for a single sample (or [N,4] for a batch).
-    min_p: probability threshold that will rescale all proabilities accordingly.
+    Filter a distribution of logits using min-p
+        Args:
+            logits: logits distribution shape (vocabulary size)
+            min_p >0.0: keep the tokens with probabilities greater than the probability
+            scaled threshold determined after multiplying min_p by the maximum probabilities.
+            (https://arxiv.org/html/2407.01082v1#S3)
     """
     # Convert logits to probs
     next_token_probs = F.softmax(logits, dim=-1)

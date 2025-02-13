@@ -12,10 +12,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from src.constants import PROJECT_PATH, DATA_PATH
+from src.constants_mod import PROJECT_PATH, DATA_PATH
 
 # Import the gRNAde module
-from gRNAde_mod_decoding import gRNAde
+from gRNAde_mod import gRNAde
 
 # Create an instance of gRNAde
 gRNAde_module = gRNAde(split='das', max_num_conformers=1, gpu_id=0)

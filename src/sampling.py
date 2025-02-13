@@ -1,0 +1,118 @@
+################################################################
+# Generalisation of codes found online
+# for explicit multi-state biomolecule representation learning.
+# Original repositories:
+# https://gist.github.com/thomwolf/1a5a29f6962089e871b94cbd09daf317
+################################################################
+
+import torch
+import torch.nn.functional as F
+from torch.distributions import Categorical
+
+################################################################
+
+def choose_nts(lgts, strategy='categorical', top_k=2, top_p=0.9, min_p=0.05, temperature=0.1):
+    """
+    lgts: shape -- FIGURE THIS OUT
+    Returns: shape -- FIGURE THIS OUT TOO
+    """
+    # First rescale with temperature -- is this right ? or should I rescale after filtering ?
+    lgts = lgts / temperature
+
+    if strategy.lower() == 'greedy':
+        # Pick argmax - Greedy decoding
+        return torch.argmax(lgts, dim=-1)
+
+    elif strategy.lower() == 'categorical':
+        # Original code
+        return Categorical(logits=lgts).sample()
+
+    elif strategy.lower() == 'top_k':
+        # top-k logic
+        filtered_lgts = top_k_filtering(lgts, top_k)
+        print(lgts.size())
+        next_token_probs = F.softmax(filtered_lgts, dim=-1)
+        print(next_token_probs.size())
+        a = torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
+        print(a.size())
+        return torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
+    
+    elif strategy.lower() == 'top_p':
+        # top-p logic
+        print(lgts.size())
+        filtered_lgts = top_p_filtering(lgts, top_p)
+        print(filtered_lgts.size())
+        next_token_probs = F.softmax(filtered_lgts, dim=-1)
+        print(next_token_probs.size())
+        a = torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
+        print(a.size())
+        return torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
+
+    elif strategy.lower() == 'min_p':
+        # min-p logic
+        print(lgts.size())
+        filtered_lgts = min_p_sampling(lgts, min_p)
+        print(filtered_lgts.size())
+        next_token_probs = F.softmax(filtered_lgts, dim=-1)
+        print(next_token_probs.size())
+        a = torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
+        print(a.size())
+        return torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
+    
+    else:
+        raise ValueError(f"Unknown sampling strategy: {strategy}")
+    
+
+def top_k_filtering(logits, top_k=2, filter_value=-float('Inf')):
+    # Code from https://gist.github.com/thomwolf/1a5a29f6962089e871b94cbd09daf317 -- slightly modified
+    """ Filter a distribution of logits using top-k and/or nucleus (top-p) filtering
+        Args:
+            logits: logits distribution shape (vocabulary size)
+            top_k >0: keep only top k tokens with highest probability (top-k filtering).
+            top_p >0.0: keep the top tokens with cumulative probability >= top_p (nucleus filtering).
+                Nucleus filtering is described in Holtzman et al. (http://arxiv.org/abs/1904.09751)
+    """
+    top_k = min(top_k, logits.size(-1))  # Safety check
+    if top_k > 0:
+        # Remove all tokens with a probability less than the last token of the top-k
+        indices_to_remove = logits < torch.topk(logits, top_k)[0][..., -1, None]
+        logits[indices_to_remove] = filter_value
+    return logits
+
+
+def top_p_filtering(logits, top_p=0.9, filter_value=-float('Inf')):
+    # Code from https://gist.github.com/thomwolf/1a5a29f6962089e871b94cbd09daf317 -- slightly modified
+    """ Filter a distribution of logits using top-k and/or nucleus (top-p) filtering
+        Args:
+            logits: logits distribution shape (vocabulary size)
+            top_k >0: keep only top k tokens with highest probability (top-k filtering).
+            top_p >0.0: keep the top tokens with cumulative probability >= top_p (nucleus filtering).
+                Nucleus filtering is described in Holtzman et al. (http://arxiv.org/abs/1904.09751)
+    """
+    if top_p > 0.0:
+        sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+        cumulative_probs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
+
+        # Remove tokens with cumulative probability above the threshold
+        sorted_indices_to_remove = cumulative_probs > top_p
+        # Shift the indices to the right to keep also the first token above the threshold
+        sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+        sorted_indices_to_remove[..., 0] = 0
+        indices_to_remove = sorted_indices[sorted_indices_to_remove]
+        print(indices_to_remove)
+        logits[indices_to_remove] = filter_value
+        print(logits)
+    return logits
+
+
+def min_p_sampling(logits, min_p=0.01, filter_value=-float('Inf')):
+    """
+    logits: shape [, ] for a single sample (or [N,4] for a batch).
+    min_p: probability threshold that will rescale all proabilities accordingly.
+    """
+    # Convert logits to probs
+    next_token_probs = F.softmax(logits, dim=-1)
+    max_probs, _ = next_token_probs.max(dim=-1, keepdim=True)
+    min_probs = min_p * max_probs  # Shape: (batch_size, res_len, 1)
+    logits[next_token_probs < min_probs] = filter_value
+    return logits

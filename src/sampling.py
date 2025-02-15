@@ -28,15 +28,21 @@ def choose_nts(lgts, strategy='categorical', top_k=2, top_p=0.9, min_p=0.05, tem
         return Categorical(logits=lgts).sample()
 
     elif strategy.lower() == 'top_k':
+        print('Logits:', lgts.size())
         # top-k logic
         filtered_lgts = top_k_filtering(lgts, top_k)
+        print('Filtered logits:', filtered_lgts.size())
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
+        print('Next token probs:', next_token_probs.size())
         return torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
     
     elif strategy.lower() == 'top_p':
         # top-p logic
+        print('Previous logits:', lgts)
         filtered_lgts = top_p_filtering(lgts, top_p)
+        print('Filtered logits:', filtered_lgts)
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
+        print('Next token probs:', next_token_probs)
         return torch.multinomial(next_token_probs, num_samples=1, replacement=True).squeeze(-1)
 
     elif strategy.lower() == 'min_p':
@@ -74,21 +80,28 @@ def top_p_filtering(logits, top_p=0.9, filter_value=-float('Inf')):
     """
     if top_p > 0.0:
         sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+        print('Sorted logits:', sorted_logits)
+        print('sorted_indices:', sorted_indices)
         cumulative_probs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
+        print('cumulative_probs:', cumulative_probs)
 
         # Remove tokens with cumulative probability above the threshold
         sorted_indices_to_remove = cumulative_probs > top_p
+        print('sorted_indices_to_remove:', sorted_indices_to_remove)
         # Shift the indices to the right to keep also the first token above the threshold
         sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+        print('sorted_indices_to_remove:', sorted_indices_to_remove)
         sorted_indices_to_remove[..., 0] = 0
+        print('sorted_indices_to_remove:', sorted_indices_to_remove)
         indices_to_remove = sorted_indices[sorted_indices_to_remove]
-        print(indices_to_remove)
-        logits[indices_to_remove] = filter_value
-        print(logits)
+        print('indices_to_remove:', indices_to_remove)
+        sorted_logits[sorted_indices_to_remove] = filter_value
+        print('sorted_logits', sorted_logits)
+        logits = torch.gather(sorted_logits, 1, sorted_indices.argsort(-1))
     return logits
 
 
-def min_p_sampling(logits, min_p=0.01, filter_value=-float('Inf')):
+def min_p_sampling(logits, min_p=0.05, filter_value=-float('Inf')):
     """
     Filter a distribution of logits using min-p
         Args:

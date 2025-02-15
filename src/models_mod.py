@@ -159,12 +159,14 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             logits (torch.Tensor): logits of shape [n_samples, n_nodes, 4]
                                    (only if return_logits is True)
         ''' 
+        print('Batch size: ', batch.size())
         h_V = (batch.node_s, batch.node_v)
         h_E = (batch.edge_s, batch.edge_v)
         edge_index = batch.edge_index
     
         device = edge_index.device
         num_nodes = h_V[0].shape[0]
+        print('Number of nodes: ', num_nodes)
         
         h_V = self.W_v(h_V)  # (n_nodes, n_conf, d_s), (n_nodes, n_conf, d_v, 3)
         h_E = self.W_e(h_E)  # (n_edges, n_conf, d_se), (n_edges, n_conf, d_ve, 3)
@@ -192,12 +194,13 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         seq = torch.zeros(n_samples * num_nodes, device=device, dtype=torch.int)
         h_S = torch.zeros(n_samples * num_nodes, self.out_dim, device=device)
         logits = torch.zeros(n_samples * num_nodes, self.out_dim, device=device)
+        print('Size logits in models_mod: ', logits.size())
 
         h_V_cache = [(h_V[0].clone(), h_V[1].clone()) for _ in self.decoder_layers]
 
         # Decode one token at a time
         for i in range(num_nodes):
-            
+            print('Iteration : ', i)
             h_S_ = h_S[edge_index[0]]
             h_S_[edge_index[0] >= edge_index[1]] = 0
             h_E_ = (torch.cat([h_E[0], h_S_], dim=-1), h_E[1])
@@ -227,7 +230,8 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
                                    temperature=temperature, top_k=top_k, top_p=top_p, min_p=min_p)
             h_S[i::num_nodes] = self.W_s(seq[i::num_nodes])
             logits[i::num_nodes] = lgts
-            print(logits.size())
+            print('Sequence models_mod size after modifications:', seq.size())
+            print('Final sequence: ', seq)
 
         if return_logits:
             return seq.view(n_samples, num_nodes), logits.view(n_samples, num_nodes, self.out_dim)

@@ -23,7 +23,7 @@ parameters:
 
   # Data configurations
   data_path:
-    value: "./data/"
+    value: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/"  # Absolute HPC path, prev: "./data/"
   radius:
     value: 4.5
   top_k:

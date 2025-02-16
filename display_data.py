@@ -6,12 +6,10 @@ DATA_PATH = "data/"
 
 def load_and_print_data():
     # Load data from the processed.pt file
-    data_list = list(torch.load(os.path.join(DATA_PATH, "das_split.pt")))
+    data_list = list(torch.load(os.path.join(DATA_PATH, "processed_filtered.pt")).values())
 
     # Print the first few entries to see how they look
-    print("Sample data from data_list:")
-    for i in range(min(5, len(data_list))):  # Print up to 5 samples
-        print(f"Sample {i + 1}: {data_list[i]}")
+    print(f"Sample {3}: {len(data_list)}")
 
 if __name__ == "__main__":
     load_and_print_data()

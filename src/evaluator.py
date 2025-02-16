@@ -432,6 +432,7 @@ def self_consistency_score_ribonanzanet(
 
     _samples = np.array([[num_to_letter[num] for num in seq] for seq in samples])
     pred_chem_mod = ribonanza_net.predict(_samples[:, mask_seq]).cpu().numpy()[:,:,0]
+
     if return_chem_mods:
         return (np.abs(pred_chem_mod - true_chem_mod).mean(1)), pred_chem_mod
     else:

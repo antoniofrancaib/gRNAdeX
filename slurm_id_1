@@ -21,7 +21,7 @@ options="--config configs/data_config.yaml --tags hpc_csd3 --expt_name rna_proce
 # Environment setup
 . /etc/profile.d/modules.sh
 module purge
-module load rhel8/default-icl   # Updated for Ice Lake nodes
+module load rhel8/default-amp
 
 source /home/${USER}/.bashrc
 source /miniforge3/bin/activate

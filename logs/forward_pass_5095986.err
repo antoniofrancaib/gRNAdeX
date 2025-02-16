@@ -1,0 +1,47 @@
+/home/jaf98/miniforge3/envs/rna/lib/python3.10/site-packages/Bio/Application/__init__.py:39: BiopythonDeprecationWarning: The Bio.Application modules and modules relying on it have been deprecated.
+
+Due to the on going maintenance burden of keeping command line application
+wrappers up to date, we have decided to deprecate and eventually remove these
+modules.
+
+We instead now recommend building your command line and invoking it directly
+with the subprocess module.
+  warnings.warn(
+wandb: Currently logged in as: jaf98 (jaf98-university-of-cambridge) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.6
+wandb: Run data is saved locally in /rds/user/jaf98/hpc-work/geometric-rna-design/wandb/wandb/run-20250214_025637-58h4tjrb
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run elegant-admirer-8
+wandb: ⭐️ View project at https://wandb.ai/jaf98-university-of-cambridge/gRNAde
+wandb: 🚀 View run at https://wandb.ai/jaf98-university-of-cambridge/gRNAde/runs/58h4tjrb
+  0%|          | 0/40 [00:00<?, ?it/s]  2%|▎         | 1/40 [00:00<00:11,  3.52it/s]100%|██████████| 40/40 [00:00<00:00, 130.53it/s]
+  0%|          | 0/40 [00:00<?, ?it/s]  2%|▎         | 1/40 [00:51<33:13, 51.12s/it]  5%|▌         | 2/40 [01:27<27:03, 42.71s/it]  5%|▌         | 2/40 [01:52<35:28, 56.00s/it]
+Traceback (most recent call last):
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 259, in <module>
+    main(config, device)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 54, in main
+    results = evaluate(
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 224, in evaluate
+    sc_score_eternafold, pred_sec_structs = self_consistency_score_eternafold(
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 355, in self_consistency_score_eternafold
+    true_sec_struct_list = np.array([dotbracket_to_adjacency(ss) for ss in true_sec_struct_list])
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 355, in <listcomp>
+    true_sec_struct_list = np.array([dotbracket_to_adjacency(ss) for ss in true_sec_struct_list])
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/data/sec_struct_utils.py", line 207, in dotbracket_to_adjacency
+    j = stack.pop()
+IndexError: pop from empty list
+Traceback (most recent call last):
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 259, in <module>
+    main(config, device)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 54, in main
+    results = evaluate(
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 224, in evaluate
+    sc_score_eternafold, pred_sec_structs = self_consistency_score_eternafold(
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 355, in self_consistency_score_eternafold
+    true_sec_struct_list = np.array([dotbracket_to_adjacency(ss) for ss in true_sec_struct_list])
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 355, in <listcomp>
+    true_sec_struct_list = np.array([dotbracket_to_adjacency(ss) for ss in true_sec_struct_list])
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/data/sec_struct_utils.py", line 207, in dotbracket_to_adjacency
+    j = stack.pop()
+IndexError: pop from empty list

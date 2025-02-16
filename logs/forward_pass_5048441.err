@@ -1,0 +1,41 @@
+/home/jaf98/miniforge3/envs/rna/lib/python3.10/site-packages/Bio/Application/__init__.py:39: BiopythonDeprecationWarning: The Bio.Application modules and modules relying on it have been deprecated.
+
+Due to the on going maintenance burden of keeping command line application
+wrappers up to date, we have decided to deprecate and eventually remove these
+modules.
+
+We instead now recommend building your command line and invoking it directly
+with the subprocess module.
+  warnings.warn(
+wandb: Currently logged in as: jaf98 (jaf98-university-of-cambridge) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.6
+wandb: Run data is saved locally in /rds/user/jaf98/hpc-work/geometric-rna-design/wandb/wandb/run-20250213_155101-dqwntpym
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run solar-meadow-4
+wandb: ⭐️ View project at https://wandb.ai/jaf98-university-of-cambridge/gRNAde
+wandb: 🚀 View run at https://wandb.ai/jaf98-university-of-cambridge/gRNAde/runs/dqwntpym
+Traceback (most recent call last):
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 257, in <module>
+    main(config, device)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 49, in main
+    _, _, test_list = get_data_splits(config, split_type=config.split)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 123, in get_data_splits
+    train_list = index_list_by_indices(data_list, train_idx_list)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 118, in index_list_by_indices
+    return [lst[index] for index in indices]
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 118, in <listcomp>
+    return [lst[index] for index in indices]
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 257, in <module>
+    main(config, device)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 49, in main
+    _, _, test_list = get_data_splits(config, split_type=config.split)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 123, in get_data_splits
+    train_list = index_list_by_indices(data_list, train_idx_list)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 118, in index_list_by_indices
+    return [lst[index] for index in indices]
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 118, in <listcomp>
+    return [lst[index] for index in indices]
+IndexError: list index out of range

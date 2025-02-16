@@ -1,0 +1,39 @@
+/home/jaf98/miniforge3/envs/rna/lib/python3.10/site-packages/Bio/Application/__init__.py:39: BiopythonDeprecationWarning: The Bio.Application modules and modules relying on it have been deprecated.
+
+Due to the on going maintenance burden of keeping command line application
+wrappers up to date, we have decided to deprecate and eventually remove these
+modules.
+
+We instead now recommend building your command line and invoking it directly
+with the subprocess module.
+  warnings.warn(
+wandb: Currently logged in as: jaf98 (jaf98-university-of-cambridge) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.6
+wandb: Run data is saved locally in /rds/user/jaf98/hpc-work/geometric-rna-design/wandb/wandb/run-20250213_202649-tstgx1we
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run olive-snowball-6
+wandb: ⭐️ View project at https://wandb.ai/jaf98-university-of-cambridge/gRNAde
+wandb: 🚀 View run at https://wandb.ai/jaf98-university-of-cambridge/gRNAde/runs/tstgx1we
+  0%|          | 0/40 [00:00<?, ?it/s]  2%|▎         | 1/40 [00:00<00:18,  2.05it/s]100%|██████████| 40/40 [00:00<00:00, 78.64it/s]
+  0%|          | 0/40 [00:00<?, ?it/s]  2%|▎         | 1/40 [00:49<32:18, 49.70s/it]  2%|▎         | 1/40 [00:52<33:53, 52.14s/it]
+Traceback (most recent call last):
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 259, in <module>
+    main(config, device)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 54, in main
+    results = evaluate(
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 234, in evaluate
+    sc_score_ribonanzanet, pred_chem_mods = self_consistency_score_ribonanzanet(
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 434, in self_consistency_score_ribonanzanet
+    pred_chem_mod = ribonanza_net.predict(_samples[:, mask_seq]).cpu().numpy()[:,:,0]
+IndexError: boolean index did not match indexed array along axis 1; size of axis is 121 but size of corresponding boolean axis is 122
+Traceback (most recent call last):
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 259, in <module>
+    main(config, device)
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 54, in main
+    results = evaluate(
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 234, in evaluate
+    sc_score_ribonanzanet, pred_chem_mods = self_consistency_score_ribonanzanet(
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 434, in self_consistency_score_ribonanzanet
+    pred_chem_mod = ribonanza_net.predict(_samples[:, mask_seq]).cpu().numpy()[:,:,0]
+IndexError: boolean index did not match indexed array along axis 1; size of axis is 121 but size of corresponding boolean axis is 122

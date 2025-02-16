@@ -107,12 +107,12 @@ def main(config, device):
         train(config, model, train_loader, val_loader, test_loader, device)
 
 
-def get_data_splits(config, split_type="structsim_v2"):
+def get_data_splits(config, nucleotides_filter=500, split_type="structsim_v2"):
     """
     Returns train, val, test data splits as lists.
     """
     data_list = list(torch.load(os.path.join(DATA_PATH, "processed.pt")).values())
-    
+
     def index_list_by_indices(lst, indices):
         # return [lst[index] if 0 <= index < len(lst) else None for index in indices]
         return [lst[index] for index in indices]
@@ -124,6 +124,11 @@ def get_data_splits(config, split_type="structsim_v2"):
     val_list = index_list_by_indices(data_list, val_idx_list)
     test_list = index_list_by_indices(data_list, test_idx_list)
 
+    # EXTRA: Filter each split to include only data points with sequences <= 500 nucleotides
+    train_list = [dp for dp in train_list if len(dp['sequence']) <= nucleotides_filter]
+    val_list = [dp for dp in val_list if len(dp['sequence']) <= nucleotides_filter]
+    test_list = [dp for dp in test_list if len(dp['sequence']) <= nucleotides_filter]
+    
     return train_list, val_list, test_list
 
 

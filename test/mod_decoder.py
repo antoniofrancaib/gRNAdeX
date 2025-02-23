@@ -46,7 +46,7 @@ if __name__ == "__main__":
         sequences, samples, perplexity, recovery_sample, sc_score = gRNAde_module.design_from_directory(
             directory_filepath = os.path.join(PROJECT_PATH, "tutorial/demo_data/adenine_riboswitch/"),
             output_filepath = os.path.join(PROJECT_PATH, "tutorial/outputs/demo_output_multistate.fasta"),
-            n_samples = 16,
+            n_samples = 1,
             temperature = 1.0,
             seed = 0
         )

@@ -80,7 +80,7 @@ GDT_THRESHOLD = 0.50
 
 
 # Sampling strategies for decoding
-SAMPLING_STRATEGY = "top_p"
+SAMPLING_STRATEGY = "min_p"
 TOP_K = 2
-TOP_P = 0.2
+TOP_P = 0.9
 MIN_P = 0.05

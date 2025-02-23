@@ -301,8 +301,13 @@ class gRNAde(object):
             logit_bias = None
         
         # sample n_samples from model for single data point: n_samples x seq_len
-        samples, logits = self.model.sample(
-            featurized_data, n_samples, temperature, logit_bias, return_logits=True,
+        #samples, logits = self.model.sample(
+            #featurized_data, n_samples, temperature, logit_bias, return_logits=True,
+            #sampling_strategy=SAMPLING_STRATEGY, top_k=TOP_K, top_p=TOP_P, min_p=MIN_P)
+        #samples, logits = self.model.beam_search(
+        #    batch=featurized_data, temperature=temperature, beam_width=2, logit_bias=logit_bias, return_logits=True)
+        samples, logits = self.model.sample_mod2(
+            featurized_data, n_samples, temperature, logit_bias, return_logits=True, beam_branch=2,
             sampling_strategy=SAMPLING_STRATEGY, top_k=TOP_K, top_p=TOP_P, min_p=MIN_P)
 
         # perplexity per sample: n_samples x 1

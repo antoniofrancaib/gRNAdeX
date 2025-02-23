@@ -16,7 +16,7 @@ import argparse
 from src.constants_mod import PROJECT_PATH, DATA_PATH
 
 # Import the gRNAde module
-from gRNAde_mod import gRNAde
+from gRNAde_mod import gRNAde_mod
 
 if __name__ == "__main__":
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     if args.run_type.lower() == 'multi':
         # Create an instance of multi-state gRNAde
-        gRNAde_module = gRNAde(split='das', max_num_conformers=3, gpu_id=0)
+        gRNAde_module = gRNAde_mod(split='das', max_num_conformers=3, gpu_id=0)
 
         # Design example usage
         sequences, samples, perplexity, recovery_sample, sc_score = gRNAde_module.design_from_directory(
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     
     else:
         # Create an instance of gRNAde
-        gRNAde_module = gRNAde(split='das', max_num_conformers=1, gpu_id=0)
+        gRNAde_module = gRNAde_mod(split='das', max_num_conformers=1, gpu_id=0)
 
         # Single-state design example usage
         sequences, samples, perplexity, recovery_sample, sc_score = gRNAde_module.design_from_pdb_file(

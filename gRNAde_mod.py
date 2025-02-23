@@ -71,7 +71,7 @@ DEFAULT_N_SAMPLES = 16
 DEFAULT_TEMPERATURE = 0.1
 
 
-class gRNAde(object):
+class gRNAde_mod(object):
     """
     gRNAde: a Geometric Deep Learning pipeline for 3D RNA Inverse Design.
 

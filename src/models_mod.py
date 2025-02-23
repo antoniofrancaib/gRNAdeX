@@ -771,59 +771,96 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             print('size top_tokens:', top_tokens.size())
 
             # For each candidate token, create a new beam candidate.
-            new_beam_scores = torch.zeros(beam_width, beam_branch*n_samples, dtype=torch.float, device=device)
+            #new_beam_scores = torch.zeros(beam_branch, beam_width*n_samples, dtype=torch.float, device=device)
             #new_beam_seq = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)
             #new_beam_h_S = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)
             new_beam_seq = seq.clone().repeat(beam_branch, 1)
             print('size of new_beam_seq:', new_beam_seq.size())
-            new_beam_h_S = h_S.clone().repeat(beam_branch, 1) ## ADD STH HERE !!!!!
+            new_beam_h_S = h_S.clone().repeat(beam_branch, 1, 1) ## ADD STH HERE !!!!!
             print('size of new_beam_h_S:', new_beam_h_S.size())
-            new_beam_h_V_cache = [(h_V[0].clone().repeat(beam_branch, 1, 1), h_V[1].clone().repeat(beam_branch, 1, 1)) for _ in self.decoder_layers]
+            #new_beam_h_V_cache = [(h_V[0].clone().repeat(beam_branch, 1, 1), h_V[1].clone().repeat(beam_branch, 1, 1)) for _ in self.decoder_layers]
             #new_beam_logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
-            new_beam_logits = logits.clone().repeat(beam_branch, 1)
+            new_beam_logits = logits.clone().repeat(beam_branch, 1, 1)
             print('size of new_beam_logits:', new_beam_logits.size())
 
-            top_log_probs_beam = log_probs.gather(dim=1, index=top_tokens).reshape(beam_branch,-1)
-
-            print(top_log_probs_beam.size())
+            top_log_probs_beam = log_probs.gather(dim=1, index=top_tokens)
+            top_log_probs_beam = top_log_probs_beam.transpose(0, 1)
+            
+            print('top_log_probs_beam.size:', top_log_probs_beam.size())
             print(top_log_probs_beam)
-            print(new_beam_scores.size())
-            new_beam_scores += top_log_probs_beam
+            #print('new_beam_scores size:', new_beam_scores.size())
+            
+            print('scores:', scores)
+            #print('new_beam_scores[:, i::num_nodes]', new_beam_scores[:, i::num_nodes])
+            new_beam_scores = scores.repeat(beam_branch, 1) + top_log_probs_beam
+            #new_beam_scores[:,i::num_nodes] = scores.repeat(beam_branch, 1)[:,i::num_nodes] + top_log_probs_beam
             print('new_beam_scores:', new_beam_scores)
-            print(new_beam_scores.size())
+            #print(new_beam_scores.size())
 
-            new_beam_seq[:,i::num_nodes] = top_tokens
+            new_beam_seq[:,i::num_nodes] = top_tokens.transpose(0,1)
             print('new_beam seq:', new_beam_seq[:,i::num_nodes])
-            print('new_beam score:', new_beam_scores[:,i::num_nodes])
-            new_beam_h_S[:,i::num_nodes] = self.W_s(new_beam_seq[:,i::num_nodes]) # weird [0] indexing
+            #print('new_beam score:', new_beam_scores[:,i::num_nodes])
             new_beam_logits[:,i::num_nodes] = lgts  # store the logits for analysis
-            print('new_beam_h_S size:', new_beam_h_S.size())
             print('new_beam_logits size:', new_beam_logits.size())
-
+            new_beam_h_S[:,i::num_nodes] = self.W_s(new_beam_seq[:,i::num_nodes]) # weird [0] indexing
+            print('new_beam_h_S size:', new_beam_h_S.size())
+            
             sorted_scores, sorted_indices = torch.sort(new_beam_scores, dim=0, descending=True)
             print('sorted_scores:', sorted_scores)
             print('sorted_indices:', sorted_indices)
-            new_beam_seq_sorted = new_beam_seq[sorted_indices]
+            new_beam_seq[:,i::num_nodes] = torch.gather(new_beam_seq[:,i::num_nodes], dim=0, index=sorted_indices)
 
-            print('size of new_beam_seq_sorted:', new_beam_seq_sorted.size())
+            # reorganize h_S and logits
+            expanded_indices = sorted_indices.unsqueeze(-1).expand(-1, -1, new_beam_h_S[:, i::num_nodes].size(-1))
+            print('size of expanded_indices:', expanded_indices.size())
+            new_beam_h_S[:,i::num_nodes] =  torch.gather(new_beam_h_S[:,i::num_nodes], dim=0, index=expanded_indices)
+            new_beam_logits[:,i::num_nodes] =  torch.gather(new_beam_logits[:,i::num_nodes], dim=0, index=expanded_indices)
 
+            # prints
+            print('size of new_beam_seq_sorted:', new_beam_seq.size())
+            print('new_beam_seq_sorted reshaped:', new_beam_seq[0,i::num_nodes])
+            print('seq:', seq[i::num_nodes])
+            print('size seq:', seq[i::num_nodes].size())
 
+            # update metrics for both beams
+            seq[i::num_nodes] = new_beam_seq[0,i::num_nodes]
+            print('seq:', seq)
+            logits[i::num_nodes] = new_beam_logits[0,i::num_nodes]
+            print('logits:', logits)
+            h_S[i::num_nodes] = new_beam_h_S[0,i::num_nodes]
+            print('h_S size:', h_S.size())
 
-            #new_beams.sort(key=lambda x: sorted_indices[0], reverse=True)
-            #print('new_beams:', new_beams)
-            #beams = new_beams[:beam_width]
+            scores = sorted_scores[0]            
+        
+        # get ordered scores
+        beamw_scores = scores.view(beam_width, -1)
+        beamw_sorted_scores, beamw_sorted_indices = torch.sort(beamw_scores, dim=0, descending=True)
 
-        # --- After decoding all nodes, select the best scoring beam ---
-        #best_beam = max(beams, key=lambda x: x["score"])
-        #seq = best_beam["seq"]
-        #logits = best_beam["logits"]
-        #print('best_beam:', best_beam)
-        #print('size logits:', logits.size())
+        # reshape tensors
+        final_seq = seq.view(beam_width, n_samples, num_nodes)
+        print(beamw_sorted_indices)
+        final_logits = logits.view(beam_width, n_samples, num_nodes, self.out_dim)
+
+        # reorganize according to indices
+        expanded_indices = beamw_sorted_indices.unsqueeze(-1).expand(-1, n_samples, num_nodes)
+        print('size expanded indices:', expanded_indices.size())
+        final_seq = torch.gather(final_seq, dim=0, index=expanded_indices)
+        print(final_seq)
+        expanded_indices = beamw_sorted_indices.unsqueeze(-1).unsqueeze(-1).expand(-1, n_samples, num_nodes, self.out_dim)
+        final_logits = torch.gather(final_logits, dim=0, index=expanded_indices)
+
+        # use sorted indices to get final tensors
+        final_scores = beamw_sorted_scores[0]
+        print('final_scores:', final_scores)
+        final_seq = final_seq[0]
+        print('final_seq:', final_seq)
+        final_logits = final_logits[0]
+        print('final_logits:', final_logits)
 
         if return_logits:
-            return seq.view(n_samples, num_nodes), logits.view(n_samples, num_nodes, self.out_dim)
+            return final_seq.view(n_samples, num_nodes), final_logits.view(n_samples, num_nodes, self.out_dim)
         else:    
-            return seq.view(n_samples, num_nodes)
+            return final_seq.view(n_samples, num_nodes)
         
     
     @torch.no_grad()

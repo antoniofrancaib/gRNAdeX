@@ -1,3 +1,5 @@
+# Create code to try diff params of sampling
+
 # code that outputs sequence recoveries
 
 # Import libraries and set up the environment
@@ -23,9 +25,9 @@ from gRNAde import gRNAde
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
+    #parser = argparse.ArgumentParser()
     #parser.add_argument('--run_type', dest='run_type', default='single', type=str, required=True)
-    parser.add_argument('--add_name', dest='add_name', type=str, required=True)
+    #parser.add_argument('--input_path', dest='input_path', type=str, required=True)
     #parser.add_argument('--output_path', dest='output_path', type=str, required=True)
     #parser.add_argument('--max_num_conformers', dest='max_num_conformers', type=int, required=True)
     #parser.add_argument('--split', dest='split', default='das', type=str)
@@ -34,7 +36,7 @@ if __name__ == "__main__":
     #parser.add_argument('--seed', dest='seed', default=0, type=int)
     #parser.add_argument('--gpu_id', dest='gpu_id', default=0, type=int)
     
-    args, unknown = parser.parse_known_args()
+    #args, unknown = parser.parse_known_args()
     gRNAde = gRNAde(split='das', max_num_conformers=1, gpu_id=0)
     gRNAde_mod = gRNAde_mod(split='das', max_num_conformers=1, gpu_id=0)
 
@@ -120,82 +122,8 @@ if __name__ == "__main__":
         "mean_recovery": np.array(vienna_recovery + farna_recovery + rosetta_recovery + grnade_recovery + grnade_mod_recovery),
         "model_name": ["ViennaRNA\n(2D only)"] * len(vienna_recovery) + ["FARNA"] * len(farna_recovery) + ["Rosetta"] * len(rosetta_recovery) + ["gRNAde"] * len(grnade_recovery) + ["gRNAde_mod"] * len(grnade_mod_recovery),
     })
-    df.to_csv(os.path.join(PROJECT_PATH, "test/outputs/"+args.add_name+"_benchmark.csv"))
-    df_sample.to_csv(os.path.join(PROJECT_PATH, "test/outputs/"+args.add_name+"_recoveries.csv"))
+    #df.to_csv(os.path.join(PROJECT_PATH, "tutorial/outputs/benchmark_mod.csv"))
 
     # Print mean recovery model
     print(df_sample.groupby("model_name").mean())
     # print(df_sample.groupby("model_name").median())
-
-
-    # NOW PLOTTING
-    # Plot the results
-    sns.set_context("talk")
-    plt.figure(figsize=(6, 4))
-
-    sns.swarmplot(
-        data = df_sample,
-        x="model_name", y="mean_recovery",
-        hue="model_name", palette="Reds",
-    )
-
-    ax = sns.barplot(
-        data = df_sample,
-        x="model_name", y="mean_recovery",
-        hue="model_name", saturation=0.5, palette="Reds",
-    )
-    # Add labels to each bar
-    for p in ax.patches:
-        ax.annotate(format(p.get_height(), '.3f'), 
-                    (p.get_x() + p.get_width() / 2., p.get_height()), 
-                    ha = 'right', va = 'center', 
-                    xytext = (-4, 8), 
-                    textcoords = 'offset points',
-                    fontsize=10)
-
-    # ax.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
-    # ax.bar_label(ax.containers[0], fontsize=10)
-    plt.xlabel("")
-    plt.ylabel("Native sequence recovery", labelpad=10)
-    # plt.ylim(0, 1)
-    plt.yticks(np.arange(0, 1.01, 0.25), fontsize=14)
-    plt.savefig(os.path.join(PROJECT_PATH, "test/outputs/"+args.add_name+"_singlestate-barplot.pdf"), dpi=300, bbox_inches="tight")
-
-    # Plot native sequence recovery per sample for Rosetta vs. gRNAde, shaded by gRNAde’s average perplexity for each sample
-    plt.figure(figsize=(5, 4))
-
-    plt.plot([0, 1], [0, 1], transform=plt.gca().transAxes, ls="-", c="black", alpha=0.3)
-
-    stat = df_sample.groupby("model_name").mean()
-    #rosetta_stat = stat.loc["Rosetta"]["mean_recovery"]
-    grnade_stat = stat.loc["gRNAde"]["mean_recovery"]
-    grnade_mod_stat = stat.loc["gRNAde_mod"]["mean_recovery"]
-    #plt.plot([rosetta_stat, rosetta_stat], [0, 1], transform=plt.gca().transAxes, ls="--", c="black", alpha=0.1)
-    plt.plot([grnade_stat, grnade_stat], [0, 1], transform=plt.gca().transAxes, ls="--", c="black", alpha=0.1)
-    plt.plot([0, 1], [grnade_mod_stat, grnade_mod_stat], transform=plt.gca().transAxes, ls="--", c="black", alpha=0.1)
-
-    ax = sns.scatterplot(
-        data = df,
-        x = "grnade_recovery", y = "grnade_mod_recovery",
-        hue = "grnade_mod_perplexity", palette="flare",
-        alpha=1.0,
-    )
-    # set model names as x and y axis labels
-    plt.xlabel("gRNAde seq. recovery", labelpad=10)
-    plt.ylabel("gRNAde_mod seq. recovery", labelpad=10)
-    # set x and y axis range to 0-1
-    plt.xticks(np.arange(0, 1.01, 0.25), fontsize=14) # plt.xlim(0, 1)
-    plt.yticks(np.arange(0, 1.01, 0.25), fontsize=14) # plt.ylim(0, 1)
-    # Add perplexity colorbar
-    norm = plt.Normalize(df['grnade_mod_perplexity'].min(), df['grnade_mod_perplexity'].max())
-    sm = plt.cm.ScalarMappable(cmap="flare", norm=norm)
-    sm.set_array([])
-    # Remove the legend and add a colorbar
-    ax.get_legend().remove()
-    cbar = plt.colorbar(sm, ax=ax)
-    cbar.ax.tick_params(labelsize=14)
-    ax2 = ax.twinx()
-    ax2.set_ylabel("gRNAde_mod perplexity", labelpad=70)
-    ax2.set_yticks([])
-    plt.savefig(os.path.join(PROJECT_PATH, "test/outputs/"+args.add_name+"singlestate-scatterplot.pdf"), dpi=300, bbox_inches="tight")
-    #plt.show()

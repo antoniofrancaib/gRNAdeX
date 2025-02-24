@@ -14,24 +14,26 @@ from torch.distributions import Categorical
 def choose_nts(lgts, strategy='categorical', beam_branch=2, top_k=2, top_p=0.9, min_p=0.05, temperature=0.1):
     """
     lgts: tensor with shape batch_size, vocab_size
+    samples according to beam_branch (will establish number of samples obtained)
     Returns: sample from the next_token probabilities
     """
     # First rescale with temperature -- is this right ? or should I rescale after filtering ?
     lgts = lgts / temperature
 
-    if strategy.lower() == 'greedy':
+    #if strategy.lower() == 'greedy':
         # Pick argmax - Greedy decoding
-        next_token_probs = F.softmax(lgts, dim=-1) ## WOULD THIS BE CORRECT ? Debug later
-        sample = torch.argmax(lgts, dim=-1)
+    #    next_token_probs = F.softmax(lgts, dim=-1) ## WOULD THIS BE CORRECT ? Debug later
+    #    sample = torch.argmax(lgts, dim=-1)
         # change so it can return 2 samples if needed !
-        return sample, next_token_probs
+    #    sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True).squeeze(-1)
+    #    return sample, next_token_probs
 
-    elif strategy.lower() == 'categorical':
+    if strategy.lower() == 'categorical':
         # Original code
-        next_token_probs = Categorical(logits=lgts) ## WOULD THIS BE CORRECT ? Debug later
-        #next_token_probs = F.softmax(lgts, dim=-1) ## WOULD THIS BE CORRECT ? Debug later -- which to use ?
+        next_token_probs = F.softmax(lgts, dim=-1) ## WOULD THIS BE CORRECT ? Debug later -- which to use ?
         # change so it can return 2 samples if needed!
-        sample = Categorical(logits=lgts).sample()
+        #sample = Categorical(logits=lgts).sample()
+        sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True)
         return sample, next_token_probs
 
     elif strategy.lower() == 'top_k':
@@ -41,7 +43,7 @@ def choose_nts(lgts, strategy='categorical', beam_branch=2, top_k=2, top_p=0.9, 
         print('Filtered logits:', filtered_lgts.size())
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
         print('Next token probs:', next_token_probs.size())
-        sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True).squeeze(-1)
+        sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True)
         return sample, next_token_probs
     
     elif strategy.lower() == 'top_p':
@@ -51,14 +53,16 @@ def choose_nts(lgts, strategy='categorical', beam_branch=2, top_k=2, top_p=0.9, 
         print('Filtered logits:', filtered_lgts)
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
         print('Next token probs:', next_token_probs)
-        sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True).squeeze(-1)
+        sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True)
         return sample, next_token_probs
 
     elif strategy.lower() == 'min_p':
         # min-p logic
         filtered_lgts = min_p_sampling(lgts, min_p)
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
-        sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True).squeeze(-1)
+        sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True)
+        print(next_token_probs.size())
+        print(sample.size())
         return sample, next_token_probs
     
     else:

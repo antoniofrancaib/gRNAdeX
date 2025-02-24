@@ -237,7 +237,7 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
                 lgts += logit_bias[i]
             # Sample from logits
             seq[i::num_nodes], _ = choose_nts(lgts, strategy=sampling_strategy, 
-                                   temperature=temperature, top_k=top_k, top_p=top_p, min_p=min_p)
+                                    temperature=temperature, beam_branch=1, top_k=top_k, top_p=top_p, min_p=min_p)
             h_S[i::num_nodes] = self.W_s(seq[i::num_nodes])
             logits[i::num_nodes] = lgts
             print('Sequence models_mod size after modifications:', seq.size())
@@ -783,6 +783,8 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             new_beam_logits = logits.clone().repeat(beam_branch, 1, 1)
             print('size of new_beam_logits:', new_beam_logits.size())
 
+            print('size log probs:', log_probs.size())
+            print('top tokens size:', top_tokens.size())
             top_log_probs_beam = log_probs.gather(dim=1, index=top_tokens)
             top_log_probs_beam = top_log_probs_beam.transpose(0, 1)
             

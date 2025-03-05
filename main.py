@@ -58,11 +58,11 @@ def main(config, device):
             config.temperature, 
             device, 
             model_name="test",
-            metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_ribonanzanet', 'sc_score_rhofold'],
+            metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_rhofold'],
             save_designs=True
         )
         df, samples_list, recovery_list, perplexity_list, \
-        scscore_list, scscore_ribonanza_list, \
+        scscore_list, \
         scscore_rmsd_list, scscore_tm_list, scscore_gdt_list, \
         rmsd_within_thresh, tm_within_thresh, gdt_within_thresh = results.values()
         # Save results
@@ -71,23 +71,38 @@ def main(config, device):
         wandb.run.summary[f"best_test_recovery"] = np.mean(recovery_list)
         wandb.run.summary[f"best_test_perplexity"] = np.mean(perplexity_list)
         wandb.run.summary[f"best_test_scscore"] = np.mean(scscore_list)
-        wandb.run.summary[f"best_test_scscore_ribonanza"] = np.mean(scscore_ribonanza_list)
+        
+        # Conditionally handle RibonanzaNet score if available
+        if 'sc_score_ribonanzanet' in results:
+            scscore_ribonanza_list = results.get('sc_score_ribonanzanet', [])
+            if len(scscore_ribonanza_list) > 0:
+                wandb.run.summary[f"best_test_scscore_ribonanza"] = np.mean(scscore_ribonanza_list)
+        
         wandb.run.summary[f"best_test_scscore_rmsd"] = np.mean(scscore_rmsd_list)
         wandb.run.summary[f"best_test_scscore_tm"] = np.mean(scscore_tm_list)
         wandb.run.summary[f"best_test_scscore_gdt"] = np.mean(scscore_gdt_list)
         wandb.run.summary[f"best_test_rmsd_within_thresh"] = np.mean(rmsd_within_thresh)
         wandb.run.summary[f"best_test_tm_within_thresh"] = np.mean(tm_within_thresh)
         wandb.run.summary[f"best_test_gdt_within_thresh"] = np.mean(gdt_within_thresh)
-        print(f"BEST test recovery: {np.mean(recovery_list):.4f}\
+        
+        # Create print message
+        print_message = f"BEST test recovery: {np.mean(recovery_list):.4f}\
                 perplexity: {np.mean(perplexity_list):.4f}\
                 scscore: {np.mean(scscore_list):.4f}\
-                scscore_ribonanza: {np.mean(scscore_ribonanza_list):.4f}\
-                scscore_rmsd: {np.mean(scscore_rmsd_list):.4f}\
+                "
+        
+        if 'sc_score_ribonanzanet' in results and len(scscore_ribonanza_list) > 0:
+            print_message += f"scscore_ribonanza: {np.mean(scscore_ribonanza_list):.4f}\
+                "
+                
+        print_message += f"scscore_rmsd: {np.mean(scscore_rmsd_list):.4f}\
                 scscore_tm: {np.mean(scscore_tm_list):.4f}\
                 scscore_gdt: {np.mean(scscore_gdt_list):.4f}\
                 rmsd_within_thresh: {np.mean(rmsd_within_thresh):.4f}\
                 tm_within_thresh: {np.mean(tm_within_thresh):.4f}\
-                gdt_within_thresh: {np.mean(gdt_within_thresh):.4f}")
+                gdt_within_thresh: {np.mean(gdt_within_thresh):.4f}"
+        
+        print(print_message)
 
     else:
         # Get train, val, test data samples as lists
@@ -190,7 +205,9 @@ def get_model(config):
         edge_h_dim = tuple(config.edge_h_dim), 
         num_layers=config.num_layers,
         drop_rate = config.drop_rate,
-        out_dim = config.out_dim
+        out_dim = config.out_dim,
+        attention_heads = config.attention_heads,
+        attention_dropout = config.attention_dropout
     )
 
 

@@ -115,7 +115,7 @@ def train(
                 config.temperature, 
                 device, 
                 model_name=set_name,
-                metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_ribonanzanet', 'sc_score_rhofold'],
+                metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_rhofold'],
                 save_designs=True
             )
             df, samples_list, recovery_list, perplexity_list, \
@@ -128,23 +128,36 @@ def train(
             wandb.run.summary[f"best_{set_name}_recovery"] = np.mean(recovery_list)
             wandb.run.summary[f"best_{set_name}_perplexity"] = np.mean(perplexity_list)
             wandb.run.summary[f"best_{set_name}_scscore"] = np.mean(scscore_list)
-            wandb.run.summary[f"best_{set_name}_scscore_ribonanza"] = np.mean(scscore_ribonanza_list)
+            
+            # Only log RibonanzaNet score if data is available
+            if len(scscore_ribonanza_list) > 0:
+                wandb.run.summary[f"best_{set_name}_scscore_ribonanza"] = np.mean(scscore_ribonanza_list)
+            
             wandb.run.summary[f"best_{set_name}_scscore_rmsd"] = np.mean(scscore_rmsd_list)
             wandb.run.summary[f"best_{set_name}_scscore_tm"] = np.mean(scscore_tm_list)
             wandb.run.summary[f"best_{set_name}_scscore_gdt"] = np.mean(scscore_gdt_list)
             wandb.run.summary[f"best_{set_name}_rmsd_within_thresh"] = np.mean(rmsd_within_thresh)
             wandb.run.summary[f"best_{set_name}_tm_within_thresh"] = np.mean(tm_within_thresh)
             wandb.run.summary[f"best_{set_name}_gdt_within_thresh"] = np.mean(gdt_within_thresh)
-            print(f"BEST {set_name} recovery: {np.mean(recovery_list):.4f}\
+            
+            # Create print message that conditionally includes RibonanzaNet scores
+            print_message = f"BEST {set_name} recovery: {np.mean(recovery_list):.4f}\
                     perplexity: {np.mean(perplexity_list):.4f}\
                     scscore: {np.mean(scscore_list):.4f}\
-                    scscore_ribonanza: {np.mean(scscore_ribonanza_list):.4f}\
-                    scscore_rmsd: {np.mean(scscore_rmsd_list):.4f}\
+                    "
+            
+            if len(scscore_ribonanza_list) > 0:
+                print_message += f"scscore_ribonanza: {np.mean(scscore_ribonanza_list):.4f}\
+                    "
+                
+            print_message += f"scscore_rmsd: {np.mean(scscore_rmsd_list):.4f}\
                     scscore_tm: {np.mean(scscore_tm_list):.4f}\
                     scscore_gdt: {np.mean(scscore_gdt_list):.4f}\
                     rmsd_within_thresh: {np.mean(rmsd_within_thresh):.4f}\
                     tm_within_thresh: {np.mean(tm_within_thresh):.4f}\
-                    gdt_within_thresh: {np.mean(gdt_within_thresh):.4f}")
+                    gdt_within_thresh: {np.mean(gdt_within_thresh):.4f}"
+                    
+            print(print_message)
 
 
 def loop(model, dataloader, loss_fn, optimizer=None, device='cpu'):
@@ -207,7 +220,12 @@ def loop(model, dataloader, loss_fn, optimizer=None, device='cpu'):
         confusion += confusion_matrix(true, pred, labels=range(model.out_dim))
         
         t.set_description("%.5f" % float(total_loss/total_count))
-        
+
+    # Safeguard: if total_count is zero (e.g., all batches skipped), return zeros to avoid division by zero.
+    if total_count == 0:
+        print("Warning: No batches processed in this epoch due to OOM issues!")
+        return 0, 0, confusion
+    
     return total_loss / total_count, total_correct / total_count, confusion
 
 

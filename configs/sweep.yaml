@@ -74,6 +74,21 @@ parameters:
     value: 0.5
   out_dim:
     value: 4
+  model_variant:
+    value: 'Hybrid'
+    desc: 'Choose "ARv1" for the original GVP-GNN; "Hybrid" for the GNN-Transformer decoder variant'
+  transformer_layers:
+    value: 1
+    desc: 'Number of Transformer layers for the hybrid decoder'
+  transformer_heads:
+    value: 4
+    desc: 'Number of attention heads in the Transformer decoder'
+  transformer_hidden_dim:
+    value: 128
+    desc: 'Feedforward hidden dimension in the Transformer decoder'
+  transformer_dropout:
+    value: 0.1
+    desc: 'Dropout rate for the Transformer decoder'
 
   # Training configurations
   epochs:

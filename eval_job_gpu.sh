@@ -19,7 +19,7 @@
 ####### SBATCH directives end here ###############################
 
 # Application options and environment
-options="--config configs/eval.yaml --evaluate True --tags hpc_csd3 --expt_name rna_eval_v1"
+options="--config configs/eval.yaml --evaluate True --tags hpc_csd3 --expt_name rna_eval_filt_baseline"
 
 # Environment setup
 . /etc/profile.d/modules.sh

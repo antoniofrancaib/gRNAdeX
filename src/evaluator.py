@@ -271,24 +271,59 @@ def evaluate(
                         Seq(raw_data["sequence"]), id=f"input_sequence,", 
                         description=f"pdb_id={raw_data['id_list'][0]} rfam={raw_data['rfam_list'][0]} eq_class={raw_data['eq_class_list'][0]} cluster={raw_data['cluster_structsim0.45']}"
                     )]
-                    for idx, zipped in enumerate(zip(
+                    
+                    # Create zipped data based on available metrics
+                    zip_data = [
                         samples.cpu().numpy(),
                         perplexity,
                         recovery.mean(axis=1),
-                        sc_score_eternafold,
-                        pred_sec_structs,
-                        sc_score_ribonanzanet,
-                        pred_chem_mods,
-                        sc_score_rmsd,
-                        sc_score_tm,
-                        sc_score_gdt
-                    )):
-                        seq, perp, rec, sc, pred_ss, sc_ribo, pred_cm, sc_rmsd, sc_tm, sc_gdt = zipped
+                    ]
+                    
+                    # Add EternaFold scores if available
+                    if 'sc_score_eternafold' in metrics:
+                        zip_data.extend([sc_score_eternafold, pred_sec_structs])
+                    else:
+                        # Add placeholder values
+                        zip_data.extend([np.zeros(n_samples), [None] * n_samples])
+                    
+                    # Add RibonanzaNet scores if available
+                    if 'sc_score_ribonanzanet' in metrics:
+                        zip_data.extend([sc_score_ribonanzanet, pred_chem_mods])
+                    else:
+                        # Add placeholder values
+                        zip_data.extend([np.zeros(n_samples), [None] * n_samples])
+                    
+                    # Add RhoFold scores if available
+                    if 'sc_score_rhofold' in metrics:
+                        zip_data.extend([sc_score_rmsd, sc_score_tm, sc_score_gdt])
+                    else:
+                        # Add placeholder values
+                        zip_data.extend([np.zeros(n_samples), np.zeros(n_samples), np.zeros(n_samples)])
+                    
+                    for idx, zipped in enumerate(zip(*zip_data)):
+                        seq, perp, rec = zipped[0:3]
+                        sc, pred_ss = zipped[3:5]
+                        sc_ribo, pred_cm = zipped[5:7]
+                        sc_rmsd, sc_tm, sc_gdt = zipped[7:10]
+                        
                         seq = "".join([NUM_TO_LETTER[num] for num in seq])
                         edit_dist = edit_distance(seq, raw_data['sequence'])
+                        
+                        # Build description string based on available metrics
+                        description = f"temperature={temperature} perplexity={perp:.4f} recovery={rec:.4f} edit_dist={edit_dist}"
+                        
+                        if 'sc_score_eternafold' in metrics:
+                            description += f" sc_score={sc:.4f}"
+                        
+                        if 'sc_score_ribonanzanet' in metrics:
+                            description += f" sc_score_ribonanzanet={sc_ribo:.4f}"
+                        
+                        if 'sc_score_rhofold' in metrics:
+                            description += f" sc_score_rmsd={sc_rmsd:.4f} sc_score_tm={sc_tm:.4f} sc_score_gdt={sc_gdt:.4f}"
+                        
                         sequences.append(SeqRecord(
                             Seq(seq), id=f"sample={idx},",
-                            description=f"temperature={temperature} perplexity={perp:.4f} recovery={rec:.4f} edit_dist={edit_dist} sc_score={sc:.4f} sc_score_ribonanzanet={sc_ribo:.4f} sc_score_rmsd={sc_rmsd:.4f} sc_score_tm={sc_tm:.4f} sc_score_gdt={sc_gdt:.4f}"
+                            description=description
                         ))
                     # write all designed sequences to output filepath
                     SeqIO.write(sequences, os.path.join(output_dir, "all_designs.fasta"), "fasta")
@@ -301,15 +336,26 @@ def evaluate(
     }
     if 'sc_score_eternafold' in metrics:
         out['sc_score_eternafold'] = sc_score_eternafold_list
-    if 'sc_score_ribonanzanet' in metrics:
-        out['sc_score_ribonanzanet'] = sc_score_ribonanzanet_list
+    else:
+        out['sc_score_eternafold'] = []  # Empty placeholder
+        
+    # Always include a placeholder for RibonanzaNet scores to maintain compatibility
+    out['sc_score_ribonanzanet'] = []  # Empty placeholder
+        
     if 'sc_score_rhofold' in metrics:
         out['sc_score_rmsd'] = sc_score_rmsd_list
         out['sc_score_tm'] = sc_score_tm_list
         out['sc_score_gddt'] = sc_score_gddt_list
         out['rmsd_within_thresh'] = rmsd_within_thresh_list
         out['tm_within_thresh'] = tm_within_thresh_list
-        out['gddt_within_thresh'] = gddt_within_thresh_list
+        out['gdt_within_thresh'] = gddt_within_thresh_list
+    else:
+        out['sc_score_rmsd'] = []  # Empty placeholder
+        out['sc_score_tm'] = []  # Empty placeholder
+        out['sc_score_gddt'] = []  # Empty placeholder
+        out['rmsd_within_thresh'] = []  # Empty placeholder
+        out['tm_within_thresh'] = []  # Empty placeholder
+        out['gdt_within_thresh'] = []  # Empty placeholder
     return out
 
 
@@ -425,15 +471,38 @@ def self_consistency_score_ribonanzanet(
 
         Take the average mean absolute error across all n_samples designed sequences
     """
+    # Check for dimension mismatch between mask and sequence
+    if len(mask_seq) != samples.shape[1]:
+        print(f"Warning: Dimension mismatch in RibonanzaNet evaluation. "
+              f"Sequence length: {samples.shape[1]}, mask length: {len(mask_seq)}")
+        # Create a new mask that matches the sequence length
+        if len(mask_seq) > samples.shape[1]:
+            # Truncate mask to match sequence length
+            mask_seq = mask_seq[:samples.shape[1]]
+        else:
+            # Extend mask with False values to match sequence length
+            extended_mask = np.zeros(samples.shape[1], dtype=bool)
+            extended_mask[:len(mask_seq)] = mask_seq
+            mask_seq = extended_mask
+        print(f"Adjusted mask to length {len(mask_seq)}")
+
     # Compute original sequence's chemical modifications using RibonanzaNet
     true_sequence = np.array([char for char in true_sequence])
+    # Ensure mask_seq doesn't exceed the length of true_sequence
+    if len(mask_seq) > len(true_sequence):
+        mask_seq = mask_seq[:len(true_sequence)]
+    elif len(mask_seq) < len(true_sequence):
+        # In case mask is shorter than sequence, extend it with False values
+        extended_mask = np.zeros(len(true_sequence), dtype=bool)
+        extended_mask[:len(mask_seq)] = mask_seq
+        mask_seq = extended_mask
+        
     true_sequence = "".join(true_sequence[mask_seq])
     true_chem_mod = ribonanza_net.predict(true_sequence).unsqueeze(0).cpu().numpy()[:,:,0]
 
     _samples = np.array([[num_to_letter[num] for num in seq] for seq in samples])
-    # prev: pred_chem_mod = ribonanza_net.predict(_samples[:, mask_seq]).cpu().numpy()[:,:,0]
-    pred_chem_mod = ribonanza_net.predict(_samples).cpu().numpy()[:,:,0]
-
+    pred_chem_mod = ribonanza_net.predict(_samples[:, mask_seq]).cpu().numpy()[:,:,0]
+    
     if return_chem_mods:
         return (np.abs(pred_chem_mod - true_chem_mod).mean(1)), pred_chem_mod
     else:

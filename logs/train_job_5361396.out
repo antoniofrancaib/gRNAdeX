@@ -1,0 +1,12 @@
+Changed directory to /rds/user/jaf98/hpc-work/geometric-rna-design.
+
+JobID: 5361396
+======
+Time: Thu Feb 20 10:43:42 GMT 2025
+Running on master node: gpu-q-24
+Current directory: /rds/user/jaf98/hpc-work/geometric-rna-design
+
+Executing command:
+==================
+python -u main.py --config configs/default.yaml --expt_name toy_rna_train_hybrid --tags hybrid,train,toy > logs/out.train_job 2>&1
+

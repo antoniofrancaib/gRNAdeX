@@ -197,6 +197,237 @@ class GVPConv(MessagePassing):
     
 #########################################################################
 
+class GraphAttentionLayer(nn.Module):
+    """
+    Graph Attention Layer for operating on scalar node features.
+    
+    Implements multi-head attention as described in:
+    "Graph Attention Networks" (Veličković et al., ICLR 2018)
+    
+    Args:
+        node_h_dim (int): Dimension of node features
+        n_heads (int): Number of attention heads
+        dropout (float): Dropout probability for attention weights
+        concat (bool): Whether to concatenate outputs from different heads
+                       or average them
+    """
+    def __init__(self, node_h_dim, n_heads=4, dropout=0.1, concat=False):
+        super().__init__()
+        
+        self.node_h_dim = node_h_dim
+        self.n_heads = n_heads
+        self.concat = concat
+        
+        # Dimension of each attention head
+        self.head_dim = node_h_dim
+        
+        # Query, key, value projections (one per head)
+        self.W_Q = nn.Linear(node_h_dim, n_heads * self.head_dim)
+        self.W_K = nn.Linear(node_h_dim, n_heads * self.head_dim)
+        self.W_V = nn.Linear(node_h_dim, n_heads * self.head_dim)
+        
+        # Output projection
+        if concat:
+            # If concatenating, the output dim is n_heads * head_dim
+            self.W_O = nn.Linear(n_heads * self.head_dim, node_h_dim)
+        else:
+            # If averaging, the output dim is head_dim
+            self.W_O = nn.Linear(self.head_dim, node_h_dim)
+            
+        # Attention dropout
+        self.dropout = nn.Dropout(dropout)
+        
+        # Scale factor for dot product attention
+        self.scale = self.head_dim ** -0.5
+        
+    def forward(self, x):
+        """
+        Forward pass of the attention layer.
+        
+        Args:
+            x (tuple): (node_s, node_v) tuple of node features
+                        node_s has shape [n_nodes, d_s]
+                        node_v is not used here (only scalar features)
+        
+        Returns:
+            tuple: Updated (node_s, node_v) tuple after attention
+                  node_v is passed through unchanged
+        """
+        s, v = x  # Unpack node features
+        
+        # Shape info
+        n_nodes = s.shape[0]  # Number of nodes
+        
+        # Linear projections for query, key, value
+        # [n_nodes, d_s] -> [n_nodes, n_heads * head_dim]
+        Q = self.W_Q(s)
+        K = self.W_K(s)
+        V = self.W_V(s)
+        
+        # Reshape for multi-head attention
+        # [n_nodes, n_heads * head_dim] -> [n_nodes, n_heads, head_dim]
+        Q = Q.view(n_nodes, self.n_heads, self.head_dim)
+        K = K.view(n_nodes, self.n_heads, self.head_dim)
+        V = V.view(n_nodes, self.n_heads, self.head_dim)
+        
+        # Transpose for batch matrix multiply
+        # [n_nodes, n_heads, head_dim] -> [n_heads, n_nodes, head_dim]
+        Q = Q.permute(1, 0, 2)
+        K = K.permute(1, 0, 2)
+        V = V.permute(1, 0, 2)
+        
+        # Scaled dot-product attention
+        # [n_heads, n_nodes, head_dim] @ [n_heads, head_dim, n_nodes] -> [n_heads, n_nodes, n_nodes]
+        scores = torch.bmm(Q, K.transpose(-2, -1)) * self.scale
+        
+        # Softmax to get attention weights
+        attn_weights = F.softmax(scores, dim=-1)
+        attn_weights = self.dropout(attn_weights)
+        
+        # Apply attention weights to values
+        # [n_heads, n_nodes, n_nodes] @ [n_heads, n_nodes, head_dim] -> [n_heads, n_nodes, head_dim]
+        h_prime = torch.bmm(attn_weights, V)
+        
+        # Transpose back and reshape
+        # [n_heads, n_nodes, head_dim] -> [n_nodes, n_heads, head_dim]
+        h_prime = h_prime.permute(1, 0, 2)
+        
+        # Final output projection
+        if self.concat:
+            # Concatenate heads: [n_nodes, n_heads, head_dim] -> [n_nodes, n_heads * head_dim]
+            h_prime = h_prime.reshape(n_nodes, -1)
+            s_out = self.W_O(h_prime)  # [n_nodes, node_h_dim]
+        else:
+            # Average across heads: [n_nodes, n_heads, head_dim] -> [n_nodes, head_dim]
+            h_prime = h_prime.mean(dim=1)
+            s_out = self.W_O(h_prime)  # [n_nodes, node_h_dim]
+        
+        return (s_out, v)  # Return updated scalars and original vectors
+
+class HybridGVPAttentionLayer(nn.Module):
+    """
+    Hybrid layer that combines MultiGVPConv with graph attention.
+    
+    This layer applies both geometric vector perceptron convolution and
+    graph attention to handle multiple RNA conformations. The outputs
+    are combined with equal weights.
+    
+    Args:
+        node_dims (tuple): (scalar_dim, vector_dim) for node features
+        edge_dims (tuple): (scalar_dim, vector_dim) for edge features
+        drop_rate (float): Dropout rate for regular dropout
+        activations (tuple): Activation functions for scalar and vector features
+        vector_gate (bool): Whether to use vector gating
+        norm_first (bool): Whether to apply normalization before or after
+        n_heads (int): Number of attention heads
+        attention_dropout (float): Dropout rate for attention weights
+    """
+    def __init__(
+        self, 
+        node_dims, 
+        edge_dims, 
+        drop_rate=0.1,
+        activations=(F.silu, None),
+        vector_gate=True,
+        norm_first=False, 
+        n_heads=4,
+        attention_dropout=0.1
+    ):
+        super().__init__()
+        
+        # Initialize the Geometric Vector Perceptron convolution layer
+        # CHANGE: using MultiGVPConv instead of GVPConv to properly handle multiple conformations
+        self.conv = MultiGVPConv(  # Changed from GVPConv to MultiGVPConv
+            in_dims = node_dims,
+            out_dims = node_dims,
+            edge_dims = edge_dims,
+            n_layers = 3,
+            vector_gate = vector_gate,
+            activations = activations
+        )
+        
+        # Attention layer for operating on nodes within each conformation
+        self.attention = GraphAttentionLayer(
+            node_h_dim = node_dims[0],  # Only operating on scalar features
+            n_heads = n_heads,
+            dropout = attention_dropout,  # Make sure dropout is correctly passed
+            concat = False  # Use averaging instead of concatenation to avoid dimension issues
+        )
+        
+        # Normalization layers - Use custom LayerNorm that handles vector features correctly
+        self.norm_first = norm_first
+        self.norm = LayerNorm(node_dims)  # Use the custom LayerNorm class
+            
+        # Dropout for regularization
+        self.dropout = Dropout(drop_rate)  # Use the custom Dropout class
+        
+    def forward(self, x, edge_index, edge_attr):
+        """
+        Forward pass of the hybrid layer.
+        
+        Args:
+            x (tuple): (node_s, node_v) tuple of node features
+                      node_s has shape [n_nodes, n_conf, d_s]
+                      node_v has shape [n_nodes, n_conf, d_v, 3]
+            edge_index (torch.Tensor): Edge indices [2, n_edges]
+            edge_attr (tuple): (edge_s, edge_v) tuple of edge features
+                              edge_s has shape [n_edges, n_conf, d_se]
+                              edge_v has shape [n_edges, n_conf, d_ve, 3]
+        
+        Returns:
+            tuple: Updated (node_s, node_v) tuple after convolution and attention
+        """
+        s, v = x  # Unpack node features
+        
+        # Initialize outputs to be the same as inputs (for residual connection)
+        out_s, out_v = s, v
+        
+        # Apply layer normalization before operations if norm_first is True
+        if self.norm_first:
+            s, v = self.norm((s, v))
+        
+        # Step 1: Apply MultiGVPConv for message passing
+        # This operates on multi-conformation data directly
+        conv_s, conv_v = self.conv((s, v), edge_index, edge_attr)
+        
+        # Step 2: Apply graph attention within each conformation
+        # We need to process each conformation separately
+        n_nodes, n_conf, d_s = s.shape
+        
+        # Initialize tensors to store attention outputs for each conformation
+        attn_s = torch.zeros_like(s)  # [n_nodes, n_conf, d_s]
+        
+        # Process each conformation separately
+        for conf_idx in range(n_conf):
+            # Extract features for this conformation
+            s_conf = s[:, conf_idx]  # [n_nodes, d_s]
+            v_conf = v[:, conf_idx] if v is not None else None  # [n_nodes, d_v, 3]
+            
+            # Apply attention to this conformation
+            attn_s_conf, _ = self.attention((s_conf, None))  # [n_nodes, d_s]
+            
+            # Store the result
+            attn_s[:, conf_idx] = attn_s_conf
+        
+        # Combine convolution and attention outputs with equal weights
+        combined_s = 0.5 * conv_s + 0.5 * attn_s  # [n_nodes, n_conf, d_s]
+        combined_v = conv_v  # [n_nodes, n_conf, d_v, 3] (attention doesn't modify vectors)
+        
+        # Apply dropout
+        combined_s, combined_v = self.dropout((combined_s, combined_v))
+        
+        # Residual connection
+        out_s = out_s + combined_s
+        if out_v is not None and combined_v is not None:
+            out_v = out_v + combined_v
+        
+        # Apply layer normalization after operations if norm_first is False
+        if not self.norm_first:
+            out_s, out_v = self.norm((out_s, out_v))
+        
+        return (out_s, out_v)
+
+
 class MultiGVPConvLayer(nn.Module):
     '''
     GVPConvLayer for handling multiple conformations (encoder-only)

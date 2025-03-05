@@ -40,7 +40,7 @@ max_nodes_batch:
   value: 3000
   desc: Maximum number of nodes in batch
 max_nodes_sample:
-  value: 5000
+  value: 500
   desc: Maximum number of nodes in batches with single samples (ie. maximum RNA length)
 
 # Splitting configurations
@@ -74,6 +74,14 @@ out_dim:
   value: 4
   desc: Output dimension (4 bases for RNA)
 
+# Attention configurations
+attention_heads:
+  value: 4
+  desc: Number of attention heads in the hybrid GVP-attention layer
+attention_dropout:
+  value: 0.1
+  desc: Dropout rate for attention weights
+  
 # Training configurations (unused)
 epochs:
   value: 50

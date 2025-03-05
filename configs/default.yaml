@@ -40,7 +40,7 @@ max_nodes_batch:
   value: 3000
   desc: Maximum number of nodes in batch
 max_nodes_sample:
-  value: 5000
+  value: 500
   desc: Maximum number of nodes in batches with single samples (ie. maximum RNA length)
 
 # Splitting configurations
@@ -51,7 +51,7 @@ split:
 # Model configurations
 model:
   value: 'ARv1'
-  desc: Model architecture (AR/NAR)
+  desc: Autoregressive GVP-GNN model architecture
 node_in_dim:
   value: [15, 4]  # (num_bb_atoms x 5, 2 + (num_bb_atoms - 1))
   desc: Input dimensions for node features (scalar channels, vector channels)
@@ -73,6 +73,14 @@ drop_rate:
 out_dim:
   value: 4
   desc: Output dimension (4 bases for RNA)
+
+# Attention configurations
+attention_heads:
+  value: 4
+  desc: Number of attention heads in the hybrid GVP-attention layer
+attention_dropout:
+  value: 0.1
+  desc: Dropout rate for attention weights
 
 # Training configurations
 epochs:

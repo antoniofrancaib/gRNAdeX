@@ -199,40 +199,49 @@ class GVPConv(MessagePassing):
 
 class GraphAttentionLayer(nn.Module):
     """
-    Graph Attention Layer for operating on scalar node features.
+    Graph Attention Layer for operating on both scalar and vector node features.
     
     Implements multi-head attention as described in:
     "Graph Attention Networks" (Veličković et al., ICLR 2018)
     
+    This version incorporates vector norms concatenated with scalar features 
+    when computing attention weights.
+    
     Args:
-        node_h_dim (int): Dimension of node features
+        node_h_dim (int): Dimension of scalar node features
+        vector_h_dim (int): Dimension of vector node features (set to 0 if no vectors)
         n_heads (int): Number of attention heads
         dropout (float): Dropout probability for attention weights
         concat (bool): Whether to concatenate outputs from different heads
                        or average them
     """
-    def __init__(self, node_h_dim, n_heads=4, dropout=0.1, concat=False):
+    def __init__(self, node_h_dim, vector_h_dim=0, n_heads=4, dropout=0.1, concat=False):
         super().__init__()
         
         self.node_h_dim = node_h_dim
+        self.vector_h_dim = vector_h_dim
         self.n_heads = n_heads
         self.concat = concat
         
+        # Combined dimension for attention calculation (scalar + vector norms)
+        self.combined_dim = node_h_dim + (vector_h_dim if vector_h_dim > 0 else 0)
+        
         # Dimension of each attention head
-        self.head_dim = node_h_dim
+        self.head_dim = self.combined_dim
         
         # Query, key, value projections (one per head)
-        self.W_Q = nn.Linear(node_h_dim, n_heads * self.head_dim)
-        self.W_K = nn.Linear(node_h_dim, n_heads * self.head_dim)
-        self.W_V = nn.Linear(node_h_dim, n_heads * self.head_dim)
+        # These now operate on combined features (scalar + vector norms)
+        self.W_Q = nn.Linear(self.combined_dim, n_heads * self.head_dim)
+        self.W_K = nn.Linear(self.combined_dim, n_heads * self.head_dim)
+        self.W_V = nn.Linear(node_h_dim, n_heads * node_h_dim)  # Value still uses only scalars
         
         # Output projection
         if concat:
             # If concatenating, the output dim is n_heads * head_dim
-            self.W_O = nn.Linear(n_heads * self.head_dim, node_h_dim)
+            self.W_O = nn.Linear(n_heads * node_h_dim, node_h_dim)
         else:
             # If averaging, the output dim is head_dim
-            self.W_O = nn.Linear(self.head_dim, node_h_dim)
+            self.W_O = nn.Linear(node_h_dim, node_h_dim)
             
         # Attention dropout
         self.dropout = nn.Dropout(dropout)
@@ -242,12 +251,12 @@ class GraphAttentionLayer(nn.Module):
         
     def forward(self, x):
         """
-        Forward pass of the attention layer.
+        Forward pass of the attention layer with vector norm incorporation.
         
         Args:
             x (tuple): (node_s, node_v) tuple of node features
                         node_s has shape [n_nodes, d_s]
-                        node_v is not used here (only scalar features)
+                        node_v has shape [n_nodes, d_v, 3] or None
         
         Returns:
             tuple: Updated (node_s, node_v) tuple after attention
@@ -258,20 +267,33 @@ class GraphAttentionLayer(nn.Module):
         # Shape info
         n_nodes = s.shape[0]  # Number of nodes
         
-        # Linear projections for query, key, value
-        # [n_nodes, d_s] -> [n_nodes, n_heads * head_dim]
-        Q = self.W_Q(s)
-        K = self.W_K(s)
+        # Create combined features with vector norms
+        if v is not None and self.vector_h_dim > 0:
+            # Calculate vector norms [n_nodes, d_v]
+            v_norms = torch.norm(v, dim=2)
+            
+            # Concatenate scalar features with vector norms [n_nodes, d_s + d_v]
+            combined_features = torch.cat([s, v_norms], dim=1)
+        else:
+            combined_features = s
+        
+        # Linear projections for query, key using combined features
+        # [n_nodes, combined_dim] -> [n_nodes, n_heads * head_dim]
+        Q = self.W_Q(combined_features)
+        K = self.W_K(combined_features)
+        
+        # For values, we still use only scalar features
+        # [n_nodes, d_s] -> [n_nodes, n_heads * node_h_dim]
         V = self.W_V(s)
         
         # Reshape for multi-head attention
         # [n_nodes, n_heads * head_dim] -> [n_nodes, n_heads, head_dim]
         Q = Q.view(n_nodes, self.n_heads, self.head_dim)
         K = K.view(n_nodes, self.n_heads, self.head_dim)
-        V = V.view(n_nodes, self.n_heads, self.head_dim)
+        V = V.view(n_nodes, self.n_heads, self.node_h_dim)
         
         # Transpose for batch matrix multiply
-        # [n_nodes, n_heads, head_dim] -> [n_heads, n_nodes, head_dim]
+        # [n_nodes, n_heads, dim] -> [n_heads, n_nodes, dim]
         Q = Q.permute(1, 0, 2)
         K = K.permute(1, 0, 2)
         V = V.permute(1, 0, 2)
@@ -285,20 +307,20 @@ class GraphAttentionLayer(nn.Module):
         attn_weights = self.dropout(attn_weights)
         
         # Apply attention weights to values
-        # [n_heads, n_nodes, n_nodes] @ [n_heads, n_nodes, head_dim] -> [n_heads, n_nodes, head_dim]
+        # [n_heads, n_nodes, n_nodes] @ [n_heads, n_nodes, node_h_dim] -> [n_heads, n_nodes, node_h_dim]
         h_prime = torch.bmm(attn_weights, V)
         
         # Transpose back and reshape
-        # [n_heads, n_nodes, head_dim] -> [n_nodes, n_heads, head_dim]
+        # [n_heads, n_nodes, node_h_dim] -> [n_nodes, n_heads, node_h_dim]
         h_prime = h_prime.permute(1, 0, 2)
         
         # Final output projection
         if self.concat:
-            # Concatenate heads: [n_nodes, n_heads, head_dim] -> [n_nodes, n_heads * head_dim]
+            # Concatenate heads: [n_nodes, n_heads, node_h_dim] -> [n_nodes, n_heads * node_h_dim]
             h_prime = h_prime.reshape(n_nodes, -1)
             s_out = self.W_O(h_prime)  # [n_nodes, node_h_dim]
         else:
-            # Average across heads: [n_nodes, n_heads, head_dim] -> [n_nodes, head_dim]
+            # Average across heads: [n_nodes, n_heads, node_h_dim] -> [n_nodes, node_h_dim]
             h_prime = h_prime.mean(dim=1)
             s_out = self.W_O(h_prime)  # [n_nodes, node_h_dim]
         
@@ -347,10 +369,12 @@ class HybridGVPAttentionLayer(nn.Module):
         )
         
         # Attention layer for operating on nodes within each conformation
+        # Now passing vector dimension to incorporate vector norms in attention
         self.attention = GraphAttentionLayer(
-            node_h_dim = node_dims[0],  # Only operating on scalar features
+            node_h_dim = node_dims[0],  # Scalar feature dimension
+            vector_h_dim = node_dims[1],  # Vector feature dimension
             n_heads = n_heads,
-            dropout = attention_dropout,  # Make sure dropout is correctly passed
+            dropout = attention_dropout,
             concat = False  # Use averaging instead of concatenation to avoid dimension issues
         )
         
@@ -403,8 +427,8 @@ class HybridGVPAttentionLayer(nn.Module):
             s_conf = s[:, conf_idx]  # [n_nodes, d_s]
             v_conf = v[:, conf_idx] if v is not None else None  # [n_nodes, d_v, 3]
             
-            # Apply attention to this conformation
-            attn_s_conf, _ = self.attention((s_conf, None))  # [n_nodes, d_s]
+            # Apply attention to this conformation - now passing both scalar and vector features
+            attn_s_conf, _ = self.attention((s_conf, v_conf))  # [n_nodes, d_s]
             
             # Store the result
             attn_s[:, conf_idx] = attn_s_conf

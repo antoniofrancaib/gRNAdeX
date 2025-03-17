@@ -20,14 +20,6 @@ def choose_nts(lgts, strategy='categorical', beam_branch=2, top_k=2, top_p=0.9, 
     # First rescale with temperature -- is this right ? or should I rescale after filtering ?
     lgts = lgts / temperature
 
-    #if strategy.lower() == 'greedy':
-        # Pick argmax - Greedy decoding
-    #    next_token_probs = F.softmax(lgts, dim=-1) ## WOULD THIS BE CORRECT ? Debug later
-    #    sample = torch.argmax(lgts, dim=-1)
-        # change so it can return 2 samples if needed !
-    #    sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True).squeeze(-1)
-    #    return sample, next_token_probs
-
     if strategy.lower() == 'categorical':
         # Original code
         next_token_probs = F.softmax(lgts, dim=-1) ## WOULD THIS BE CORRECT ? Debug later -- which to use ?

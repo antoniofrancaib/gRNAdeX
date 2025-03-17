@@ -11,12 +11,12 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 import torch_geometric
 
-from src.layers import *
+from src.layers_mod import *
 
 
 class AutoregressiveMultiGNNv1(torch.nn.Module):
     '''
-    Autoregressive GVP-GNN for **multiple** structure-conditioned RNA design.
+    Autoregressive GVP-GNN with attention for **multiple** structure-conditioned RNA design.
     
     Takes in RNA structure graphs of type `torch_geometric.data.Data` 
     or `torch_geometric.data.Batch` and returns a categorical distribution
@@ -33,10 +33,9 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         edge_h_dim (tuple): edge dimensions to embed in GVP-GNN layers
         num_layers (int): number of GVP-GNN layers in encoder/decoder
         drop_rate (float): rate to use in all dropout layers
+        attention_heads (int): number of attention heads in hybrid layer
+        attention_dropout (float): dropout rate for attention mechanism
         out_dim (int): output dimension (4 bases)
-        max_moment_order (int): Maximum order of tensor moments to compute
-        attention_heads (int): Number of attention heads in the hybrid GVP-attention layer
-        attention_dropout (float): Dropout rate for attention weights
     '''
     def __init__(
         self,
@@ -46,10 +45,9 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         edge_h_dim = (32, 1),
         num_layers = 3, 
         drop_rate = 0.1,
+        attention_heads = 4,
+        attention_dropout = 0.1,
         out_dim = 4,
-        attention_heads = 4,  # Add this
-        attention_dropout = 0.1,  # Add this
-        max_moment_order = 2,  # Maximum order of tensor moments to compute
     ):
         super().__init__()
         self.node_in_dim = node_in_dim
@@ -58,7 +56,6 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         self.edge_h_dim = edge_h_dim
         self.num_layers = num_layers
         self.out_dim = out_dim
-        self.max_moment_order = max_moment_order
         activations = (F.silu, None)
         
         # Node input embedding
@@ -76,32 +73,32 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         )
         
         # Encoder layers (supports multiple conformations)
+        # Uses the updated MultiConformationEncoderLayer with MultiGVPConv
         self.encoder_layers = nn.ModuleList(
-                MultiAttentiveGVPLayer(self.node_h_dim, self.edge_h_dim, 
-                                      activations=activations, vector_gate=True,
-                                      drop_rate=drop_rate, norm_first=True,
-                                      n_heads=attention_heads,  # Add this
-                                      attention_dropout=attention_dropout)  # Add this
+                MultiConformationEncoderLayer(  # Updated class name
+                          self.node_h_dim, self.edge_h_dim, 
+                          activations=activations, vector_gate=True,
+                          drop_rate=drop_rate, norm_first=True,
+                          n_heads=attention_heads,
+                          attention_dropout=attention_dropout)
             for _ in range(num_layers))
-
-        # MLP for tensor moment pooling (psi)
-        # Calculate input dimension: d + d^2 + ... + d^p (where d is node_h_dim[0])
-        d = self.node_h_dim[0]
-        moment_dim = sum(d**order for order in range(1, self.max_moment_order + 1))
-        self.psi = nn.Sequential(
-            nn.Linear(moment_dim, 2 * d),
-            nn.SiLU(),
-            nn.Dropout(drop_rate),
-            nn.Linear(2 * d, d)
-        )
-
+        
         # Decoder layers
         self.W_s = nn.Embedding(self.out_dim, self.out_dim)
         self.edge_h_dim = (self.edge_h_dim[0] + self.out_dim, self.edge_h_dim[1])
+        
+        # Use AutoregressiveGVPDecoderLayer instead of TransformerDecoderLayer
         self.decoder_layers = nn.ModuleList(
-                GVPConvLayer(self.node_h_dim, self.edge_h_dim,
-                             activations=activations, vector_gate=True, 
-                             drop_rate=drop_rate, autoregressive=True, norm_first=True) 
+                GeometricAttentionDecoderLayer(  # Updated to more accurate name
+                    node_dims=self.node_h_dim,
+                    edge_dims=self.edge_h_dim,
+                    n_heads=attention_heads,
+                    dropout=drop_rate,
+                    norm_first=True,
+                    autoregressive=True,
+                    activations=activations,
+                    vector_gate=True
+                )
             for _ in range(num_layers))
         
         # Output
@@ -244,89 +241,28 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             return seq.view(n_samples, num_nodes)
         
     def pool_multi_conf(self, h_V, h_E, mask_confs, edge_index):
-        """
-        Pool multi-conformation features using tensor moment pooling for node scalar features.
-        This implements a universal set aggregator as described by Maron et al.
-        
-        Args:
-            h_V: Tuple of (scalar_features, vector_features) for nodes
-            h_E: Tuple of (scalar_features, vector_features) for edges
-            mask_confs: Boolean mask indicating valid conformations [n_nodes, n_conf]
-            edge_index: Edge index tensor of shape [2, n_edges]
-            
-        Returns:
-            Pooled node and edge features
-        """
+
         if mask_confs.size(1) == 1:
             # Number of conformations is 1, no need to pool
             return (h_V[0][:, 0], h_V[1][:, 0]), (h_E[0][:, 0], h_E[1][:, 0])
         
-        # True num_conf for masked pooling
+        # True num_conf for masked mean pooling
         n_conf_true = mask_confs.sum(1, keepdim=True)  # (n_nodes, 1)
         
-        # ==== TENSOR MOMENT POOLING FOR NODE SCALAR FEATURES ====
-        # Apply mask to scalar features
+        # Mask scalar features
         mask = mask_confs.unsqueeze(2)  # (n_nodes, n_conf, 1)
-        h_V0_masked = h_V[0] * mask  # [n_nodes, n_conf, d]
-        
-        # Initialize list to store moments
-        moments_list = []
-        
-        # Calculate moments up to max_moment_order
-        for order in range(1, self.max_moment_order + 1):
-            if order == 1:
-                # First-order moment (mean)
-                moment = h_V0_masked.sum(dim=1) / n_conf_true  # [n_nodes, d]
-                moments_list.append(moment)
-            else:
-                # Higher-order moments
-                moment = torch.zeros_like(h_V0_masked[:, 0])  # [n_nodes, d]
-                
-                for i in range(mask_confs.size(1)):
-                    # Only consider valid conformations
-                    conf_mask = mask_confs[:, i].bool()
-                    if not conf_mask.any():
-                        continue
-                        
-                    X_i = h_V0_masked[conf_mask, i]  # [n_valid_nodes, d]
-                    
-                    # For order=2, compute outer product X_i ⊗ X_i
-                    if order == 2:
-                        # Efficient implementation for order 2
-                        tensor_i = X_i.unsqueeze(2) * X_i.unsqueeze(1)  # [n_valid_nodes, d, d]
-                        tensor_i_flat = tensor_i.flatten(start_dim=1)  # [n_valid_nodes, d*d]
-                    else:
-                        # For higher orders, implementation would be more complex
-                        # Here we approximate with element-wise powers for efficiency
-                        tensor_i_flat = X_i ** order  # [n_valid_nodes, d]
-                    
-                    # Accumulate for this conformation
-                    if order == 2:
-                        moment[conf_mask] = moment[conf_mask] + tensor_i_flat
-                    else:
-                        moment[conf_mask] = moment[conf_mask] + tensor_i_flat
-                
-                # Normalize by number of valid conformations
-                moment = moment / n_conf_true
-                moments_list.append(moment)
-        
-        # Concatenate all moments
-        aggregated = torch.cat(moments_list, dim=1)  # [n_nodes, (d + d^2 + ... + d^p)]
-        
-        # Apply MLP to transform aggregated moments
-        h_V0_pooled = self.psi(aggregated)  # [n_nodes, d]
-        
-        # ==== REGULAR POOLING FOR NODE VECTOR FEATURES AND EDGE FEATURES ====
-        # Mask vector features
-        mask_vec = mask.unsqueeze(3)  # (n_nodes, n_conf, 1, 1)
-        h_V1 = h_V[1] * mask_vec
+        h_V0 = h_V[0] * mask
         h_E0 = h_E[0] * mask[edge_index[0]]
-        h_E1 = h_E[1] * mask_vec[edge_index[0]]
+
+        # Mask vector features
+        mask = mask.unsqueeze(3)  # (n_nodes, n_conf, 1, 1)
+        h_V1 = h_V[1] * mask
+        h_E1 = h_E[1] * mask[edge_index[0]]
         
-        # Average pooling for vector features and edge features
-        h_V1_pooled = h_V1.sum(dim=1) / n_conf_true.unsqueeze(2)  # (n_nodes, d_v, 3)
-        h_E = (h_E0.sum(dim=1) / n_conf_true[edge_index[0]],              # (n_edges, d_se)
-               h_E1.sum(dim=1) / n_conf_true[edge_index[0]].unsqueeze(2)) # (n_edges, d_ve, 3)
+        # Average pooling multi-conformation features
+        h_V = (h_V0.sum(dim=1) / n_conf_true,               # (n_nodes, d_s)
+               h_V1.sum(dim=1) / n_conf_true.unsqueeze(2))  # (n_nodes, d_v, 3)
+        h_E = (h_E0.sum(dim=1) / n_conf_true[edge_index[0]],               # (n_edges, d_se)
+               h_E1.sum(dim=1) / n_conf_true[edge_index[0]].unsqueeze(2))  # (n_edges, d_ve, 3)
 
-        return (h_V0_pooled, h_V1_pooled), h_E
-
+        return h_V, h_E

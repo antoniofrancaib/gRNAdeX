@@ -1,4 +1,8 @@
 # Custom
+backup/
+train_job_gpu.sh
+eval_job_gpu.sh
+
 /notebooks/designs/
 /tools
 /data

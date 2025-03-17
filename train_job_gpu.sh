@@ -19,7 +19,7 @@
 ####### SBATCH directives end here ###############################
 
 # Application options and environment
-options="--config configs/default.yaml --expt_name rna_train_attn_pool --tags pool,attn,train"
+options="--config configs/default.yaml --expt_name hybrid_multi_tensor_pool --tags hybrid_enc,multi_tensor_pool, train"
 
 # Environment setup
 . /etc/profile.d/modules.sh

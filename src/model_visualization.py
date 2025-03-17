@@ -7,7 +7,7 @@ from collections import OrderedDict
 from torch_geometric.data import Data
 
 from src.models import AutoregressiveMultiGNNv1, AutoregressiveMultiGNNv1_previous
-from src.layers import HybridGVPAttentionLayer, LayerNorm, GVP, MultiGVPConvLayer
+from src.layers import HybridGVPAttentionLayer, LayerNorm, GVP, MultiGVPConvLayer, TransformerDecoderLayer
 from src.constants import DATA_PATH
 from src.data.dataset import RNADesignDataset
 
@@ -27,11 +27,16 @@ class ModelInspector:
         self.verbose = verbose
         self.last_nucleotide_only = last_nucleotide_only
         
-        # Register hooks for all encoder layers
+        # Register hooks for all encoder and decoder layers
         for name, module in model.named_modules():
-            if isinstance(module, (HybridGVPAttentionLayer, MultiGVPConvLayer)):
+            if isinstance(module, (HybridGVPAttentionLayer, MultiGVPConvLayer, TransformerDecoderLayer)):
                 self.register_hooks(module, name)
             elif 'W_v' in name or 'W_e' in name or 'W_s' in name or 'decoder_layers' in name or 'W_out' in name:
+                self.register_hooks(module, name)
+            # Register hooks for internal components of TransformerDecoderLayer
+            elif isinstance(module, torch.nn.MultiheadAttention) and 'attention' in name:
+                self.register_hooks(module, name)
+            elif isinstance(module, torch.nn.Sequential) and ('scalar_ff' in name or 'vector_ff' in name):
                 self.register_hooks(module, name)
     
     def register_hooks(self, module, name):
@@ -61,6 +66,13 @@ class ModelInspector:
         # First print the input to the model
         print("\nModel Input:")
         self._print_data_info(self.data_input)
+        
+        # Print parameter count early to give overview
+        param_count = count_parameters(self.model)
+        print(f"\nTotal Parameters: {param_count:,}")
+        
+        # Print parameter counts for specific layer types
+        self._print_layer_param_counts()
         
         # Then print embedding layer transformations
         print("\nEmbedding Layers:")
@@ -99,6 +111,17 @@ class ModelInspector:
                     self._print_tensor_info(self.activations[name], print_stats=True)
                     print("\nOutput:")
                     self._print_tensor_info(self.activations[module_name + '_output'], print_stats=True)
+                    
+                    # Print TransformerDecoderLayer sub-components if present
+                    if 'attention' in module_name or 'scalar_ff' in module_name or 'vector_ff' in module_name:
+                        for submodule_name in self.activations:
+                            if module_name in submodule_name and '_input' in submodule_name:
+                                submodule_full_name = submodule_name.replace('_input', '')
+                                print(f"\n  {submodule_full_name.split('.')[-1]}:")
+                                print("  Input:")
+                                self._print_tensor_info(self.activations[submodule_name], print_stats=True, indent="  ")
+                                print("\n  Output:")
+                                self._print_tensor_info(self.activations[submodule_full_name + '_output'], print_stats=True, indent="  ")
         else:
             # For last nucleotide, only print the last decoder layer
             decoder_layers = [name for name in self.activations if 'decoder_layers' in name and 'input' in name]
@@ -112,6 +135,17 @@ class ModelInspector:
                 self._print_tensor_info(self.activations[last_layer_name], print_stats=True)
                 print("\nOutput:")
                 self._print_tensor_info(self.activations[module_name + '_output'], print_stats=True)
+                
+                # Print TransformerDecoderLayer sub-components if present
+                if 'TransformerDecoderLayer' in module_name:
+                    for submodule_name in self.activations:
+                        if module_name in submodule_name and '_input' in submodule_name and submodule_name != last_layer_name:
+                            submodule_full_name = submodule_name.replace('_input', '')
+                            print(f"\n  {submodule_full_name.split('.')[-1]}:")
+                            print("  Input:")
+                            self._print_tensor_info(self.activations[submodule_name], print_stats=True, indent="  ")
+                            print("\n  Output:")
+                            self._print_tensor_info(self.activations[submodule_full_name + '_output'], print_stats=True, indent="  ")
         
         # Print output layer transformation
         if not self.last_nucleotide_only:
@@ -143,10 +177,48 @@ class ModelInspector:
         if hasattr(self, 'predicted_sequence'):
             print("\nPredicted Sequence:")
             print(self.predicted_sequence)
+    
+    def _print_layer_param_counts(self):
+        """Print parameter counts for each layer type in the model."""
+        transformer_params = 0
+        gvp_conv_params = 0
+        hybrid_attn_params = 0
         
-        # Print parameter count
-        param_count = count_parameters(self.model)
-        print(f"\nTotal Parameters: {param_count:,}")
+        print("\nPARAMETER COUNTS BY LAYER TYPE:")
+        
+        for name, module in self.model.named_modules():
+            if isinstance(module, TransformerDecoderLayer):
+                layer_params = sum(p.numel() for p in module.parameters() if p.requires_grad)
+                transformer_params += layer_params
+                print(f"  {name} (TransformerDecoderLayer): {layer_params:,} parameters")
+                
+                # Print parameters for submodules
+                if hasattr(module, 'attention'):
+                    attn_params = sum(p.numel() for p in module.attention.parameters() if p.requires_grad)
+                    print(f"    - Attention: {attn_params:,} parameters")
+                if hasattr(module, 'scalar_ff'):
+                    scalar_ff_params = sum(p.numel() for p in module.scalar_ff.parameters() if p.requires_grad)
+                    print(f"    - Scalar FFN: {scalar_ff_params:,} parameters")
+                if hasattr(module, 'vector_ff'):
+                    vector_ff_params = sum(p.numel() for p in module.vector_ff.parameters() if p.requires_grad)
+                    print(f"    - Vector FFN: {vector_ff_params:,} parameters")
+                if hasattr(module, 'vector_projection'):
+                    proj_params = sum(p.numel() for p in module.vector_projection.parameters() if p.requires_grad)
+                    print(f"    - Vector Projection: {proj_params:,} parameters")
+                
+            elif isinstance(module, MultiGVPConvLayer):
+                layer_params = sum(p.numel() for p in module.parameters() if p.requires_grad)
+                gvp_conv_params += layer_params
+                print(f"  {name} (MultiGVPConvLayer): {layer_params:,} parameters")
+                
+            elif isinstance(module, HybridGVPAttentionLayer):
+                layer_params = sum(p.numel() for p in module.parameters() if p.requires_grad)
+                hybrid_attn_params += layer_params
+                print(f"  {name} (HybridGVPAttentionLayer): {layer_params:,} parameters")
+        
+        print(f"\nTotal TransformerDecoderLayer parameters: {transformer_params:,}")
+        print(f"Total MultiGVPConvLayer parameters: {gvp_conv_params:,}")
+        print(f"Total HybridGVPAttentionLayer parameters: {hybrid_attn_params:,}")
     
     def _print_data_info(self, data):
         """Print information about a PyG Data object."""
@@ -158,29 +230,29 @@ class ModelInspector:
             print(f"edge_v = {data.edge_v.shape}")
         print(f"edge_index = {data.edge_index.shape}")
     
-    def _print_tensor_info(self, tensor, print_stats=True):
+    def _print_tensor_info(self, tensor, print_stats=True, indent=""):
         """Print information about tensor or tuple of tensors."""
         if isinstance(tensor, tuple):
             for i, t in enumerate(tensor):
                 if isinstance(t, torch.Tensor):
-                    print(f"tensor[{i}] shape = {t.shape}")
+                    print(f"{indent}tensor[{i}] shape = {t.shape}")
                     if print_stats and t.dtype in [torch.float16, torch.float32, torch.float64]:
-                        print(f"  mean = {t.mean().item():.4f}, std = {t.std().item():.4f}")
-                        print(f"  min = {t.min().item():.4f}, max = {t.max().item():.4f}")
+                        print(f"{indent}  mean = {t.mean().item():.4f}, std = {t.std().item():.4f}")
+                        print(f"{indent}  min = {t.min().item():.4f}, max = {t.max().item():.4f}")
                     elif print_stats:
-                        print(f"  dtype = {t.dtype} (statistics skipped for non-float tensors)")
+                        print(f"{indent}  dtype = {t.dtype} (statistics skipped for non-float tensors)")
                 else:
-                    print(f"tensor[{i}] = {type(t)}")
+                    print(f"{indent}tensor[{i}] = {type(t)}")
         elif isinstance(tensor, torch.Tensor):
-            print(f"shape = {tensor.shape}")
+            print(f"{indent}shape = {tensor.shape}")
             # Only print statistics for floating point tensors
             if print_stats and tensor.dtype in [torch.float16, torch.float32, torch.float64]:
-                print(f"mean = {tensor.mean().item():.4f}, std = {tensor.std().item():.4f}")
-                print(f"min = {tensor.min().item():.4f}, max = {tensor.max().item():.4f}")
+                print(f"{indent}mean = {tensor.mean().item():.4f}, std = {tensor.std().item():.4f}")
+                print(f"{indent}min = {tensor.min().item():.4f}, max = {tensor.max().item():.4f}")
             elif print_stats:
-                print(f"dtype = {tensor.dtype} (statistics skipped for non-float tensors)")
+                print(f"{indent}dtype = {tensor.dtype} (statistics skipped for non-float tensors)")
         else:
-            print(f"type = {type(tensor)}")
+            print(f"{indent}type = {type(tensor)}")
     
     def run_and_analyze(self, data):
         """Run the model with the provided data and analyze the transformations."""

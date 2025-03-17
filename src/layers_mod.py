@@ -14,8 +14,240 @@ from torch_scatter import scatter_add
 
 
 #########################################################################
-   
+# Contributions from original GVP repository
+#########################################################################
+
 class GraphAttentionLayer(nn.Module):
+    '''
+    Self-attention layer for updating node scalar features.
+    Takes scalar and vector features as input, uses vector norms
+    as part of attention computation, and returns updated scalar features
+    along with unchanged vector features.
+    
+    :param node_dims: node embedding dimensions (n_scalar, n_vector)
+    :param n_heads: number of attention heads
+    :param drop_rate: dropout probability
+    :param norm_first: whether to apply normalization before attention
+    '''
+    def __init__(
+            self,
+            node_dims,
+            n_heads=4,
+            drop_rate=0.1,
+            norm_first=False,
+            residual=True,
+        ):
+        super(GraphAttentionLayer, self).__init__()
+        self.node_dims = node_dims
+        self.n_scalar, self.n_vector = node_dims
+        self.n_heads = n_heads
+        self.head_dim = self.n_scalar // n_heads
+        assert self.n_scalar % n_heads == 0, "n_scalar must be divisible by n_heads"
+        
+        # Input feature dimension after concatenating scalar and vector norm features
+        self.combined_dim = self.n_scalar + self.n_vector
+        
+        # Multi-head attention layers
+        self.q_proj = nn.Linear(self.combined_dim, self.n_heads * self.head_dim)
+        self.k_proj = nn.Linear(self.combined_dim, self.n_heads * self.head_dim)
+        self.v_proj = nn.Linear(self.n_scalar, self.n_heads * self.head_dim)
+        self.o_proj = nn.Linear(self.n_heads * self.head_dim, self.n_scalar)
+        
+        # Normalization and dropout (using ModuleList for consistency with GVPConvLayer)
+        self.norm = nn.ModuleList([LayerNorm(node_dims) for _ in range(2)])
+        self.dropout = nn.ModuleList([Dropout(drop_rate) for _ in range(2)])
+        self.attn_dropout = nn.Dropout(drop_rate)
+        
+        self.norm_first = norm_first
+        self.residual = residual
+        
+        # Scaling factor for attention scores
+        self.scale = self.head_dim ** -0.5
+        
+    def forward(self, x):
+        '''
+        :param x: tuple (s, V) of `torch.Tensor` for a single conformation
+        :return: tuple (s_updated, V) with updated scalar features
+        '''
+        s, v = x
+        batch_size = s.shape[0]
+        
+        # Prepare input features (concatenate scalar with vector norms)
+        if v is not None:
+            v_norm = _norm_no_nan(v, axis=-1)  # [n_nodes, n_vector]
+            combined_features = torch.cat([s, v_norm], dim=-1)  # [n_nodes, n_scalar + n_vector]
+        else:
+            combined_features = s
+        
+        if self.norm_first:
+            # Apply normalization before attention if norm_first is True
+            s_norm, v_norm = self.norm[0]((s, v))
+        else:
+            s_norm, v_norm = s, v
+            
+        # Project to queries, keys, and values
+        q = self.q_proj(combined_features)  # [n_nodes, n_heads * head_dim]
+        k = self.k_proj(combined_features)  # [n_nodes, n_heads * head_dim]
+        v = self.v_proj(s_norm)  # [n_nodes, n_heads * head_dim]
+        
+        # Reshape to [n_heads, n_nodes, head_dim]
+        q = q.view(batch_size, self.n_heads, self.head_dim).transpose(0, 1)
+        k = k.view(batch_size, self.n_heads, self.head_dim).transpose(0, 1)
+        v = v.view(batch_size, self.n_heads, self.head_dim).transpose(0, 1)
+        
+        # Compute attention scores
+        attn_scores = torch.bmm(q, k.transpose(1, 2)) * self.scale  # [n_heads, n_nodes, n_nodes]
+        attn_probs = F.softmax(attn_scores, dim=-1)
+        attn_probs = self.attn_dropout(attn_probs)
+        
+        # Apply attention to values
+        attn_output = torch.bmm(attn_probs, v)  # [n_heads, n_nodes, head_dim]
+        
+        # Reshape back to [n_nodes, n_scalar]
+        attn_output = attn_output.transpose(0, 1).contiguous().view(batch_size, -1)
+        attn_output = self.o_proj(attn_output)  # [n_nodes, n_scalar]
+        
+        # Apply first dropout
+        attn_output = self.dropout[0](attn_output)
+        
+        # First residual connection
+        if self.residual:
+            s_out = tuple_sum((s, None), (attn_output, None))[0]
+        else:
+            s_out = attn_output
+        
+        # Apply normalization if not norm_first
+        if not self.norm_first:
+            s_out, _ = self.norm[1]((s_out, v))
+        
+        return (s_out, v)
+
+class MultiAttentiveGVPLayer(nn.Module):
+    '''
+    A hybrid layer that combines GVP-based message passing with self-attention
+    for processing multiple conformations. 
+    
+    For each conformation:
+    1. Uses MultiGVPConvLayer for geometric message passing
+    2. Uses GraphAttentionLayer for self-attention on node features
+    3. Fuses the outputs of both branches
+    
+    :param node_dims: node embedding dimensions (n_scalar, n_vector)
+    :param edge_dims: input edge embedding dimensions (n_scalar, n_vector)
+    :param n_message: number of GVPs in message function
+    :param n_feedforward: number of GVPs in feedforward function
+    :param n_heads: number of attention heads
+    :param drop_rate: dropout probability
+    :param activations: tuple of activation functions for GVPs
+    :param vector_gate: whether to use vector gating in GVPs
+    :param residual: whether to use residual connections
+    :param norm_first: whether to apply normalization before attention/convolution
+    :param fusion_weight: weight for combining GVP and attention outputs (0-1)
+    '''
+    def __init__(
+            self,
+            node_dims,
+            edge_dims,
+            n_message=3,
+            n_feedforward=2,
+            n_heads=4,
+            drop_rate=0.1,
+            activations=(F.silu, torch.sigmoid),
+            vector_gate=True,
+            residual=True,
+            norm_first=False,
+            fusion_weight=0.5,
+        ):
+        super(MultiAttentiveGVPLayer, self).__init__()
+        
+        # GVP message passing branch
+        self.gvp_branch = MultiGVPConvLayer(
+            node_dims=node_dims,
+            edge_dims=edge_dims,
+            n_message=n_message,
+            n_feedforward=n_feedforward,
+            drop_rate=drop_rate,
+            activations=activations,
+            vector_gate=vector_gate,
+            residual=residual,
+            norm_first=norm_first
+        )
+        
+        # Attention branch
+        self.attention_layer = GraphAttentionLayer(
+            node_dims=node_dims,
+            n_heads=n_heads,
+            drop_rate=drop_rate,
+            norm_first=norm_first,
+            residual=residual
+        )
+        
+        # Normalization and dropout for the combined output
+        self.norm = nn.ModuleList([LayerNorm(node_dims) for _ in range(2)])
+        self.dropout = nn.ModuleList([Dropout(drop_rate) for _ in range(2)])
+        
+        # Layer parameters
+        self.fusion_weight = fusion_weight
+        self.residual = residual
+        self.norm_first = norm_first
+        
+    def forward(self, x, edge_index, edge_attr):
+        '''
+        :param x: tuple (s, V) of `torch.Tensor`
+                s: [n_nodes, n_conf, d_scalar]
+                V: [n_nodes, n_conf, d_vector, 3]
+        :param edge_index: array of shape [2, n_edges]
+        :param edge_attr: tuple (s, V) of `torch.Tensor`
+        :return: tuple (s_updated, V_updated) with updated features
+        '''
+        # Apply first normalization if norm_first
+        if self.norm_first:
+            x_norm = self.norm[0](x)
+            # 1. Process with GVP message passing branch
+            gvp_s, gvp_v = self.gvp_branch(x_norm, edge_index, edge_attr)
+        else:
+            # 1. Process with GVP message passing branch
+            gvp_s, gvp_v = self.gvp_branch(x, edge_index, edge_attr)
+        
+        # 2. Process each conformation with attention branch
+        s, v = x if self.norm_first else x
+        n_nodes, n_conf, d_scalar = s.shape
+        _, _, d_vector, _ = v.shape
+        
+        attn_s = torch.zeros_like(s)
+        
+        for i in range(n_conf):
+            # Extract features for current conformation
+            s_i = s[:, i, :]  # [n_nodes, d_scalar]
+            v_i = v[:, i, :, :]  # [n_nodes, d_vector, 3]
+            
+            # Process with attention layer
+            s_i_updated, _ = self.attention_layer((s_i, v_i))
+            
+            # Store updated scalar features
+            attn_s[:, i, :] = s_i_updated
+        
+        # 3. Fuse outputs from both branches
+        combined_s = (1 - self.fusion_weight) * gvp_s + self.fusion_weight * attn_s
+        combined_v = gvp_v  # Keep vector features from GVP branch
+        
+        # Apply dropout to the combined outputs
+        combined_s = self.dropout[0](combined_s)
+        combined_v = self.dropout[0](combined_v)
+        
+        # Apply residual connection
+        if self.residual:
+            result = tuple_sum(x, (combined_s, combined_v))
+        else:
+            result = (combined_s, combined_v)
+        
+        # Apply second normalization if not norm_first
+        if not self.norm_first:
+            result = self.norm[1](result)
+        
+        return result
+    
+class GeometricMultiHeadAttention(nn.Module):
     """
     Graph Attention Layer for operating on both scalar and vector node features.
     
@@ -144,7 +376,7 @@ class GraphAttentionLayer(nn.Module):
         
         return (s_out, v)  # Return updated scalars and original vectors
 
-class MultiAttentiveGVPLayer(nn.Module):
+class MultiConformationEncoderLayer(nn.Module):
     """
     Hybrid layer that combines MultiGVPConv with graph attention.
     
@@ -188,7 +420,7 @@ class MultiAttentiveGVPLayer(nn.Module):
         
         # Attention layer for operating on nodes within each conformation
         # Now passing vector dimension to incorporate vector norms in attention
-        self.attention = GraphAttentionLayer(  # Updated class name
+        self.attention = GeometricMultiHeadAttention(  # Updated class name
             node_h_dim = node_dims[0],  # Scalar feature dimension
             vector_h_dim = node_dims[1],  # Vector feature dimension
             n_heads = n_heads,
@@ -268,7 +500,378 @@ class MultiAttentiveGVPLayer(nn.Module):
             out_s, out_v = self.norm((out_s, out_v))
         
         return (out_s, out_v)
+
+class GlobalAttention(nn.Module):
+    '''
+    Global attention module that performs full self-attention over all nodes.
     
+    This module applies standard transformer attention to all nodes, ignoring
+    any graph structure. It supports both self-attention and cross-attention modes.
+    
+    Args:
+        combined_dim (int): dimension of the node features
+        n_heads (int): number of attention heads
+        dropout (float): dropout rate for attention
+    '''
+    def __init__(self, combined_dim, n_heads=4, dropout=0.1):
+        super(GlobalAttention, self).__init__()
+        self.attention = nn.MultiheadAttention(
+            embed_dim=combined_dim,
+            num_heads=n_heads,
+            dropout=dropout,
+            batch_first=True
+        )
+        
+    def forward(self, query_features, key_value_features=None):
+        '''
+        Apply global attention between all nodes.
+        
+        Args:
+            query_features: tensor of shape [n_nodes, d]
+            key_value_features: tensor of shape [n_nodes, d] for cross-attention, None for self-attention
+            
+        Returns:
+            tensor of shape [n_nodes, d] with attention outputs
+        '''
+        # Default to self-attention if no separate key/value features provided
+        if key_value_features is None:
+            key_value_features = query_features
+        
+        # Perform standard attention over all nodes
+        attn_output, _ = self.attention(
+            query=query_features.unsqueeze(0),
+            key=key_value_features.unsqueeze(0),
+            value=key_value_features.unsqueeze(0),
+            need_weights=False
+        )
+        
+        return attn_output.squeeze(0)
+
+class GeometricAttentionDecoderLayer(nn.Module):
+    '''
+    Attention-based decoder layer that uses global attention for processing nodes.
+    This layer applies multi-head attention across all nodes while incorporating
+    geometric vector features through vector norms.
+    
+    Note: This layer ignores graph structure and applies attention globally to all nodes.
+    
+    Args:
+        node_dims (tuple): Node dimensions (scalar_dim, vector_dim)
+        edge_dims (tuple): Edge dimensions (scalar_dim, vector_dim) - kept for API compatibility
+        n_heads (int): Number of attention heads
+        dropout (float): Dropout rate
+        norm_first (bool): Whether to apply normalization before or after attention
+        autoregressive (bool): Whether to use cross-attention with encoder features
+        residual (bool): Whether to use residual connections
+    '''
+    def __init__(
+            self,
+            node_dims,
+            edge_dims,
+            n_heads=4,
+            dropout=0.1,
+            norm_first=True,
+            autoregressive=True,
+            activations=(F.silu, None),  # Kept for API compatibility
+            vector_gate=True,  # Kept for API compatibility
+            residual=True,
+            **kwargs  # To handle any extra args passed from original GVPConvLayer
+        ):
+        super(GeometricAttentionDecoderLayer, self).__init__()
+        
+        # Save dimensions and settings
+        self.scalar_dim, self.vector_dim = node_dims
+        self.combined_dim = self.scalar_dim + self.vector_dim
+        self.autoregressive = autoregressive
+        self.residual = residual
+        self.norm_first = norm_first
+        self.dropout_rate = dropout
+        
+        # Normalization layers for scalar and vector features
+        self.scalar_norm1 = nn.LayerNorm(self.scalar_dim)
+        self.scalar_norm2 = nn.LayerNorm(self.scalar_dim)
+        
+        # Attention module and projection
+        self.attention = GlobalAttention(self.combined_dim, n_heads, dropout)
+        self.output_projection = nn.Linear(self.combined_dim, self.scalar_dim)
+        self.dropout_attn = nn.Dropout(dropout)
+        
+        # Feed-forward networks
+        self.scalar_ff = nn.Sequential(
+            nn.Linear(self.scalar_dim, self.scalar_dim * 8),
+            nn.SiLU(),
+            nn.Dropout(dropout),
+            nn.Linear(self.scalar_dim * 8, self.scalar_dim)
+        )
+        
+        self.vector_ff = nn.Sequential(
+            nn.Linear(self.vector_dim, self.vector_dim * 4),
+            nn.SiLU(),
+            nn.Dropout(dropout),
+            nn.Linear(self.vector_dim * 4, self.vector_dim)
+        )
+        
+        self.dropout_ff_scalar = nn.Dropout(dropout)
+        self.dropout_ff_vector = nn.Dropout(dropout)
+    
+    def _apply_node_mask(self, features, node_mask):
+        '''
+        Apply node mask to features.
+        
+        Args:
+            features (tuple): (scalar_features, vector_features) tuple
+            node_mask (torch.Tensor): Boolean mask for nodes to update
+            
+        Returns:
+            tuple: Masked scalar and vector features
+        '''
+        if node_mask is None:
+            return features
+        
+        scalar, vector = features
+        return scalar[node_mask], vector[node_mask]
+    
+    def _apply_norm_to_vectors(self, vectors):
+        '''
+        Apply normalization to vector features.
+        
+        Args:
+            vectors (torch.Tensor): Vector features of shape [n_nodes, d_v, 3]
+            
+        Returns:
+            torch.Tensor: Normalized vector features
+        '''
+        # Compute vector norms (square and mean across vector dimension)
+        # Shape: [n_nodes, d_v, 3] -> [n_nodes, d_v] -> [n_nodes, 1, 1]
+        v_norm = torch.sqrt(
+            torch.mean(
+                torch.sum(vectors ** 2, dim=-1, keepdim=False), 
+                dim=-1, keepdim=True
+            ).unsqueeze(-1).clamp(min=1e-8)
+        )
+        
+        # Normalize vectors
+        # Shape: [n_nodes, d_v, 3]
+        return vectors / v_norm
+    
+    def _apply_norm_pair(self, features, norm_idx=0):
+        '''
+        Apply normalization to scalar and vector features.
+        
+        Args:
+            features (tuple): (scalar_features, vector_features) tuple
+            norm_idx (int): 0 for first norm layer, 1 for second
+            
+        Returns:
+            tuple: Normalized scalar and vector features
+        '''
+        scalar, vector = features
+        
+        # Apply normalization to scalar features
+        norm_layer = self.scalar_norm1 if norm_idx == 0 else self.scalar_norm2
+        scalar_norm = norm_layer(scalar)
+        
+        # Apply normalization to vector features if they exist
+        vector_norm = self._apply_norm_to_vectors(vector) if vector is not None else None
+        
+        return scalar_norm, vector_norm
+    
+    def _enhance_features(self, features):
+        '''
+        Create enhanced features by combining scalar features with vector norms.
+        
+        Args:
+            features (tuple): (scalar_features, vector_features) tuple where
+                             scalar_features: [n_nodes, d_s]
+                             vector_features: [n_nodes, d_v, 3]
+                             
+        Returns:
+            torch.Tensor: Enhanced features of shape [n_nodes, d_s + d_v]
+        '''
+        scalar, vector = features
+        
+        # Calculate vector norms
+        # Shape: [n_nodes, d_v, 3] -> [n_nodes, d_v]
+        vector_norms = torch.norm(vector, dim=-1)
+        
+        # Concatenate scalar features with vector norms
+        # Shape: [n_nodes, d_s + d_v]
+        return torch.cat([scalar, vector_norms], dim=-1)
+    
+    def _apply_attention(self, query_features, key_value_features=None):
+        '''
+        Apply attention and project the output.
+        
+        Args:
+            query_features (torch.Tensor): Query features of shape [n_nodes, d_s + d_v]
+            key_value_features (torch.Tensor, optional): Key/value features for cross-attention
+            
+        Returns:
+            torch.Tensor: Attention output of shape [n_nodes, d_s]
+        '''
+        # Apply attention
+        # Shape: [n_nodes, d_s + d_v] -> [n_nodes, d_s + d_v]
+        attn_output = self.attention(
+            query_features=query_features,
+            key_value_features=key_value_features
+        )
+        
+        # Project attention output to scalar dimension and apply dropout
+        # Shape: [n_nodes, d_s + d_v] -> [n_nodes, d_s]
+        return self.dropout_attn(self.output_projection(attn_output))
+    
+    def _apply_residual(self, input_features, update_features):
+        '''
+        Apply residual connection.
+        
+        Args:
+            input_features (tuple): Original (scalar, vector) tuple
+            update_features (tuple): Update (scalar, vector) tuple
+            
+        Returns:
+            tuple: Updated (scalar, vector) tuple after residual connection
+        '''
+        if not self.residual:
+            return update_features
+            
+        input_scalar, input_vector = input_features
+        update_scalar, update_vector = update_features
+        
+        # Apply residual connections
+        output_scalar = input_scalar + update_scalar
+        output_vector = input_vector + update_vector if update_vector is not None else input_vector
+        
+        return output_scalar, output_vector
+    
+    def _apply_feed_forward(self, features):
+        '''
+        Apply feed-forward networks to scalar and vector features.
+        
+        Args:
+            features (tuple): (scalar_features, vector_features) tuple
+            
+        Returns:
+            tuple: Updated scalar and vector features after feed-forward
+        '''
+        scalar, vector = features
+        
+        # Apply feed-forward to scalar features and dropout
+        # Shape: [n_nodes, d_s] -> [n_nodes, d_s]
+        scalar_ff = self.dropout_ff_scalar(self.scalar_ff(scalar))
+        
+        # Apply feed-forward to vector features and dropout
+        if vector is not None:
+            # Shape: [n_nodes, d_v, 3] -> [n_nodes * d_v, 3] -> [n_nodes, d_v, 3]
+            vector_shape = vector.shape
+            vector_flat = vector.reshape(-1, self.vector_dim)
+            vector_ff = self.vector_ff(vector_flat).reshape(vector_shape)
+            vector_ff = self.dropout_ff_vector(vector_ff)
+        else:
+            vector_ff = None
+            
+        return scalar_ff, vector_ff
+    
+    def _restore_node_mask(self, original_features, updated_features, node_mask):
+        '''
+        Restore original features for nodes that were not in the mask.
+        
+        Args:
+            original_features (tuple): Original (scalar, vector) tuple for all nodes
+            updated_features (tuple): Updated (scalar, vector) tuple for masked nodes
+            node_mask (torch.Tensor): Boolean mask indicating which nodes were updated
+            
+        Returns:
+            tuple: Complete (scalar, vector) tuple with updates applied only to masked nodes
+        '''
+        if node_mask is None:
+            return updated_features
+            
+        orig_scalar, orig_vector = original_features
+        updated_scalar, updated_vector = updated_features
+        
+        # Clone original features
+        result_scalar = orig_scalar.clone()
+        result_vector = orig_vector.clone()
+        
+        # Update only the masked nodes
+        result_scalar[node_mask] = updated_scalar
+        result_vector[node_mask] = updated_vector
+        
+        return result_scalar, result_vector
+
+    def forward(self, x, edge_index, edge_attr=None, autoregressive_x=None, node_mask=None):
+        '''
+        Forward pass of the GeometricAttentionDecoderLayer.
+        
+        Args:
+            x (tuple): Node features (scalar_features, vector_features) where
+                     scalar_features: [n_nodes, d_s]
+                     vector_features: [n_nodes, d_v, 3]
+            edge_index (torch.Tensor): Edge indices of shape [2, n_edges] (unused)
+            edge_attr (tuple, optional): Edge features (unused)
+            autoregressive_x (tuple, optional): Encoder features for cross-attention
+            node_mask (torch.Tensor, optional): Boolean mask for nodes to update
+            
+        Returns:
+            tuple: Updated node features (scalar_features, vector_features)
+        '''
+        # Save original features for node masking
+        original_features = x
+        
+        # Step 1: Apply node mask if provided
+        scalar, vector = self._apply_node_mask(x, node_mask)
+        
+        # Step 2: Process encoder features if in autoregressive mode
+        encoder_features = None
+        if autoregressive_x is not None:
+            encoder_features = self._apply_node_mask(autoregressive_x, node_mask)
+        
+        # Step 3: Apply first normalization if norm_first is True
+        if self.norm_first:
+            norm_features = self._apply_norm_pair((scalar, vector), norm_idx=0)
+        else:
+            norm_features = (scalar, vector)
+        
+        # Step 4: Prepare features for attention
+        # Create enhanced features by combining scalar and vector norms
+        enhanced_scalar = self._enhance_features(norm_features)
+        
+        # Create enhanced encoder features if in autoregressive mode
+        enhanced_encoder = None
+        if encoder_features is not None:
+            enhanced_encoder = self._enhance_features(encoder_features)
+        
+        # Step 5: Apply attention and projection
+        attn_scalar = self._apply_attention(
+            query_features=enhanced_scalar,
+            key_value_features=enhanced_encoder
+        )
+        
+        # Step 6: First residual connection (only for scalar features)
+        scalar_after_attn = scalar + attn_scalar if self.residual else attn_scalar
+        features_after_attn = (scalar_after_attn, vector)
+        
+        # Step 7: Apply normalization before or after the first residual connection
+        if self.norm_first:
+            ff_input_features = self._apply_norm_pair(features_after_attn, norm_idx=1)
+        else:
+            ff_input_features = self._apply_norm_pair(features_after_attn, norm_idx=0) if self.residual else features_after_attn
+        
+        # Step 8: Apply feed-forward networks
+        ff_output_features = self._apply_feed_forward(ff_input_features)
+        
+        # Step 9: Second residual connection
+        updated_features = self._apply_residual(features_after_attn, ff_output_features)
+        
+        # Step 10: Apply final normalization if not norm_first
+        if not self.norm_first and self.residual:
+            updated_features = self._apply_norm_pair(updated_features, norm_idx=1)
+        
+        # Step 11: Restore original features for nodes that were not in the mask
+        result_features = self._restore_node_mask(original_features, updated_features, node_mask)
+        
+        return result_features
+
 #########################################################################
 
 class GVPConvLayer(nn.Module):
@@ -451,8 +1054,7 @@ class GVPConv(MessagePassing):
         message = tuple_cat((s_j, v_j), edge_attr, (s_i, v_i))
         message = self.message_func(message)
         return _merge(*message)
-    
-#########################################################################
+  
 
 class MultiGVPConvLayer(nn.Module):
     '''
@@ -658,9 +1260,8 @@ class _VDropout(nn.Module):
         if not self.training:
             return x
         mask = torch.bernoulli(
-            (1 - self.drop_rate) * torch.ones(x.shape[:-1], device=device)
-        ).unsqueeze(-1)
-        x = mask * x / (1 - self.drop_rate)
+            (1 - self.drop_rate) * torch.ones(x.shape[:-1], device=device))
+        x = mask.unsqueeze(-1) * x / (1 - self.drop_rate)
         return x
 
 class Dropout(nn.Module):

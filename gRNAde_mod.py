@@ -611,4 +611,3 @@ if __name__ == "__main__":
 
     for seq in sequences:
         print(seq.format("fasta"))
-    

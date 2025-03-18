@@ -30,7 +30,13 @@ from src.constants import (
     PROJECT_PATH,
     RMSD_THRESHOLD,
     TM_THRESHOLD,
-    GDT_THRESHOLD
+    GDT_THRESHOLD,
+    BEAM_WIDTH,
+    BEAM_BRANCH,
+    SAMPLING_STRATEGY,
+    TOP_K,
+    TOP_P,
+    MIN_P
 )
 
 
@@ -161,7 +167,9 @@ def evaluate(
             data = dataset.featurizer(raw_data).to(device)
 
             # sample n_samples from model for single data point: n_samples x seq_len
-            samples, logits = model.sample(data, n_samples, temperature, return_logits=True)
+            samples, logits = model.sample(data, n_samples, temperature, return_logits=True,
+                beam_width=BEAM_WIDTH, beam_branch=BEAM_BRANCH, sampling_strategy=SAMPLING_STRATEGY,
+                top_k=TOP_K, top_p=TOP_P, min_p=MIN_P)
             samples_list.append(samples.cpu().numpy())
             
             # perplexity per sample: n_samples x 1

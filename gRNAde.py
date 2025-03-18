@@ -23,8 +23,15 @@ from src.constants import (
     NUM_TO_LETTER, 
     RNA_ATOMS, 
     FILL_VALUE,
-    PROJECT_PATH
+    PROJECT_PATH,
+    BEAM_WIDTH,
+    BEAM_BRANCH,
+    SAMPLING_STRATEGY,
+    TOP_K,
+    TOP_P,
+    MIN_P
 )
+
 
 
 # Model checkpoint paths corresponding to data split and maximum no. of conformers
@@ -298,7 +305,9 @@ class gRNAde(object):
         
         # sample n_samples from model for single data point: n_samples x seq_len
         samples, logits = self.model.sample(
-            featurized_data, n_samples, temperature, logit_bias, return_logits=True)
+            featurized_data, n_samples, temperature, logit_bias, return_logits=True,
+            beam_width=BEAM_WIDTH, beam_branch=BEAM_BRANCH, sampling_strategy=SAMPLING_STRATEGY,
+            top_k=TOP_K, top_p=TOP_P, min_p=MIN_P)
 
         # perplexity per sample: n_samples x 1
         n_nodes = logits.shape[1]

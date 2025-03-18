@@ -10,8 +10,8 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import transformers
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-from src.evaluator_mod import evaluate
-from src.constants_mod import NUM_TO_LETTER
+from src.evaluator import evaluate
+from src.constants import NUM_TO_LETTER
 
 
 # TODO: change this later !

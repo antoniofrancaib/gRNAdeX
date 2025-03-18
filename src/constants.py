@@ -77,3 +77,13 @@ DOTBRACKET_TO_NUM = {
 RMSD_THRESHOLD = 2.0
 TM_THRESHOLD = 0.45
 GDT_THRESHOLD = 0.50
+
+# Sampling strategies for decoding
+SAMPLING_STRATEGY = "min_p"
+TOP_K = 2
+TOP_P = 0.9
+MIN_P = 0.05
+
+# Define beam width and beam branch
+BEAM_WIDTH = 2
+BEAM_BRANCH = 4

@@ -67,7 +67,7 @@ class GraphAttentionLayer(nn.Module):
         # Scale factor for dot product attention
         self.scale = self.head_dim ** -0.5
         
-    def forward(self, x):
+    def forward(self, x, mask=None):
         """
         Forward pass of the attention layer with vector norm incorporation.
         
@@ -75,6 +75,8 @@ class GraphAttentionLayer(nn.Module):
             x (tuple): (node_s, node_v) tuple of node features
                         node_s has shape [n_nodes, d_s]
                         node_v has shape [n_nodes, d_v, 3] or None
+            mask (torch.Tensor, optional): Attention mask of shape [n_nodes, n_nodes] or [n_heads, n_nodes, n_nodes].
+                                         Values to mask should be set to a large negative number (e.g., -1e9).
         
         Returns:
             tuple: Updated (node_s, node_v) tuple after attention
@@ -119,6 +121,13 @@ class GraphAttentionLayer(nn.Module):
         # Scaled dot-product attention
         # [n_heads, n_nodes, head_dim] @ [n_heads, head_dim, n_nodes] -> [n_heads, n_nodes, n_nodes]
         scores = torch.bmm(Q, K.transpose(-2, -1)) * self.scale
+        
+        # Apply attention mask if provided
+        if mask is not None:
+            # If mask is 2D, expand to 3D for all heads
+            if mask.dim() == 2:
+                mask = mask.unsqueeze(0).expand(self.n_heads, -1, -1)
+            scores = scores + mask
         
         # Softmax to get attention weights
         attn_weights = F.softmax(scores, dim=-1)
@@ -269,6 +278,167 @@ class MultiAttentiveGVPLayer(nn.Module):
         
         return (out_s, out_v)
     
+class AttentiveGVPLayer(nn.Module):
+    """
+    Hybrid layer that combines GVP-based message passing with self-attention.
+    
+    This layer implements a parallel architecture with two branches:
+    1. GVP-based message passing (autoregressive)
+    2. Self-attention with causal masking
+    
+    The outputs from both branches are combined with equal weights.
+    
+    Args:
+        node_dims (tuple): (scalar_dim, vector_dim) for node features
+        edge_dims (tuple): (scalar_dim, vector_dim) for edge features
+        n_message (int): number of GVPs to use in message function
+        n_feedforward (int): number of GVPs to use in feedforward function
+        drop_rate (float): drop probability in all dropout layers
+        activations (tuple): activation functions for scalar and vector features
+        vector_gate (bool): whether to use vector gating
+        residual (bool): whether to use residual connections
+        norm_first (bool): whether to apply normalization before or after operations
+        n_heads (int): number of attention heads
+        attention_dropout (float): dropout rate for attention weights
+    """
+    def __init__(
+        self,
+        node_dims,
+        edge_dims,
+        n_message=3,
+        n_feedforward=2,
+        drop_rate=0.1,
+        activations=(F.silu, torch.sigmoid),
+        vector_gate=True,
+        residual=True,
+        norm_first=False,
+        n_heads=4,
+        attention_dropout=0.1
+    ):
+        super().__init__()
+        
+        # Branch A: GVP-based message passing
+        self.gvp_branch = GVPConvLayer(
+            node_dims=node_dims,
+            edge_dims=edge_dims,
+            n_message=n_message,
+            n_feedforward=n_feedforward,
+            drop_rate=drop_rate,
+            activations=activations,
+            vector_gate=vector_gate,
+            residual=residual,
+            norm_first=norm_first,
+            autoregressive=True  # Always use autoregressive mode
+        )
+        
+        # Branch B: Self-attention
+        self.attention_branch = GraphAttentionLayer(
+            node_h_dim=node_dims[0],  # Scalar feature dimension
+            vector_h_dim=node_dims[1],  # Vector feature dimension
+            n_heads=n_heads,
+            dropout=attention_dropout,
+            concat=False  # Use averaging instead of concatenation
+        )
+        
+        # Normalization layers
+        self.norm_first = norm_first
+        self.norm = LayerNorm(node_dims)
+        
+        # Dropout for regularization
+        self.dropout = Dropout(drop_rate)
+        
+        # Optional feedforward network
+        GVP_ = functools.partial(GVP, activations=activations, vector_gate=vector_gate)
+        ff_func = []
+        if n_feedforward == 1:
+            ff_func.append(GVP_(node_dims, node_dims))
+        else:
+            hid_dims = 4*node_dims[0], 2*node_dims[1]
+            ff_func.append(GVP_(node_dims, hid_dims))
+            for i in range(n_feedforward-2):
+                ff_func.append(GVP_(hid_dims, hid_dims))
+            ff_func.append(GVP_(hid_dims, node_dims, activations=(None, None)))
+        self.ff_func = nn.Sequential(*ff_func)
+        
+        # Final normalization
+        self.final_norm = LayerNorm(node_dims)
+        
+    def create_causal_mask(self, n_nodes, device):
+        """
+        Create a causal mask for autoregressive attention.
+        
+        Args:
+            n_nodes (int): number of nodes
+            device (torch.device): device to create mask on
+            
+        Returns:
+            torch.Tensor: causal mask of shape [n_nodes, n_nodes]
+        """
+        # Create lower triangular mask (including diagonal)
+        mask = torch.triu(torch.ones(n_nodes, n_nodes, device=device), diagonal=1)
+        # Convert to additive mask (1 -> -inf, 0 -> 0)
+        mask = mask * -1e9
+        return mask
+        
+    def forward(self, x, edge_index, edge_attr, autoregressive_x=None, node_mask=None):
+        """
+        Forward pass of the hybrid layer.
+        
+        Args:
+            x (tuple): (node_s, node_v) tuple of node features
+            edge_index (torch.Tensor): edge indices [2, n_edges]
+            edge_attr (tuple): (edge_s, edge_v) tuple of edge features
+            autoregressive_x (tuple, optional): node features for autoregressive message passing
+            node_mask (torch.Tensor, optional): boolean mask for nodes to update
+            
+        Returns:
+            tuple: Updated (node_s, node_v) tuple after both branches
+        """
+        s, v = x
+        n_nodes = s.shape[0]
+        device = s.device
+        
+        # Initialize outputs to be the same as inputs (for residual connection)
+        out_s, out_v = s, v
+        
+        # Apply layer normalization before operations if norm_first is True
+        if self.norm_first:
+            s, v = self.norm((s, v))
+        
+        # Branch A: GVP-based message passing
+        gvp_s, gvp_v = self.gvp_branch(
+            (s, v), edge_index, edge_attr,
+            autoregressive_x=autoregressive_x,
+            node_mask=node_mask
+        )
+        
+        # Branch B: Self-attention with causal masking
+        # Create causal mask for autoregressive attention
+        causal_mask = self.create_causal_mask(n_nodes, device)
+        attn_s, attn_v = self.attention_branch((s, v), mask=causal_mask)
+        
+        # Combine outputs from both branches with equal weights
+        combined_s = 0.5 * gvp_s + 0.5 * attn_s
+        combined_v = gvp_v  # Use GVP branch's vector features
+        
+        # Apply dropout
+        combined_s, combined_v = self.dropout((combined_s, combined_v))
+        
+        # Residual connection
+        out_s = out_s + combined_s
+        if out_v is not None and combined_v is not None:
+            out_v = out_v + combined_v
+        
+        # Apply layer normalization after operations if norm_first is False
+        if not self.norm_first:
+            out_s, out_v = self.norm((out_s, out_v))
+        
+        # Optional feedforward network
+        ff_s, ff_v = self.ff_func((out_s, out_v))
+        out_s, out_v = self.final_norm((out_s + ff_s, out_v + ff_v))
+        
+        return (out_s, out_v)
+
 #########################################################################
 
 class GVPConvLayer(nn.Module):

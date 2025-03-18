@@ -8,7 +8,6 @@ import torch
 import numpy as np
 from torch_geometric.loader import DataLoader
 
-from src.data.dataset import RNADesignDataset
 from src.models import AutoregressiveMultiGNNv1
 from src.constants import DATA_PATH
 from src.layers_mod import (
@@ -35,30 +34,50 @@ def test_forward_pass():
         torch.cuda.manual_seed(42)
     
     try:
-        # Load a single datapoint from the dataset
-        print("Loading data...")
-        data_list = list(torch.load(os.path.join(DATA_PATH, "processed.pt")).values())
+        # Create a simple test data structure
+        print("Creating test data...")
         
-        # Take just the first datapoint
-        single_data = data_list[0]
+        # Create a small RNA sequence (10 nucleotides)
+        seq = torch.tensor([0, 1, 2, 3, 0, 1, 2, 3, 0, 1], device=device, dtype=torch.long)  # A,G,C,U,A,G,C,U,A,G
         
-        # Create dataset with a single sample
-        dataset = RNADesignDataset(
-            data_list=[single_data],
-            split="test",
-            radius=0.0,
-            top_k=32,
-            num_rbf=32,
-            num_posenc=32,
-            max_num_conformers=1,
-            noise_scale=0.1
+        # Create random coordinates for 3 backbone atoms (P, C4', N1/N9) for each nucleotide
+        num_nodes = len(seq)
+        num_conf = 1
+        num_bb_atoms = 3
+        coords = torch.randn(num_conf, num_nodes, num_bb_atoms, 3, device=device)
+        
+        # Create edge indices (fully connected graph)
+        edge_index = []
+        for i in range(num_nodes):
+            for j in range(i+1, num_nodes):
+                edge_index.extend([[i,j], [j,i]])
+        edge_index = torch.tensor(edge_index, device=device).t()
+        
+        # Create masks
+        mask_coords = torch.ones(num_nodes, dtype=torch.bool, device=device)
+        mask_confs = torch.ones(num_nodes, num_conf, dtype=torch.bool, device=device)
+        
+        # Create node features
+        node_s = torch.randn(num_nodes, num_conf, num_bb_atoms * 5, device=device)  # 5 features per atom
+        node_v = torch.randn(num_nodes, num_conf, 4, 3, device=device)  # 4 vectors per node
+        
+        # Create edge features
+        num_edges = edge_index.shape[1]
+        edge_s = torch.randn(num_edges, num_conf, 32 + 32 + num_bb_atoms, device=device)  # RBF + posenc + log(lengths)
+        edge_v = torch.randn(num_edges, num_conf, num_bb_atoms, 3, device=device)
+        
+        # Create a Data object
+        from torch_geometric.data import Data
+        data = Data(
+            seq=seq,
+            node_s=node_s,
+            node_v=node_v,
+            edge_s=edge_s,
+            edge_v=edge_v,
+            edge_index=edge_index,
+            mask_confs=mask_confs,
+            mask_coords=mask_coords
         )
-        
-        # Get the single datapoint
-        data = dataset[0]
-        
-        # Move data to device
-        data = data.to(device)
         
         # Print data information
         print("\n==== INPUT DATA DIMENSIONS ====")
@@ -301,5 +320,6 @@ def test_forward_pass():
         return False
 
 
+    
 if __name__ == "__main__":
     test_forward_pass() 

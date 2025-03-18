@@ -1,12 +1,13 @@
 import os
 import wandb
 
+PROJECT_PATH = os.environ.get("PROJECT_PATH")
 
-# HPC-optimized with fallbacks; prev: same without ABSOLUTE PATHS
-PROJECT_PATH = os.environ.get("PROJECT_PATH", "/rds/user/jaf98/hpc-work/geometric-rna-design/")
-DATA_PATH = os.environ.get("DATA_PATH", "/rds/user/jaf98/hpc-work/geometric-rna-design/data/")
-X3DNA_PATH = os.environ.get("X3DNA", "/rds/user/jaf98/hpc-work/geometric-rna-design/tools/x3dna-v2.4")
-ETERNAFOLD_PATH = os.environ.get("ETERNAFOLD", "/rds/user/jaf98/hpc-work/geometric-rna-design/tools/EternaFold")
+DATA_PATH = os.environ.get("DATA_PATH")
+
+X3DNA_PATH = os.environ.get("X3DNA")
+
+ETERNAFOLD_PATH = os.environ.get("ETERNAFOLD")
 
 
 # Value to fill missing coordinate entries when reading PDB files
@@ -76,3 +77,14 @@ DOTBRACKET_TO_NUM = {
 RMSD_THRESHOLD = 2.0
 TM_THRESHOLD = 0.45
 GDT_THRESHOLD = 0.50
+
+
+# Sampling strategies for decoding
+SAMPLING_STRATEGY = "categorical"
+TOP_K = 2
+TOP_P = 0.9
+MIN_P = 0.05
+
+# Define beam width and beam branch
+BEAM_WIDTH = 1
+BEAM_BRANCH = 1

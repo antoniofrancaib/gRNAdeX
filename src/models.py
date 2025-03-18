@@ -148,7 +148,13 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             n_samples, 
             temperature: Optional[float] = 0.1, 
             logit_bias: Optional[torch.Tensor] = None,
-            return_logits: Optional[bool] = False
+            return_logits: Optional[bool] = False,
+            beam_width: Optional[int] = 2,
+            beam_branch: Optional[int] = 2,
+            sampling_strategy: Optional[str] = "categorical",
+            top_k: Optional[int] = 0,
+            top_p: Optional[float] = 0.0,
+            min_p: Optional[float] = 0.0,
         ):
         '''
         Samples sequences autoregressively from the distribution
@@ -163,8 +169,13 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             logit_bias (torch.Tensor): bias to add to logits during sampling
                 to manually fix or control nucleotides in designed sequences,
                 of shape [n_nodes, 4]
-            return_logits (bool): whether to return logits or not
-        
+            return_logits (bool): whether to return logits or 
+            sampling_strategy (str): one of "categorical", "greedy", "top_k", "top_p", "min_p", etc.
+            top_k (int): if using top-k sampling, how many tokens to keep
+            top_p (float): if using nucleus (top-p) sampling, what cumulative probability threshold
+            min_p (float): if using min-p sampling, probability threshold w.r.t max prob
+            beam_width (int): number of beams to maintain during search
+            beam_branch (int): number of samples to get from sampling strategy
         Returns:
             seq (torch.Tensor): int tensor of shape [n_samples, n_nodes]
                                 based on the residue-to-int mapping of
@@ -191,59 +202,138 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         h_V, h_E = self.pool_multi_conf(h_V, h_E, batch.mask_confs, edge_index)
         
         # Repeat features for sampling n_samples times
-        h_V = (h_V[0].repeat(n_samples, 1),
-            h_V[1].repeat(n_samples, 1, 1))
-        h_E = (h_E[0].repeat(n_samples, 1),
-            h_E[1].repeat(n_samples, 1, 1))
-        
+        # might have to change this
+        h_V = (h_V[0].repeat(beam_width*n_samples, 1),
+            h_V[1].repeat(beam_width*n_samples, 1, 1))
+        h_E = (h_E[0].repeat(beam_width*n_samples, 1),
+            h_E[1].repeat(beam_width*n_samples, 1, 1))
+
         # Expand edge index for autoregressive decoding
-        edge_index = edge_index.expand(n_samples, -1, -1)
-        offset = num_nodes * torch.arange(n_samples, device=device).view(-1, 1, 1)
+        edge_index = edge_index.expand(beam_width*n_samples, -1, -1)
+        offset = num_nodes * torch.arange(beam_width*n_samples, device=device).view(beam_width*n_samples, 1, 1)
+
         edge_index = torch.cat(tuple(edge_index + offset), dim=-1)
         # This is akin to 'batching' (in PyG style) n_samples copies of the graph
         
-        seq = torch.zeros(n_samples * num_nodes, device=device, dtype=torch.int)
-        h_S = torch.zeros(n_samples * num_nodes, self.out_dim, device=device)
-        logits = torch.zeros(n_samples * num_nodes, self.out_dim, device=device)
-
+        scores = torch.zeros(beam_width*n_samples, dtype=torch.float, device=device)  # cumulative log-probability
+        seq = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)  # decoded tokens (to be filled)
+        h_S = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
+        # Each decoder layer keeps its own cache (here cloned from the pooled encoder features)
         h_V_cache = [(h_V[0].clone(), h_V[1].clone()) for _ in self.decoder_layers]
+        # Optionally, you can store logits for later inspection
+        logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
 
         # Decode one token at a time
         for i in range(num_nodes):
-            
+
+            # --- Prepare messages for decoding token at position i ---
+            # In the original sample(), h_S is used via indexing with edge_index.
+            # Here we prepare the subset h_S_ corresponding to incoming edges for node i.
             h_S_ = h_S[edge_index[0]]
+            # Zero out contributions from nodes not yet decoded:
             h_S_[edge_index[0] >= edge_index[1]] = 0
+
+            # Concatenate h_S_ with edge features
             h_E_ = (torch.cat([h_E[0], h_S_], dim=-1), h_E[1])
-                    
+            # Select only the incoming edges for node i:
             edge_mask = edge_index[1] % num_nodes == i  # True for all edges where dst is node i
             edge_index_ = edge_index[:, edge_mask]  # subset all incoming edges to node i
             h_E_ = tuple_index(h_E_, edge_mask)
-            node_mask = torch.zeros(n_samples * num_nodes, device=device, dtype=torch.bool)
+
+            # Create a mask that is True only for the current node i (across all copies in the beam)
+            node_mask = torch.zeros(beam_width*n_samples*num_nodes, device=device, dtype=torch.bool)
             node_mask[i::num_nodes] = True  # True for all nodes i and its repeats
-            
+            # not entirely sure if the thing above is correct
+
+            # --- Pass through decoder layers ---
+            # We simulate the same decoder forward pass as in sample(), updating the cache.
             for j, layer in enumerate(self.decoder_layers):
                 out = layer(h_V_cache[j], edge_index_, h_E_,
                         autoregressive_x=h_V_cache[0], node_mask=node_mask)
-                
                 out = tuple_index(out, node_mask)  # subset out to only node i and its repeats
-                
+                # Update the cache for the next layer if needed
                 if j < len(self.decoder_layers)-1:
                     h_V_cache[j+1][0][i::num_nodes] = out[0]
                     h_V_cache[j+1][1][i::num_nodes] = out[1]
-                
+            # Final logits for node i:
             lgts = self.W_out(out)
+
             # Add logit bias if provided to fix or bias positions
             if logit_bias is not None:
                 lgts += logit_bias[i]
             # Sample from logits
-            seq[i::num_nodes] = Categorical(logits=lgts / temperature).sample()
-            h_S[i::num_nodes] = self.W_s(seq[i::num_nodes])
-            logits[i::num_nodes] = lgts
+            # ADD HERE THE BRANCHING FACTOR !!
+            top_tokens, log_probs = choose_nts(lgts, strategy=sampling_strategy, beam_branch=beam_branch,
+                                    temperature=temperature, top_k=top_k, top_p=top_p, min_p=min_p)
+            # log probs will return probabilities for each nucleotide type
+            # top tokens will return beam_branch samples of tokens for each of the sequences in n_samples
+            # For each candidate token, create a new beam candidate.
+            #new_beam_scores = torch.zeros(beam_branch, beam_width*n_samples, dtype=torch.float, device=device)
+            #new_beam_seq = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)
+            #new_beam_h_S = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)
+            new_beam_seq = seq.clone().repeat(beam_branch, 1)
+            new_beam_h_S = h_S.clone().repeat(beam_branch, 1, 1) ## ADD STH HERE !!!!!
+            #new_beam_h_V_cache = [(h_V[0].clone().repeat(beam_branch, 1, 1), h_V[1].clone().repeat(beam_branch, 1, 1)) for _ in self.decoder_layers]
+            #new_beam_logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
+            new_beam_logits = logits.clone().repeat(beam_branch, 1, 1)
+
+            top_log_probs_beam = log_probs.gather(dim=1, index=top_tokens)
+            top_log_probs_beam = top_log_probs_beam.transpose(0, 1)
+            
+
+            #print('new_beam_scores size:', new_beam_scores.size())
+            
+            #print('new_beam_scores[:, i::num_nodes]', new_beam_scores[:, i::num_nodes])
+            new_beam_scores = scores.repeat(beam_branch, 1) + top_log_probs_beam
+            #new_beam_scores[:,i::num_nodes] = scores.repeat(beam_branch, 1)[:,i::num_nodes] + top_log_probs_beam
+
+            #print(new_beam_scores.size())
+
+            new_beam_seq[:,i::num_nodes] = top_tokens.transpose(0,1)
+            #print('new_beam score:', new_beam_scores[:,i::num_nodes])
+            new_beam_logits[:,i::num_nodes] = lgts  # store the logits for analysis
+            new_beam_h_S[:,i::num_nodes] = self.W_s(new_beam_seq[:,i::num_nodes]) # weird [0] indexing
+            
+            sorted_scores, sorted_indices = torch.sort(new_beam_scores, dim=0, descending=True)
+
+            new_beam_seq[:,i::num_nodes] = torch.gather(new_beam_seq[:,i::num_nodes], dim=0, index=sorted_indices)
+
+            # reorganize h_S and logits
+            expanded_indices = sorted_indices.unsqueeze(-1).expand(-1, -1, new_beam_h_S[:, i::num_nodes].size(-1))
+            new_beam_h_S[:,i::num_nodes] =  torch.gather(new_beam_h_S[:,i::num_nodes], dim=0, index=expanded_indices)
+            new_beam_logits[:,i::num_nodes] =  torch.gather(new_beam_logits[:,i::num_nodes], dim=0, index=expanded_indices)
+
+            # update metrics for both beams
+            seq[i::num_nodes] = new_beam_seq[0,i::num_nodes]
+            logits[i::num_nodes] = new_beam_logits[0,i::num_nodes]
+            h_S[i::num_nodes] = new_beam_h_S[0,i::num_nodes]
+
+            scores = sorted_scores[0]            
+        
+        # get ordered scores
+        beamw_scores = scores.view(beam_width, -1)
+        beamw_sorted_scores, beamw_sorted_indices = torch.sort(beamw_scores, dim=0, descending=True)
+
+        # reshape tensors
+        final_seq = seq.view(beam_width, n_samples, num_nodes)
+        final_logits = logits.view(beam_width, n_samples, num_nodes, self.out_dim)
+
+        # reorganize according to indices
+        expanded_indices = beamw_sorted_indices.unsqueeze(-1).expand(-1, n_samples, num_nodes)
+        final_seq = torch.gather(final_seq, dim=0, index=expanded_indices)
+        expanded_indices = beamw_sorted_indices.unsqueeze(-1).unsqueeze(-1).expand(-1, n_samples, num_nodes, self.out_dim)
+        final_logits = torch.gather(final_logits, dim=0, index=expanded_indices)
+
+        # use sorted indices to get final tensors
+        final_scores = beamw_sorted_scores[0]
+        final_seq = final_seq[0]
+        final_logits = final_logits[0]
 
         if return_logits:
-            return seq.view(n_samples, num_nodes), logits.view(n_samples, num_nodes, self.out_dim)
+            return final_seq.view(n_samples, num_nodes), final_logits.view(n_samples, num_nodes, self.out_dim)
         else:    
-            return seq.view(n_samples, num_nodes)
+            return final_seq.view(n_samples, num_nodes)
+        
         
     def pool_multi_conf(self, h_V, h_E, mask_confs, edge_index):
         """

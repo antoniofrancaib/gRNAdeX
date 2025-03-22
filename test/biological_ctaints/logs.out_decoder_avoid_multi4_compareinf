@@ -1,0 +1,3622 @@
+/home/ml2169/miniforge3/envs/rna/lib/python3.10/site-packages/Bio/Application/__init__.py:39: BiopythonDeprecationWarning: The Bio.Application modules and modules relying on it have been deprecated.
+
+Due to the on going maintenance burden of keeping command line application
+wrappers up to date, we have decided to deprecate and eventually remove these
+modules.
+
+We instead now recommend building your command line and invoking it directly
+with the subprocess module.
+  warnings.warn(
+/rds/user/ml2169/hpc-work/geometric-rna-design/test/../gRNAde.py:141: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  self.model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
+Arguments:
+  run_type: multi
+  avoid_sequences: ['AGC']
+Avoiding sequences: ['AGC']
+Instantiating gRNAde v0.3
+    Using device: cuda:0
+    Creating RNA graph featurizer for max_num_conformers=3
+    Initialising GNN encoder-decoder model
+    Loading model checkpoint: /rds/user/ml2169/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_3state_das.h5
+Finished initialising gRNAde v0.3
+
+Coords: 68
+Sequence: GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUGAUUAUCUU
+Len sequence: 68
+Detected base pairs: [[  70 1423]
+ [  92 1403]
+ [ 114 1383]
+ [ 137 1363]
+ [ 159 1341]
+ [ 179 1321]
+ [ 221 1301]
+ [ 265  691]
+ [ 285  668]
+ [ 305  645]
+ [ 325  622]
+ [ 345  602]
+ [ 367  582]
+ [ 389  562]
+ [ 454 1112]
+ [ 474 1090]
+ [ 516 1030]
+ [ 539 1010]
+ [ 713  858]
+ [ 736  836]
+ [ 776 1279]
+ [ 878 1256]
+ [ 898 1236]
+ [ 920 1216]
+ [ 942 1196]
+ [ 965 1176]
+ [ 987 1156]]
+Secondary structure: '...((((((.(.(((((((..[[.[[)))))))((.{..))((((((]]..]].))))))})))))))'
+Sequence length: 68
+Number of residues: 68
+Chain IDs: ['B']
+Base atoms present: ["C1'" 'C2' "C2'" "C3'" 'C4' "C4'" 'C5' "C5'" 'C6' 'C8' 'N1' 'N2' 'N3'
+ 'N4' 'N6' 'N7' 'N9' 'O2' "O2'" "O3'" 'O4' "O4'" "O5'" 'O6' 'OP1' 'OP2'
+ 'OP3' 'P']
+...((((((.(.(((((((.......)))))))((....))((((((.......)))))).)))))))
+Coords: 68
+Sequence: GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUGAUUAUCUU
+Len sequence: 68
+Detected base pairs: [[  70 1423]
+ [  92 1403]
+ [ 114 1383]
+ [ 137 1363]
+ [ 159 1341]
+ [ 179 1321]
+ [ 221 1301]
+ [ 265  691]
+ [ 285  668]
+ [ 305  645]
+ [ 325  622]
+ [ 345  602]
+ [ 367  582]
+ [ 389  562]
+ [ 454 1112]
+ [ 474 1090]
+ [ 516 1030]
+ [ 539 1010]
+ [ 713  858]
+ [ 736  836]
+ [ 776 1279]
+ [ 878 1256]
+ [ 898 1236]
+ [ 920 1216]
+ [ 942 1196]
+ [ 965 1176]
+ [ 987 1156]]
+Secondary structure: '...((((((.(.(((((((..[[.[[)))))))((.{..))((((((]]..]].))))))})))))))'
+Sequence length: 68
+Number of residues: 68
+Chain IDs: ['B']
+Base atoms present: ["C1'" 'C2' "C2'" "C3'" 'C4' "C4'" 'C5' "C5'" 'C6' 'C8' 'N1' 'N2' 'N3'
+ 'N4' 'N6' 'N7' 'N9' 'O2' "O2'" "O3'" 'O4' "O4'" "O5'" 'O6' 'OP1' 'OP2'
+ 'OP3' 'P']
+...((((((.(.(((((((.......)))))))((....))((((((.......)))))).)))))))
+Coords: 68
+Sequence: GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUGAUUAUCUU
+Len sequence: 68
+Detected base pairs: [[  69 1422]
+ [  91 1402]
+ [ 113 1382]
+ [ 136 1362]
+ [ 158 1340]
+ [ 178 1320]
+ [ 200  835]
+ [ 264  690]
+ [ 284  667]
+ [ 304  644]
+ [ 324  621]
+ [ 344  601]
+ [ 366  581]
+ [ 388  561]
+ [ 515 1029]
+ [ 538 1009]
+ [ 712  857]
+ [ 877 1255]
+ [ 897 1235]
+ [ 919 1215]
+ [ 941 1195]
+ [ 964 1175]
+ [ 986 1155]]
+Secondary structure: '...(((((({..(((((((.....[[)))))))(.....})((((((]].....))))))..))))))'
+Sequence length: 68
+Number of residues: 68
+Chain IDs: ['X']
+Base atoms present: ["C1'" 'C2' "C2'" "C3'" 'C4' "C4'" 'C5' "C5'" 'C6' 'C8' 'N1' 'N2' 'N3'
+ 'N4' 'N6' 'N7' 'N9' 'O2' "O2'" "O3'" 'O4' "O4'" "O5'" 'O6' 'OP1' 'OP2'
+ 'P']
+...((((((...(((((((.......)))))))(......)((((((.......))))))..))))))
+featurized_data Data(edge_index=[2, 2710], seq=[68], node_s=[68, 3, 15], node_v=[68, 3, 4, 3], edge_s=[2710, 3, 131], edge_v=[2710, 3, 3, 3], mask_confs=[68, 3], mask_coords=[68])
+Avoid tensors: tensor([[0, 1, 2]], device='cuda:0')
+Iteration: 0
+lgts before avoiding: tensor([[ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982],
+        [ 0.2974,  1.3813, -0.8985, -0.0982]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 1
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 0.7552,  1.6930, -0.3288, -0.6523],
+        [ 1.1055,  1.0482, -0.4125, -0.3670],
+        [ 0.7552,  1.6930, -0.3288, -0.6523]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 2
+Sequence so far: tensor([1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.4025, -0.0063,  0.2655, -0.0061],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.1048,  0.3234,  0.4956, -0.2092],
+        [ 0.3729, -0.4872,  0.4022,  0.3062],
+        [ 0.1048,  0.3234,  0.4956, -0.2092]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 2
+sequence_reshaped: tensor([[1, 1, 0,  ..., 0, 0, 0],
+        [1, 1, 0,  ..., 0, 0, 0],
+        [1, 1, 0,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0],
+        [1, 1, 0,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 0],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [0, 0],
+        [1, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 0, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 3
+Sequence so far: tensor([2, 2, 2, 2, 0, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [ 0.0074,  2.0819,  0.5119, -1.0018],
+        [-0.1697,  2.2136,  0.5539, -0.9634],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.1697,  2.2136,  0.5540, -0.9634],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.0310,  2.2764,  0.4114, -0.9524],
+        [-0.1697,  2.2136,  0.5539, -0.9634],
+        [ 0.3259,  2.1672,  0.2082, -1.0293],
+        [-0.0310,  2.2764,  0.4114, -0.9524]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 3
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [0, 0],
+        [1, 1],
+        [1, 2],
+        [1, 1],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 1],
+        [0, 2],
+        [1, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 4
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.3586,  1.0284,  1.4268, -0.4037],
+        [-1.4278,  1.2175,  1.5082, -0.4627],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.4278,  1.2175,  1.5082, -0.4627],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.4278,  1.2175,  1.5082, -0.4627],
+        [-1.5013,  1.1469,  1.3598, -0.2631],
+        [-1.6106,  1.3243,  1.4908, -0.3579]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 4
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [0, 1],
+        [1, 1],
+        [2, 1],
+        [1, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [1, 1],
+        [2, 1],
+        [2, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False,  True, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Preventing completion of avoid_seq pattern in 1 sequences.
+Setting logit for 2 to -inf for matching sequences
+lgts after preventing completion: tensor([[-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.3586,  1.0284,    -inf, -0.4037],
+        [-1.4278,  1.2175,  1.5082, -0.4627],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.4278,  1.2175,  1.5082, -0.4627],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.6106,  1.3243,  1.4908, -0.3579],
+        [-1.4278,  1.2175,  1.5082, -0.4627],
+        [-1.5013,  1.1469,  1.3598, -0.2631],
+        [-1.6106,  1.3243,  1.4908, -0.3579]], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 5
+Sequence so far: tensor([2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.6308,  2.6747,  0.1018, -0.6599],
+        [-0.7539,  3.0746, -0.0433, -0.6433],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.7539,  3.0746, -0.0433, -0.6433],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.8687,  2.8784,  0.2162, -0.5851],
+        [-0.7539,  3.0746, -0.0433, -0.6433],
+        [-0.6421,  2.7706,  0.0319, -0.5730],
+        [-0.8687,  2.8784,  0.2162, -0.5851]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 5
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 1],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 6
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.8508, -0.0208, -1.0332, -1.1075],
+        [ 2.2553,  0.8581, -1.1650, -1.0517],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.2553,  0.8581, -1.1650, -1.0517],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.1943,  0.8976, -1.1516, -1.0204],
+        [ 2.2553,  0.8581, -1.1650, -1.0517],
+        [ 2.6386,  0.3216, -1.1159, -0.9584],
+        [ 2.1943,  0.8976, -1.1516, -1.0204]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 6
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [1, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 7
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.6519,  2.6844,  0.1680, -1.0152],
+        [-0.7030,  2.5890,  0.4730, -1.1032],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7030,  2.5890,  0.4730, -1.1032],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7090,  2.4132,  0.6329, -1.0949],
+        [-0.7030,  2.5890,  0.4730, -1.1032],
+        [-0.6707,  2.2610,  0.5873, -1.0115],
+        [-0.7090,  2.4132,  0.6329, -1.0949]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 7
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 8
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.0860,  1.5160,  1.6283, -0.9934],
+        [-1.1380,  1.2965,  1.9030, -0.9961],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1380,  1.2965,  1.9030, -0.9961],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1236,  1.2450,  1.9173, -0.9713],
+        [-1.1380,  1.2965,  1.9030, -0.9961],
+        [-1.0417,  1.4920,  1.6373, -0.9762],
+        [-1.1236,  1.2450,  1.9173, -0.9713]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 8
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([True, True, True, True, True, True, True, True, True, True, True, True,
+        True, True, True, True], device='cuda:0')
+Preventing completion of avoid_seq pattern in 16 sequences.
+Setting logit for 2 to -inf for matching sequences
+lgts after preventing completion: tensor([[-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.0860,  1.5160,    -inf, -0.9934],
+        [-1.1380,  1.2965,    -inf, -0.9961],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1380,  1.2965,    -inf, -0.9961],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1236,  1.2450,    -inf, -0.9713],
+        [-1.1380,  1.2965,    -inf, -0.9961],
+        [-1.0417,  1.4920,    -inf, -0.9762],
+        [-1.1236,  1.2450,    -inf, -0.9713]], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 9
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.4791, -0.9392, -0.2872,  2.2590],
+        [-0.8319, -1.0580,  0.3358,  2.0723],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8319, -1.0580,  0.3358,  2.0723],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8660, -1.0529,  0.4159,  2.0339],
+        [-0.8319, -1.0580,  0.3358,  2.0723],
+        [-0.6372, -0.9367, -0.1233,  2.3043],
+        [-0.8660, -1.0529,  0.4159,  2.0339]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 9
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 10
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.6701, -0.7773, -1.1566, -0.9008],
+        [ 2.5766, -0.7609, -1.1717, -0.8369],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5766, -0.7609, -1.1717, -0.8369],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5714, -0.7471, -1.1787, -0.8210],
+        [ 2.5766, -0.7609, -1.1717, -0.8369],
+        [ 2.6975, -0.7841, -1.1625, -0.8828],
+        [ 2.5714, -0.7471, -1.1787, -0.8210]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 10
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 11
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.8479, -0.7385, -1.7215, -1.6669],
+        [ 2.7962, -0.7459, -1.7289, -1.6246],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7962, -0.7459, -1.7289, -1.6246],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7899, -0.7758, -1.7142, -1.6029],
+        [ 2.7962, -0.7459, -1.7289, -1.6246],
+        [ 2.8512, -0.7346, -1.7153, -1.6363],
+        [ 2.7899, -0.7758, -1.7142, -1.6029]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 11
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 12
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.0399,  2.8129, -0.5115, -1.1268],
+        [-0.1369,  2.9362, -0.5043, -1.0818],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1369,  2.9362, -0.5043, -1.0818],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1274,  2.9252, -0.5028, -1.0728],
+        [-0.1369,  2.9362, -0.5043, -1.0818],
+        [-0.0343,  2.8451, -0.5395, -1.0970],
+        [-0.1274,  2.9252, -0.5028, -1.0728]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 12
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 13
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5574,  0.6637,  2.2088, -1.0390],
+        [-1.5589,  0.6349,  2.2547, -1.0508],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5589,  0.6349,  2.2547, -1.0508],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5560,  0.6401,  2.2494, -1.0504],
+        [-1.5589,  0.6349,  2.2547, -1.0508],
+        [-1.5556,  0.6556,  2.2249, -1.0434],
+        [-1.5560,  0.6401,  2.2494, -1.0504]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 13
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([True, True, True, True, True, True, True, True, True, True, True, True,
+        True, True, True, True], device='cuda:0')
+Preventing completion of avoid_seq pattern in 16 sequences.
+Setting logit for 2 to -inf for matching sequences
+lgts after preventing completion: tensor([[-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5574,  0.6637,    -inf, -1.0390],
+        [-1.5589,  0.6349,    -inf, -1.0508],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5589,  0.6349,    -inf, -1.0508],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5560,  0.6401,    -inf, -1.0504],
+        [-1.5589,  0.6349,    -inf, -1.0508],
+        [-1.5556,  0.6556,    -inf, -1.0434],
+        [-1.5560,  0.6401,    -inf, -1.0504]], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 14
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.0634,  2.7423,  0.0288, -1.1318],
+        [-1.1130,  2.8065,  0.0375, -1.1250],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1130,  2.8065,  0.0375, -1.1250],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1193,  2.8100,  0.0439, -1.1242],
+        [-1.1130,  2.8065,  0.0375, -1.1250],
+        [-1.0784,  2.7594,  0.0387, -1.1328],
+        [-1.1193,  2.8100,  0.0439, -1.1242]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 14
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 15
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5361, -1.3635, -1.1967,  3.0018],
+        [-1.5301, -1.3603, -1.1911,  2.9909],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5301, -1.3603, -1.1911,  2.9909],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5286, -1.3599, -1.1887,  2.9894],
+        [-1.5301, -1.3603, -1.1911,  2.9909],
+        [-1.5340, -1.3634, -1.1945,  3.0027],
+        [-1.5286, -1.3599, -1.1887,  2.9894]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 15
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 16
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3737, -1.4971,  2.5954,  0.0732],
+        [-1.3296, -1.4798,  2.6948, -0.0900],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3296, -1.4798,  2.6948, -0.0900],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3221, -1.4760,  2.7080, -0.1142],
+        [-1.3296, -1.4798,  2.6948, -0.0900],
+        [-1.3601, -1.4918,  2.6271,  0.0231],
+        [-1.3221, -1.4760,  2.7080, -0.1142]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 16
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 17
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2355, -1.9310, -0.9419,  2.4779],
+        [-0.2642, -1.9242, -0.9216,  2.4841],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2642, -1.9242, -0.9216,  2.4841],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2704, -1.9228, -0.9177,  2.4856],
+        [-0.2642, -1.9242, -0.9216,  2.4841],
+        [-0.2484, -1.9292, -0.9348,  2.4830],
+        [-0.2704, -1.9228, -0.9177,  2.4856]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 17
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 18
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7255, -1.5493, -1.1380,  3.2329],
+        [-1.7225, -1.5490, -1.1395,  3.2326],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7225, -1.5490, -1.1395,  3.2326],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7221, -1.5491, -1.1394,  3.2325],
+        [-1.7225, -1.5490, -1.1395,  3.2326],
+        [-1.7248, -1.5494, -1.1387,  3.2338],
+        [-1.7221, -1.5491, -1.1394,  3.2325]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 18
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 19
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2147,  1.1676, -1.7231, -1.0623],
+        [ 2.2156,  1.1829, -1.7289, -1.0699],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2156,  1.1829, -1.7289, -1.0699],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2148,  1.1866, -1.7299, -1.0711],
+        [ 2.2156,  1.1829, -1.7289, -1.0699],
+        [ 2.2145,  1.1745, -1.7255, -1.0651],
+        [ 2.2148,  1.1866, -1.7299, -1.0711]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 19
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 20
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7681, -1.4321, -0.9124,  3.1213],
+        [-0.7689, -1.4320, -0.9125,  3.1210],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7689, -1.4320, -0.9125,  3.1210],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7690, -1.4320, -0.9124,  3.1207],
+        [-0.7689, -1.4321, -0.9125,  3.1210],
+        [-0.7685, -1.4321, -0.9126,  3.1215],
+        [-0.7690, -1.4320, -0.9124,  3.1207]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 20
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 21
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6653, -1.2751, -1.2852,  3.4482],
+        [-1.6658, -1.2752, -1.2849,  3.4478],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6658, -1.2752, -1.2849,  3.4478],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6660, -1.2752, -1.2849,  3.4481],
+        [-1.6658, -1.2752, -1.2849,  3.4478],
+        [-1.6655, -1.2752, -1.2853,  3.4482],
+        [-1.6660, -1.2752, -1.2849,  3.4481]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 21
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 22
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0479, -1.5403, -1.8110, -1.3388],
+        [ 3.0427, -1.5381, -1.8116, -1.3389],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0427, -1.5381, -1.8116, -1.3389],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0421, -1.5379, -1.8117, -1.3388],
+        [ 3.0427, -1.5381, -1.8116, -1.3389],
+        [ 3.0470, -1.5401, -1.8111, -1.3388],
+        [ 3.0421, -1.5379, -1.8117, -1.3388]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 22
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 23
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9340, -0.6937, -1.2578,  2.6232],
+        [-0.9566, -0.6908, -1.2521,  2.6432],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9566, -0.6908, -1.2521,  2.6432],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9599, -0.6894, -1.2511,  2.6450],
+        [-0.9566, -0.6908, -1.2521,  2.6432],
+        [-0.9460, -0.6899, -1.2554,  2.6309],
+        [-0.9599, -0.6894, -1.2511,  2.6450]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 23
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 24
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5944,  3.6418, -0.7884, -0.8034],
+        [-0.5970,  3.6493, -0.7921, -0.8017],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5970,  3.6493, -0.7921, -0.8017],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5971,  3.6497, -0.7924, -0.8015],
+        [-0.5970,  3.6493, -0.7921, -0.8017],
+        [-0.5952,  3.6436, -0.7892, -0.8029],
+        [-0.5971,  3.6497, -0.7924, -0.8015]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 24
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 25
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0448,  3.5460, -0.8555, -1.2392],
+        [-1.0514,  3.5535, -0.8487, -1.2434],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0514,  3.5535, -0.8487, -1.2434],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0519,  3.5543, -0.8478, -1.2442],
+        [-1.0514,  3.5535, -0.8487, -1.2434],
+        [-1.0464,  3.5480, -0.8534, -1.2409],
+        [-1.0519,  3.5543, -0.8478, -1.2442]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 25
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 26
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1296, -1.4056, -1.1027,  3.7189],
+        [-1.1318, -1.4036, -1.1035,  3.7191],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1318, -1.4036, -1.1035,  3.7191],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1322, -1.4034, -1.1036,  3.7194],
+        [-1.1318, -1.4036, -1.1035,  3.7191],
+        [-1.1304, -1.4052, -1.1031,  3.7197],
+        [-1.1322, -1.4034, -1.1036,  3.7194]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 26
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 27
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6391, -1.1182, -0.8043, -1.1795],
+        [ 3.6424, -1.1168, -0.8081, -1.1848],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6424, -1.1168, -0.8081, -1.1848],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6427, -1.1163, -0.8086, -1.1859],
+        [ 3.6424, -1.1168, -0.8081, -1.1848],
+        [ 3.6407, -1.1177, -0.8053, -1.1814],
+        [ 3.6427, -1.1163, -0.8086, -1.1859]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 27
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 28
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6530,  3.3903, -0.7559, -0.8418],
+        [-0.6467,  3.3883, -0.7558, -0.8459],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6467,  3.3883, -0.7558, -0.8459],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6458,  3.3885, -0.7556, -0.8466],
+        [-0.6467,  3.3883, -0.7558, -0.8459],
+        [-0.6508,  3.3905, -0.7557, -0.8434],
+        [-0.6458,  3.3885, -0.7556, -0.8466]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 28
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 29
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0785,  3.5030, -0.8743, -0.9959],
+        [-1.0778,  3.5036, -0.8734, -0.9942],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0778,  3.5036, -0.8734, -0.9942],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0774,  3.5034, -0.8733, -0.9937],
+        [-1.0778,  3.5036, -0.8734, -0.9942],
+        [-1.0777,  3.5038, -0.8739, -0.9947],
+        [-1.0774,  3.5034, -0.8733, -0.9937]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 29
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([True, True, True, True, True, True, True, True, True, True, True, True,
+        True, True, True, True], device='cuda:0')
+Preventing completion of avoid_seq pattern in 16 sequences.
+Setting logit for 2 to -inf for matching sequences
+lgts after preventing completion: tensor([[-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0785,  3.5030,    -inf, -0.9959],
+        [-1.0778,  3.5036,    -inf, -0.9942],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0778,  3.5036,    -inf, -0.9942],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0774,  3.5034,    -inf, -0.9937],
+        [-1.0778,  3.5036,    -inf, -0.9942],
+        [-1.0777,  3.5038,    -inf, -0.9947],
+        [-1.0774,  3.5034,    -inf, -0.9937]], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 30
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7223, -0.9545,  3.2747, -1.5035],
+        [-0.7202, -0.9662,  3.2951, -1.5090],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7202, -0.9662,  3.2951, -1.5090],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7195, -0.9667,  3.2964, -1.5092],
+        [-0.7202, -0.9662,  3.2951, -1.5090],
+        [-0.7207, -0.9578,  3.2814, -1.5058],
+        [-0.7195, -0.9667,  3.2964, -1.5092]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 30
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 31
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6929, -1.1338,  3.3279, -1.5382],
+        [-0.6897, -1.1311,  3.3291, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6897, -1.1311,  3.3291, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6892, -1.1294,  3.3283, -1.5406],
+        [-0.6897, -1.1311,  3.3291, -1.5406],
+        [-0.6919, -1.1329,  3.3303, -1.5397],
+        [-0.6892, -1.1294,  3.3283, -1.5406]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 31
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2],
+        [1, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 32
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.9107, -1.6086,  3.0900, -1.4160],
+        [-0.8788, -1.5789,  3.0970, -1.4608],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8788, -1.5789,  3.0970, -1.4608],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8732, -1.5706,  3.0932, -1.4670],
+        [-0.8788, -1.5789,  3.0970, -1.4608],
+        [-0.8977, -1.5944,  3.0894, -1.4324],
+        [-0.8732, -1.5706,  3.0932, -1.4670]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 32
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 33
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.3053,  2.8820, -1.0044, -0.9145],
+        [-0.5117,  3.0374, -0.8940, -0.9288],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5117,  3.0374, -0.8940, -0.9288],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5323,  3.0482, -0.8756, -0.9346],
+        [-0.5117,  3.0374, -0.8940, -0.9288],
+        [-0.4019,  3.0491, -1.0019, -0.9252],
+        [-0.5323,  3.0482, -0.8756, -0.9346]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 33
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 34
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.4378, -0.9834, -1.3750,  3.4626],
+        [-1.5552, -1.0277, -1.2063,  3.5068],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5552, -1.0277, -1.2063,  3.5068],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5768, -1.0706, -1.1668,  3.5406],
+        [-1.5552, -1.0277, -1.2063,  3.5068],
+        [-1.4655, -1.0423, -1.3195,  3.5313],
+        [-1.5768, -1.0706, -1.1668,  3.5406]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 34
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 35
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7057, -0.2749, -1.1982,  3.1096],
+        [-1.7565, -0.1462, -1.1096,  3.0741],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7565, -0.1462, -1.1096,  3.0741],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7326, -0.2164, -1.0412,  3.0672],
+        [-1.7565, -0.1462, -1.1096,  3.0741],
+        [-1.6515, -0.4282, -1.1048,  3.1487],
+        [-1.7326, -0.2164, -1.0412,  3.0672]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 35
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 36
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3736,  1.0959, -1.9634,  2.4507],
+        [-1.3743,  0.8016, -1.9052,  2.6724],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3743,  0.8016, -1.9052,  2.6724],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3368,  0.4714, -1.8302,  2.8169],
+        [-1.3743,  0.8016, -1.9052,  2.6724],
+        [-1.3001,  0.7130, -1.9059,  2.6629],
+        [-1.3368,  0.4714, -1.8302,  2.8169]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 36
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 37
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 2.9345, -1.8817, -0.7328,  0.1387],
+        [ 3.1983, -1.9545, -0.4691, -0.3560],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1983, -1.9545, -0.4691, -0.3560],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1871, -1.9844, -0.3796, -0.4202],
+        [ 3.1983, -1.9545, -0.4691, -0.3560],
+        [ 3.0436, -1.9561, -0.6224, -0.0123],
+        [ 3.1871, -1.9844, -0.3796, -0.4202]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 37
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 38
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.4501, -1.4259, -1.3315, -0.1018],
+        [ 3.3542, -1.4455, -1.1867, -0.1468],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3542, -1.4455, -1.1867, -0.1468],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3107, -1.4446, -1.1157, -0.1623],
+        [ 3.3542, -1.4455, -1.1867, -0.1468],
+        [ 3.4548, -1.4500, -1.2021, -0.1815],
+        [ 3.3107, -1.4446, -1.1157, -0.1623]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 38
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 39
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3554,  3.6365, -1.1566, -0.3243],
+        [-0.3332,  3.5952, -1.2296, -0.2383],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3332,  3.5952, -1.2296, -0.2383],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3235,  3.5822, -1.2380, -0.2186],
+        [-0.3332,  3.5952, -1.2296, -0.2383],
+        [-0.3388,  3.6100, -1.2003, -0.2450],
+        [-0.3235,  3.5822, -1.2380, -0.2186]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 39
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 40
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7576, -0.8219,  3.2563, -0.5307],
+        [-0.7768, -0.7761,  3.2546, -0.5093],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7768, -0.7761,  3.2546, -0.5093],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7948, -0.7713,  3.2567, -0.4833],
+        [-0.7768, -0.7761,  3.2546, -0.5093],
+        [-0.7986, -0.8231,  3.2701, -0.4552],
+        [-0.7948, -0.7713,  3.2567, -0.4833]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 40
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([True, True, True, True, True, True, True, True, True, True, True, True,
+        True, True, True, True], device='cuda:0')
+Preventing completion of avoid_seq pattern in 16 sequences.
+Setting logit for 2 to -inf for matching sequences
+lgts after preventing completion: tensor([[-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7576, -0.8219,    -inf, -0.5307],
+        [-0.7768, -0.7761,    -inf, -0.5093],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7768, -0.7761,    -inf, -0.5093],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7948, -0.7713,    -inf, -0.4833],
+        [-0.7768, -0.7761,    -inf, -0.5093],
+        [-0.7986, -0.8231,    -inf, -0.4552],
+        [-0.7948, -0.7713,    -inf, -0.4833]], device='cuda:0')
+Sequence new: tensor([3, 3, 1, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 41
+Sequence so far: tensor([3, 3, 1, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.0787,  3.4339, -0.9274, -0.7867],
+        [-0.0787,  3.4339, -0.9274, -0.7867],
+        [ 1.1290,  2.8255, -1.6954, -0.7371],
+        [-0.1209,  3.3702, -0.8582, -0.7917],
+        [-0.0512,  3.3885, -0.9281, -0.8152],
+        [-0.0814,  3.4318, -0.9285, -0.7916],
+        [-0.0787,  3.4339, -0.9274, -0.7867],
+        [-0.0814,  3.4318, -0.9285, -0.7916],
+        [-0.0787,  3.4339, -0.9274, -0.7867],
+        [-0.0787,  3.4339, -0.9274, -0.7867],
+        [-0.0787,  3.4339, -0.9274, -0.7867],
+        [-0.0787,  3.4339, -0.9274, -0.7867],
+        [-0.0787,  3.4339, -0.9274, -0.7867],
+        [-0.0814,  3.4318, -0.9285, -0.7916],
+        [-0.1128,  3.3278, -0.8649, -0.7714],
+        [-0.0787,  3.4339, -0.9274, -0.7867]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 41
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 3],
+        [1, 3],
+        [1, 1],
+        [1, 0],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 0],
+        [1, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 42
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3996,  2.8055, -0.5843, -1.4346],
+        [ 0.3195,  2.9043, -0.7311, -1.3485],
+        [ 0.4928,  2.9091, -0.8677, -1.4141],
+        [ 0.4255,  2.9285, -0.8011, -1.3906],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.4255,  2.9285, -0.8011, -1.3906],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.4255,  2.9285, -0.8011, -1.3906],
+        [ 0.3868,  2.8290, -0.7475, -1.3652],
+        [ 0.3849,  2.9524, -0.7921, -1.3735]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 42
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 1],
+        [3, 1],
+        [1, 1],
+        [0, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [3, 1],
+        [0, 1],
+        [3, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False,  True, False, False, False, False, False, False,
+        False, False, False, False,  True, False], device='cuda:0')
+Preventing completion of avoid_seq pattern in 2 sequences.
+Setting logit for 2 to -inf for matching sequences
+lgts after preventing completion: tensor([[ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3996,  2.8055, -0.5843, -1.4346],
+        [ 0.3195,  2.9043,    -inf, -1.3485],
+        [ 0.4928,  2.9091, -0.8677, -1.4141],
+        [ 0.4255,  2.9285, -0.8011, -1.3906],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.4255,  2.9285, -0.8011, -1.3906],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.3849,  2.9524, -0.7921, -1.3735],
+        [ 0.4255,  2.9285, -0.8011, -1.3906],
+        [ 0.3868,  2.8290,    -inf, -1.3652],
+        [ 0.3849,  2.9524, -0.7921, -1.3735]], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 43
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 2.8303, -1.2347, -1.7008,  0.3405],
+        [ 2.8303, -1.2347, -1.7008,  0.3405],
+        [ 2.9210, -1.2857, -1.6956,  0.3010],
+        [ 2.6874, -1.1823, -1.7007,  0.3803],
+        [ 2.8037, -1.2917, -1.7763,  0.4279],
+        [ 2.8123, -1.2630, -1.7148,  0.3816],
+        [ 2.8303, -1.2347, -1.7008,  0.3405],
+        [ 2.8123, -1.2630, -1.7148,  0.3816],
+        [ 2.8303, -1.2347, -1.7008,  0.3405],
+        [ 2.8303, -1.2347, -1.7008,  0.3405],
+        [ 2.8303, -1.2347, -1.7008,  0.3405],
+        [ 2.8303, -1.2347, -1.7008,  0.3405],
+        [ 2.8303, -1.2347, -1.7008,  0.3405],
+        [ 2.8123, -1.2630, -1.7148,  0.3816],
+        [ 2.6860, -1.2167, -1.7254,  0.4181],
+        [ 2.8303, -1.2347, -1.7008,  0.3405]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 43
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1],
+        [1, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 44
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.1660, -1.3420,  1.3058,  0.2077],
+        [-0.1660, -1.3420,  1.3058,  0.2077],
+        [-0.3167, -1.3240,  1.7760, -0.1282],
+        [-0.2109, -1.3076,  1.1042,  0.3809],
+        [-0.0617, -1.3710,  0.7000,  0.6874],
+        [-0.1642, -1.3489,  1.2106,  0.3029],
+        [-0.1660, -1.3420,  1.3058,  0.2077],
+        [-0.1642, -1.3489,  1.2106,  0.3029],
+        [-0.1660, -1.3420,  1.3058,  0.2077],
+        [-0.1660, -1.3420,  1.3058,  0.2077],
+        [-0.1660, -1.3420,  1.3058,  0.2077],
+        [-0.1660, -1.3420,  1.3058,  0.2077],
+        [-0.1660, -1.3420,  1.3058,  0.2077],
+        [-0.1642, -1.3489,  1.2106,  0.3029],
+        [-0.0513, -1.2944,  0.6353,  0.6603],
+        [-0.1660, -1.3420,  1.3058,  0.2077]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 44
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 45
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.6347, -1.4400, -1.5378,  2.8423],
+        [-0.6347, -1.4400, -1.5378,  2.8423],
+        [-0.5022, -1.3932, -1.5586,  2.7461],
+        [-0.6268, -1.4044, -1.5359,  2.7457],
+        [-0.7949, -1.4227, -1.5291,  2.8894],
+        [-0.6581, -1.4365, -1.5372,  2.8509],
+        [-0.6347, -1.4400, -1.5378,  2.8423],
+        [-0.6581, -1.4365, -1.5372,  2.8509],
+        [-0.6347, -1.4400, -1.5378,  2.8423],
+        [-0.6347, -1.4400, -1.5378,  2.8423],
+        [-0.6347, -1.4400, -1.5378,  2.8423],
+        [-0.6347, -1.4400, -1.5378,  2.8423],
+        [-0.6347, -1.4400, -1.5378,  2.8423],
+        [-0.6581, -1.4365, -1.5372,  2.8509],
+        [-1.1758, -1.2839, -1.4585,  3.0342],
+        [-0.6347, -1.4400, -1.5378,  2.8423]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 45
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 2],
+        [0, 3],
+        [0, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 46
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.5492,  0.3167,  2.1538, -1.3229],
+        [-1.5492,  0.3167,  2.1538, -1.3229],
+        [-1.5282,  0.2549,  2.1445, -1.3054],
+        [-1.5517,  0.2963,  2.1648, -1.3157],
+        [-1.5492,  0.4188,  2.0300, -1.2958],
+        [-1.5488,  0.3311,  2.1379, -1.3208],
+        [-1.5492,  0.3167,  2.1538, -1.3229],
+        [-1.5488,  0.3311,  2.1379, -1.3208],
+        [-1.5492,  0.3167,  2.1538, -1.3229],
+        [-1.5492,  0.3167,  2.1538, -1.3229],
+        [-1.5492,  0.3167,  2.1538, -1.3229],
+        [-1.5492,  0.3167,  2.1538, -1.3229],
+        [-1.5492,  0.3167,  2.1538, -1.3229],
+        [-1.5488,  0.3311,  2.1379, -1.3208],
+        [-1.5999,  0.3831,  2.0936, -1.2865],
+        [-1.5492,  0.3167,  2.1538, -1.3229]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 46
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [3, 3],
+        [2, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 47
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.8604, -0.8781,  3.2884, -1.2270],
+        [-0.8604, -0.8781,  3.2884, -1.2270],
+        [-0.8650, -0.8694,  3.2400, -1.2071],
+        [-0.8623, -0.8844,  3.2876, -1.2230],
+        [-0.8556, -0.8751,  3.2928, -1.2327],
+        [-0.8597, -0.8769,  3.2881, -1.2278],
+        [-0.8604, -0.8781,  3.2884, -1.2270],
+        [-0.8597, -0.8769,  3.2881, -1.2278],
+        [-0.8604, -0.8781,  3.2884, -1.2270],
+        [-0.8604, -0.8781,  3.2884, -1.2270],
+        [-0.8604, -0.8781,  3.2884, -1.2270],
+        [-0.8604, -0.8781,  3.2884, -1.2270],
+        [-0.8604, -0.8781,  3.2884, -1.2270],
+        [-0.8597, -0.8769,  3.2881, -1.2278],
+        [-0.8508, -0.8651,  3.3927, -1.3005],
+        [-0.8604, -0.8781,  3.2884, -1.2270]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 47
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 48
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.6167, -0.5376,  3.2870, -1.2130],
+        [-1.6167, -0.5376,  3.2870, -1.2130],
+        [-1.6232, -0.4937,  3.2411, -1.2211],
+        [-1.6124, -0.5412,  3.2755, -1.2052],
+        [-1.6149, -0.5539,  3.2886, -1.1998],
+        [-1.6162, -0.5384,  3.2863, -1.2121],
+        [-1.6167, -0.5376,  3.2870, -1.2130],
+        [-1.6162, -0.5384,  3.2863, -1.2121],
+        [-1.6167, -0.5376,  3.2870, -1.2130],
+        [-1.6167, -0.5376,  3.2870, -1.2130],
+        [-1.6167, -0.5376,  3.2870, -1.2130],
+        [-1.6167, -0.5376,  3.2870, -1.2130],
+        [-1.6167, -0.5376,  3.2870, -1.2130],
+        [-1.6162, -0.5384,  3.2863, -1.2121],
+        [-1.6357, -0.6256,  3.3944, -1.2187],
+        [-1.6167, -0.5376,  3.2870, -1.2130]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 48
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 49
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.9359, -0.7823, -2.2103,  3.9834],
+        [-0.9359, -0.7823, -2.2103,  3.9834],
+        [-0.9776, -0.7376, -2.1950,  3.9604],
+        [-0.9216, -0.8005, -2.2138,  3.9914],
+        [-0.8548, -0.8191, -2.2280,  3.9557],
+        [-0.9252, -0.7864, -2.2123,  3.9789],
+        [-0.9359, -0.7823, -2.2103,  3.9834],
+        [-0.9252, -0.7864, -2.2123,  3.9789],
+        [-0.9359, -0.7823, -2.2103,  3.9834],
+        [-0.9359, -0.7823, -2.2103,  3.9834],
+        [-0.9359, -0.7823, -2.2103,  3.9834],
+        [-0.9359, -0.7823, -2.2103,  3.9834],
+        [-0.9359, -0.7823, -2.2103,  3.9834],
+        [-0.9252, -0.7864, -2.2123,  3.9789],
+        [-0.7919, -0.9792, -2.2338,  4.0172],
+        [-0.9359, -0.7823, -2.2103,  3.9834]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 49
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 50
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-2.0070, -1.7569, -0.9739,  3.9851],
+        [-2.0070, -1.7569, -0.9739,  3.9851],
+        [-1.9795, -1.7479, -0.8993,  3.8447],
+        [-1.9983, -1.7638, -0.9850,  3.9948],
+        [-1.9808, -1.7446, -1.0424,  4.0166],
+        [-2.0031, -1.7550, -0.9825,  3.9880],
+        [-2.0070, -1.7569, -0.9739,  3.9851],
+        [-2.0031, -1.7550, -0.9825,  3.9880],
+        [-2.0070, -1.7569, -0.9739,  3.9851],
+        [-2.0070, -1.7569, -0.9739,  3.9851],
+        [-2.0070, -1.7569, -0.9739,  3.9851],
+        [-2.0070, -1.7569, -0.9739,  3.9851],
+        [-2.0070, -1.7569, -0.9739,  3.9851],
+        [-2.0031, -1.7550, -0.9825,  3.9880],
+        [-1.9630, -1.7327, -1.1108,  4.0341],
+        [-2.0070, -1.7569, -0.9739,  3.9851]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 50
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 51
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 2.9050,  0.4063, -1.6812, -1.4101],
+        [ 2.9050,  0.4063, -1.6812, -1.4101],
+        [ 2.8628,  0.4336, -1.6731, -1.3988],
+        [ 2.9204,  0.3868, -1.6815, -1.4092],
+        [ 2.9195,  0.3742, -1.6873, -1.3922],
+        [ 2.9062,  0.4043, -1.6820, -1.4094],
+        [ 2.9050,  0.4063, -1.6812, -1.4101],
+        [ 2.9062,  0.4043, -1.6820, -1.4094],
+        [ 2.9050,  0.4063, -1.6812, -1.4101],
+        [ 2.9050,  0.4063, -1.6812, -1.4101],
+        [ 2.9050,  0.4063, -1.6812, -1.4101],
+        [ 2.9050,  0.4063, -1.6812, -1.4101],
+        [ 2.9050,  0.4063, -1.6812, -1.4101],
+        [ 2.9062,  0.4043, -1.6820, -1.4094],
+        [ 2.8380,  0.4762, -1.6792, -1.3896],
+        [ 2.9050,  0.4063, -1.6812, -1.4101]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 51
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3],
+        [3, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 52
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 4.1193, -1.1532, -1.6436, -0.3948],
+        [ 4.1193, -1.1532, -1.6436, -0.3948],
+        [ 4.1035, -1.1387, -1.6434, -0.3960],
+        [ 4.1188, -1.1555, -1.6409, -0.3932],
+        [ 4.1144, -1.1549, -1.6447, -0.3828],
+        [ 4.1189, -1.1532, -1.6436, -0.3944],
+        [ 4.1193, -1.1532, -1.6436, -0.3948],
+        [ 4.1189, -1.1532, -1.6436, -0.3944],
+        [ 4.1193, -1.1532, -1.6436, -0.3948],
+        [ 4.1193, -1.1532, -1.6436, -0.3948],
+        [ 4.1193, -1.1532, -1.6436, -0.3948],
+        [ 4.1193, -1.1532, -1.6436, -0.3948],
+        [ 4.1193, -1.1532, -1.6436, -0.3948],
+        [ 4.1189, -1.1532, -1.6436, -0.3944],
+        [ 4.1296, -1.1955, -1.6813, -0.3209],
+        [ 4.1193, -1.1532, -1.6436, -0.3948]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 52
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0],
+        [3, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 53
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 3.4579, -1.1506, -1.6686, -1.2032],
+        [ 3.4579, -1.1506, -1.6686, -1.2032],
+        [ 3.3640, -1.0562, -1.6647, -1.2033],
+        [ 3.4607, -1.1519, -1.6689, -1.2015],
+        [ 3.4586, -1.1536, -1.6722, -1.1911],
+        [ 3.4578, -1.1508, -1.6690, -1.2020],
+        [ 3.4579, -1.1506, -1.6686, -1.2032],
+        [ 3.4578, -1.1508, -1.6690, -1.2020],
+        [ 3.4579, -1.1506, -1.6686, -1.2032],
+        [ 3.4579, -1.1506, -1.6686, -1.2032],
+        [ 3.4579, -1.1506, -1.6686, -1.2032],
+        [ 3.4579, -1.1506, -1.6686, -1.2032],
+        [ 3.4579, -1.1506, -1.6686, -1.2032],
+        [ 3.4578, -1.1508, -1.6690, -1.2020],
+        [ 3.5003, -1.1905, -1.6939, -1.1646],
+        [ 3.4579, -1.1506, -1.6686, -1.2032]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 53
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 54
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.8137,  3.0878, -0.9841, -0.9823],
+        [-0.8137,  3.0878, -0.9841, -0.9823],
+        [-0.7735,  3.0624, -1.0043, -0.9840],
+        [-0.8152,  3.0835, -0.9794, -0.9816],
+        [-0.8367,  3.0860, -0.9640, -0.9727],
+        [-0.8155,  3.0872, -0.9828, -0.9812],
+        [-0.8137,  3.0878, -0.9841, -0.9823],
+        [-0.8155,  3.0872, -0.9828, -0.9812],
+        [-0.8137,  3.0878, -0.9841, -0.9823],
+        [-0.8137,  3.0878, -0.9841, -0.9823],
+        [-0.8137,  3.0878, -0.9841, -0.9823],
+        [-0.8137,  3.0878, -0.9841, -0.9823],
+        [-0.8137,  3.0878, -0.9841, -0.9823],
+        [-0.8155,  3.0872, -0.9828, -0.9812],
+        [-0.9335,  3.1650, -0.9494, -0.9591],
+        [-0.8137,  3.0878, -0.9841, -0.9823]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 54
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 55
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 3.1887, -0.6687, -1.4032, -1.5775],
+        [ 3.1887, -0.6687, -1.4032, -1.5775],
+        [ 3.2317, -0.6312, -1.4321, -1.6307],
+        [ 3.1653, -0.6891, -1.3915, -1.5651],
+        [ 3.1883, -0.6901, -1.3880, -1.5604],
+        [ 3.1879, -0.6711, -1.4014, -1.5752],
+        [ 3.1887, -0.6687, -1.4032, -1.5775],
+        [ 3.1879, -0.6711, -1.4014, -1.5752],
+        [ 3.1887, -0.6687, -1.4032, -1.5775],
+        [ 3.1887, -0.6687, -1.4032, -1.5775],
+        [ 3.1887, -0.6687, -1.4032, -1.5775],
+        [ 3.1887, -0.6687, -1.4032, -1.5775],
+        [ 3.1887, -0.6687, -1.4032, -1.5775],
+        [ 3.1879, -0.6711, -1.4014, -1.5752],
+        [ 3.2505, -0.7664, -1.3984, -1.5609],
+        [ 3.1887, -0.6687, -1.4032, -1.5775]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 55
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([True, True, True, True, True, True, True, True, True, True, True, True,
+        True, True, True, True], device='cuda:0')
+Preventing completion of avoid_seq pattern in 16 sequences.
+Setting logit for 2 to -inf for matching sequences
+lgts after preventing completion: tensor([[ 3.1887, -0.6687,    -inf, -1.5775],
+        [ 3.1887, -0.6687,    -inf, -1.5775],
+        [ 3.2317, -0.6312,    -inf, -1.6307],
+        [ 3.1653, -0.6891,    -inf, -1.5651],
+        [ 3.1883, -0.6901,    -inf, -1.5604],
+        [ 3.1879, -0.6711,    -inf, -1.5752],
+        [ 3.1887, -0.6687,    -inf, -1.5775],
+        [ 3.1879, -0.6711,    -inf, -1.5752],
+        [ 3.1887, -0.6687,    -inf, -1.5775],
+        [ 3.1887, -0.6687,    -inf, -1.5775],
+        [ 3.1887, -0.6687,    -inf, -1.5775],
+        [ 3.1887, -0.6687,    -inf, -1.5775],
+        [ 3.1887, -0.6687,    -inf, -1.5775],
+        [ 3.1879, -0.6711,    -inf, -1.5752],
+        [ 3.2505, -0.7664,    -inf, -1.5609],
+        [ 3.1887, -0.6687,    -inf, -1.5775]], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 56
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.8127,  3.3395, -1.0000, -0.9687],
+        [-0.8127,  3.3395, -1.0000, -0.9687],
+        [-0.7943,  3.3490, -1.0003, -0.9919],
+        [-0.8183,  3.3290, -0.9976, -0.9594],
+        [-0.8310,  3.3351, -0.9971, -0.9638],
+        [-0.8147,  3.3378, -0.9995, -0.9668],
+        [-0.8127,  3.3395, -1.0000, -0.9687],
+        [-0.8147,  3.3378, -0.9995, -0.9668],
+        [-0.8127,  3.3395, -1.0000, -0.9687],
+        [-0.8127,  3.3395, -1.0000, -0.9687],
+        [-0.8127,  3.3395, -1.0000, -0.9687],
+        [-0.8127,  3.3395, -1.0000, -0.9687],
+        [-0.8127,  3.3395, -1.0000, -0.9687],
+        [-0.8147,  3.3378, -0.9995, -0.9668],
+        [ 3.6469, -0.6758, -1.3758, -1.5747],
+        [-0.8127,  3.3395, -1.0000, -0.9687]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 56
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0],
+        [1, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 57
+Sequence so far: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.5516, -1.2123, -1.5257,  3.2135],
+        [-1.5516, -1.2123, -1.5257,  3.2135],
+        [-1.5561, -1.2309, -1.5202,  3.2318],
+        [-1.5684, -1.1963, -1.5145,  3.1736],
+        [-1.5806, -1.1789, -1.5325,  3.1644],
+        [-1.5551, -1.2064, -1.5279,  3.2016],
+        [-1.5516, -1.2123, -1.5257,  3.2135],
+        [-1.5551, -1.2064, -1.5279,  3.2016],
+        [-1.5516, -1.2123, -1.5257,  3.2135],
+        [-1.5516, -1.2123, -1.5257,  3.2135],
+        [-1.5516, -1.2123, -1.5257,  3.2135],
+        [-1.5516, -1.2123, -1.5257,  3.2135],
+        [-1.5516, -1.2123, -1.5257,  3.2135],
+        [-1.5551, -1.2064, -1.5279,  3.2016],
+        [-1.5672, -1.1773, -1.5924,  3.1849],
+        [-1.5516, -1.2123, -1.5257,  3.2135]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 57
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 0],
+        [0, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([ True,  True,  True,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True, False,  True], device='cuda:0')
+Preventing completion of avoid_seq pattern in 15 sequences.
+Setting logit for 2 to -inf for matching sequences
+lgts after preventing completion: tensor([[-1.5516, -1.2123,    -inf,  3.2135],
+        [-1.5516, -1.2123,    -inf,  3.2135],
+        [-1.5561, -1.2309,    -inf,  3.2318],
+        [-1.5684, -1.1963,    -inf,  3.1736],
+        [-1.5806, -1.1789,    -inf,  3.1644],
+        [-1.5551, -1.2064,    -inf,  3.2016],
+        [-1.5516, -1.2123,    -inf,  3.2135],
+        [-1.5551, -1.2064,    -inf,  3.2016],
+        [-1.5516, -1.2123,    -inf,  3.2135],
+        [-1.5516, -1.2123,    -inf,  3.2135],
+        [-1.5516, -1.2123,    -inf,  3.2135],
+        [-1.5516, -1.2123,    -inf,  3.2135],
+        [-1.5516, -1.2123,    -inf,  3.2135],
+        [-1.5551, -1.2064,    -inf,  3.2016],
+        [-1.5672, -1.1773, -1.5924,  3.1849],
+        [-1.5516, -1.2123,    -inf,  3.2135]], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 58
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.9082, -0.8239,  3.0304, -1.3169],
+        [-0.9082, -0.8239,  3.0304, -1.3169],
+        [-0.9115, -0.8132,  3.0423, -1.3330],
+        [-0.9145, -0.8518,  2.9970, -1.2894],
+        [-0.9180, -0.8737,  3.0280, -1.3348],
+        [-0.9076, -0.8320,  3.0257, -1.3229],
+        [-0.9082, -0.8239,  3.0304, -1.3169],
+        [-0.9076, -0.8320,  3.0257, -1.3229],
+        [-0.9082, -0.8239,  3.0304, -1.3169],
+        [-0.9082, -0.8239,  3.0304, -1.3169],
+        [-0.9082, -0.8239,  3.0304, -1.3169],
+        [-0.9082, -0.8239,  3.0304, -1.3169],
+        [-0.9082, -0.8239,  3.0304, -1.3169],
+        [-0.9076, -0.8320,  3.0257, -1.3229],
+        [-0.8927, -0.9077,  3.0222, -1.3173],
+        [-0.9082, -0.8239,  3.0304, -1.3169]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 58
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [1, 3],
+        [0, 3],
+        [1, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 59
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.1270, -0.8993,  2.8306, -1.0946],
+        [-1.1270, -0.8993,  2.8306, -1.0946],
+        [-1.1315, -0.9425,  2.8613, -1.0998],
+        [-1.1334, -0.9206,  2.7835, -1.0557],
+        [-1.1311, -0.9362,  2.8351, -1.1107],
+        [-1.1359, -0.9094,  2.8366, -1.0981],
+        [-1.1270, -0.8993,  2.8306, -1.0946],
+        [-1.1359, -0.9094,  2.8366, -1.0981],
+        [-1.1270, -0.8993,  2.8306, -1.0946],
+        [-1.1270, -0.8993,  2.8306, -1.0946],
+        [-1.1270, -0.8993,  2.8306, -1.0946],
+        [-1.1270, -0.8993,  2.8306, -1.0946],
+        [-1.1270, -0.8993,  2.8306, -1.0946],
+        [-1.1359, -0.9094,  2.8366, -1.0981],
+        [-1.0774, -0.9210,  2.7733, -1.0939],
+        [-1.1270, -0.8993,  2.8306, -1.0946]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 59
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 60
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[ 1.8375,  0.5029, -1.6449, -0.7561],
+        [ 1.8375,  0.5029, -1.6449, -0.7561],
+        [ 1.9998,  0.4408, -1.7686, -0.7462],
+        [ 1.6098,  0.5508, -1.5399, -0.7228],
+        [ 1.4340,  0.8172, -1.6634, -0.5899],
+        [ 1.7448,  0.5610, -1.6501, -0.7103],
+        [ 1.8375,  0.5029, -1.6449, -0.7561],
+        [ 1.7448,  0.5610, -1.6501, -0.7103],
+        [ 1.8375,  0.5029, -1.6449, -0.7561],
+        [ 1.8375,  0.5029, -1.6449, -0.7561],
+        [ 1.8375,  0.5029, -1.6449, -0.7561],
+        [ 1.8375,  0.5029, -1.6449, -0.7561],
+        [ 1.8375,  0.5029, -1.6449, -0.7561],
+        [ 1.7448,  0.5610, -1.6501, -0.7103],
+        [ 1.4866,  0.7380, -1.5623, -0.6626],
+        [ 1.8375,  0.5029, -1.6449, -0.7561]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 60
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 61
+Sequence so far: tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.4489, -0.8529, -0.8842,  3.1317],
+        [-1.4489, -0.8529, -0.8842,  3.1317],
+        [-1.4003, -0.8603, -0.9978,  3.2068],
+        [-1.4359, -0.8240, -0.7966,  2.9551],
+        [-1.4532, -0.7313, -1.0285,  3.0803],
+        [-1.4624, -0.8174, -0.9040,  3.1127],
+        [-1.4489, -0.8529, -0.8842,  3.1317],
+        [-1.4624, -0.8174, -0.9040,  3.1127],
+        [-1.4489, -0.8529, -0.8842,  3.1317],
+        [-1.4489, -0.8529, -0.8842,  3.1317],
+        [-1.4489, -0.8529, -0.8842,  3.1317],
+        [-1.4489, -0.8529, -0.8842,  3.1317],
+        [-1.4489, -0.8529, -0.8842,  3.1317],
+        [-1.4624, -0.8174, -0.9040,  3.1127],
+        [-1.4394, -0.7841, -0.9686,  3.0628],
+        [-1.4489, -0.8529, -0.8842,  3.1317]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 61
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0],
+        [2, 0]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 62
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.9949, -0.7492,  3.2821, -1.1699],
+        [-0.9949, -0.7492,  3.2821, -1.1699],
+        [-1.0014, -0.7538,  3.2945, -1.1917],
+        [-0.9984, -0.7461,  3.2251, -1.1479],
+        [-1.0121, -0.7937,  3.2862, -1.1664],
+        [-0.9999, -0.7561,  3.2802, -1.1761],
+        [-0.9949, -0.7492,  3.2821, -1.1699],
+        [-0.9999, -0.7561,  3.2802, -1.1761],
+        [-0.9949, -0.7492,  3.2821, -1.1699],
+        [-0.9949, -0.7492,  3.2821, -1.1699],
+        [-0.9949, -0.7492,  3.2821, -1.1699],
+        [-0.9949, -0.7492,  3.2821, -1.1699],
+        [-0.9949, -0.7492,  3.2821, -1.1699],
+        [-0.9999, -0.7561,  3.2802, -1.1761],
+        [-0.9995, -0.7753,  3.2393, -1.1400],
+        [-0.9949, -0.7492,  3.2821, -1.1699]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 62
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3],
+        [0, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 63
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.0173, -0.8834,  3.2289, -1.1754],
+        [-1.0173, -0.8834,  3.2289, -1.1754],
+        [-1.0260, -0.8839,  3.2400, -1.1922],
+        [-1.0247, -0.8806,  3.1707, -1.1480],
+        [-1.0094, -0.9213,  3.2395, -1.1846],
+        [-1.0192, -0.8864,  3.2287, -1.1811],
+        [-1.0173, -0.8834,  3.2289, -1.1754],
+        [-1.0192, -0.8864,  3.2287, -1.1811],
+        [-1.0173, -0.8834,  3.2289, -1.1754],
+        [-1.0173, -0.8834,  3.2289, -1.1754],
+        [-1.0173, -0.8834,  3.2289, -1.1754],
+        [-1.0173, -0.8834,  3.2289, -1.1754],
+        [-1.0173, -0.8834,  3.2289, -1.1754],
+        [-1.0192, -0.8864,  3.2287, -1.1811],
+        [-1.0090, -0.9175,  3.1883, -1.1471],
+        [-1.0173, -0.8834,  3.2289, -1.1754]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 63
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 64
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.6766, -1.3565, -1.7919,  3.1474],
+        [-1.6766, -1.3565, -1.7919,  3.1474],
+        [-1.6718, -1.3642, -1.7949,  3.1561],
+        [-1.6834, -1.3518, -1.7863,  3.1075],
+        [-1.7098, -1.3873, -1.8444,  3.1425],
+        [-1.6877, -1.3549, -1.8024,  3.1390],
+        [-1.6766, -1.3565, -1.7919,  3.1474],
+        [-1.6877, -1.3549, -1.8024,  3.1390],
+        [-1.6766, -1.3565, -1.7919,  3.1474],
+        [-1.6766, -1.3565, -1.7919,  3.1474],
+        [-1.6766, -1.3565, -1.7919,  3.1474],
+        [-1.6766, -1.3565, -1.7919,  3.1474],
+        [-1.6766, -1.3565, -1.7919,  3.1474],
+        [-1.6877, -1.3549, -1.8024,  3.1390],
+        [-1.7151, -1.3870, -1.8472,  3.1447],
+        [-1.6766, -1.3565, -1.7919,  3.1474]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 64
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2],
+        [2, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 65
+Sequence so far: tensor([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.9684, -0.9204,  2.9621, -1.2372],
+        [-0.9684, -0.9204,  2.9621, -1.2372],
+        [-0.9809, -0.9162,  2.9765, -1.2496],
+        [-0.9805, -0.9279,  2.9211, -1.2112],
+        [-0.9894, -0.9829,  2.9693, -1.2770],
+        [-0.9752, -0.9298,  2.9529, -1.2418],
+        [-0.9684, -0.9204,  2.9621, -1.2372],
+        [-0.9752, -0.9298,  2.9529, -1.2418],
+        [-0.9684, -0.9204,  2.9621, -1.2372],
+        [-0.9684, -0.9204,  2.9621, -1.2372],
+        [-0.9684, -0.9204,  2.9621, -1.2372],
+        [-0.9684, -0.9204,  2.9621, -1.2372],
+        [-0.9684, -0.9204,  2.9621, -1.2372],
+        [-0.9752, -0.9298,  2.9529, -1.2418],
+        [-0.9590, -0.9649,  2.9192, -1.2317],
+        [-0.9684, -0.9204,  2.9621, -1.2372]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 65
+sequence_reshaped: tensor([[1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 0, 0, 0],
+        [0, 0, 2,  ..., 0, 0, 0],
+        [1, 1, 2,  ..., 0, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3],
+        [2, 3]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 66
+Sequence so far: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-0.9780,  3.5897, -0.8008, -0.8551],
+        [-0.9780,  3.5897, -0.8008, -0.8551],
+        [-0.9737,  3.5956, -0.8027, -0.8668],
+        [-0.9987,  3.5697, -0.7981, -0.8356],
+        [-1.1301, -1.1204,  3.1199, -1.2745],
+        [-0.9706,  3.5832, -0.8264, -0.8665],
+        [-0.9780,  3.5897, -0.8008, -0.8551],
+        [-0.9706,  3.5832, -0.8264, -0.8665],
+        [-0.9780,  3.5897, -0.8008, -0.8551],
+        [-0.9780,  3.5897, -0.8008, -0.8551],
+        [-0.9780,  3.5897, -0.8008, -0.8551],
+        [-0.9780,  3.5897, -0.8008, -0.8551],
+        [-0.9780,  3.5897, -0.8008, -0.8551],
+        [-0.9706,  3.5832, -0.8264, -0.8665],
+        [-0.9978,  3.5772, -0.8176, -0.8355],
+        [-0.9780,  3.5897, -0.8008, -0.8551]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 66
+sequence_reshaped: tensor([[1, 1, 2,  ..., 2, 0, 0],
+        [1, 1, 2,  ..., 2, 0, 0],
+        [1, 1, 2,  ..., 2, 0, 0],
+        ...,
+        [1, 1, 1,  ..., 2, 0, 0],
+        [0, 0, 2,  ..., 2, 0, 0],
+        [1, 1, 2,  ..., 2, 0, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2],
+        [3, 2]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+Iteration: 67
+Sequence so far: tensor([1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0',
+       dtype=torch.int32)
+lgts before avoiding: tensor([[-1.3771, -1.3554,  3.3107, -1.8072],
+        [-1.3771, -1.3554,  3.3107, -1.8072],
+        [-1.3936, -1.3655,  3.3476, -1.8372],
+        [-1.3891, -1.3428,  3.2475, -1.7611],
+        [-1.3421, -1.3123,  3.1762, -1.8497],
+        [-1.3944, -1.3782,  3.3342, -1.8277],
+        [-1.3771, -1.3554,  3.3107, -1.8072],
+        [-1.3944, -1.3782,  3.3342, -1.8277],
+        [-1.3771, -1.3554,  3.3107, -1.8072],
+        [-1.3771, -1.3554,  3.3107, -1.8072],
+        [-1.3771, -1.3554,  3.3107, -1.8072],
+        [-1.3771, -1.3554,  3.3107, -1.8072],
+        [-1.3771, -1.3554,  3.3107, -1.8072],
+        [-1.3944, -1.3782,  3.3342, -1.8277],
+        [-1.3170, -1.3286,  3.1491, -1.7686],
+        [-1.3771, -1.3554,  3.3107, -1.8072]], device='cuda:0')
+Avoiding sequences: tensor([0, 1, 2], device='cuda:0')
+Entering in iteration: 67
+sequence_reshaped: tensor([[1, 1, 2,  ..., 2, 1, 0],
+        [1, 1, 2,  ..., 2, 1, 0],
+        [1, 1, 2,  ..., 2, 1, 0],
+        ...,
+        [1, 1, 1,  ..., 2, 1, 0],
+        [0, 0, 2,  ..., 2, 1, 0],
+        [1, 1, 2,  ..., 2, 1, 0]], device='cuda:0', dtype=torch.int32)
+seq_window: tensor([[2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 2],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1]], device='cuda:0', dtype=torch.int32)
+avoid_window: tensor([0, 1], device='cuda:0')
+matches: tensor([False, False, False, False, False, False, False, False, False, False,
+        False, False, False, False, False, False], device='cuda:0')
+Sequence new: tensor([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], device='cuda:0',
+       dtype=torch.int32)
+>input_sequence, gRNAde_version=0.3, model=AutoregressiveMultiGNNv1, max_num_conformers=3, checkpoint=/rds/user/ml2169/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_3state_das.h5, seed=0
+GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUG
+AUUAUCUU
+
+>sample=0, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=1, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=2, seed=0, temperature=1.0, perplexity=1.1490, recovery=0.4853, edit_dist=35, sc_score=0.8931
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGGGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=3, seed=0, temperature=1.0, perplexity=1.1551, recovery=0.4853, edit_dist=34, sc_score=0.8703
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGAGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=4, seed=0, temperature=1.0, perplexity=1.1661, recovery=0.4706, edit_dist=35, sc_score=0.7935
+GAAGGGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCCC
+
+>sample=5, seed=0, temperature=1.0, perplexity=1.1491, recovery=0.5000, edit_dist=34, sc_score=0.7935
+GGGGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=6, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=7, seed=0, temperature=1.0, perplexity=1.1491, recovery=0.5000, edit_dist=34, sc_score=0.7935
+GGGGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=8, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=9, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=10, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=11, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=12, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=13, seed=0, temperature=1.0, perplexity=1.1491, recovery=0.5000, edit_dist=34, sc_score=0.7935
+GGGGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=14, seed=0, temperature=1.0, perplexity=1.1868, recovery=0.4559, edit_dist=36, sc_score=0.8703
+AACGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGAGGAUUCCCUUAAAGAAUCC
+AUCCUCGC
+
+>sample=15, seed=0, temperature=1.0, perplexity=1.1459, recovery=0.4853, edit_dist=35, sc_score=0.7935
+GGCGCGAGGUAAGGGUCUUAUUAUGGUAGGCCCGUUUAAGUGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+

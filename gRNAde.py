@@ -132,7 +132,8 @@ class gRNAde(object):
             edge_h_dim = EDGE_H_DIM, 
             num_layers = NUM_LAYERS,
             drop_rate = DROP_RATE,
-            out_dim = OUT_DIM
+            out_dim = OUT_DIM,
+            #bert_dim = 768,
         )
         # Load model checkpoint
         self.model_path = CHECKPOINT_PATH[split][max_num_conformers]
@@ -152,7 +153,8 @@ class gRNAde(object):
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0
+            seed: Optional[int] = 0,
+            avoid_sequences: Optional[list] = None
         ):
         """
         Design RNA sequences for a PDB file, i.e. fixed backbone re-design
@@ -168,6 +170,7 @@ class gRNAde(object):
                 and underscores (e.g. "AUG___") where letters are fixed 
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
+            avoid_sequences (list): list of sequences to avoid during sampling
         
         Returns:
             sequences (List[SeqRecord]): designed sequences in fasta format
@@ -177,7 +180,7 @@ class gRNAde(object):
             sc_score (Tensor): global self consistency score per sample with shape `(n_samples, 1)`
         """
         featurized_data, raw_data = self.featurizer.featurize_from_pdb_file(pdb_filepath)
-        return self.design(raw_data, featurized_data, output_filepath, n_samples, temperature, partial_seq, seed)
+        return self.design(raw_data, featurized_data, output_filepath, n_samples, temperature, partial_seq, seed, avoid_sequences)
 
     def design_from_directory(
             self,
@@ -186,7 +189,8 @@ class gRNAde(object):
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0
+            seed: Optional[int] = 0,
+            avoid_sequences: Optional[list] = None
         ):
         """
         Design RNA sequences for directory of PDB files corresponding to the 
@@ -216,7 +220,7 @@ class gRNAde(object):
             if pdb_filepath.endswith(".pdb"):
                 pdb_filelist.append(os.path.join(directory_filepath, pdb_filepath))
         featurized_data, raw_data = self.featurizer.featurize_from_pdb_filelist(pdb_filelist)
-        return self.design(raw_data, featurized_data, output_filepath, n_samples, temperature, partial_seq, seed)
+        return self.design(raw_data, featurized_data, output_filepath, n_samples, temperature, partial_seq, seed, avoid_sequences)
 
     @torch.no_grad()
     def design(
@@ -227,7 +231,8 @@ class gRNAde(object):
         n_samples: Optional[int] = DEFAULT_N_SAMPLES,
         temperature: Optional[float] = DEFAULT_TEMPERATURE,
         partial_seq: Optional[str] = None,
-        seed: Optional[int] = 0
+        seed: Optional[int] = 0,
+        avoid_sequences: Optional[list] = None
     ):
         """
         Design RNA sequences from raw data.
@@ -239,6 +244,7 @@ class gRNAde(object):
                     `(num_conf, num_res, num_bb_atoms, 3)`.
                 - sec_struct_list (List[str]): Secondary structure for each
                     conformer in dotbracket notation.
+                - rfam_list (List[str]): List of RFAM family IDs for the RNA.
             featurized_data (torch_geometric.data.Data): featurized RNA data
             output_filepath (str): filepath to write designed sequences to
             n_samples (int): number of samples to generate
@@ -248,6 +254,7 @@ class gRNAde(object):
                 and underscores (e.g. "AUG___") where letters are fixed 
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
+            avoid_sequences (list): list of sequences to avoid during sampling
         
         Returns:
             sequences (List[SeqRecord]): designed sequences in fasta format
@@ -278,12 +285,14 @@ class gRNAde(object):
         else:
             raise ValueError(f"Invalid number of atoms per nucleotide in input data: {raw_data['coords_list'][0].shape[1]}")
 
+        #print(raw_data['rfam_list'])
         if featurized_data is None:
             # featurize raw data
             featurized_data = self.featurizer.featurize(raw_data)
 
         # transfer data to device
         featurized_data = featurized_data.to(self.device)
+        print('featurized_data', featurized_data)
 
         # create logit bias matrix if partial sequence is provided
         if partial_seq is not None:
@@ -307,7 +316,8 @@ class gRNAde(object):
         samples, logits = self.model.sample(
             featurized_data, n_samples, temperature, logit_bias, return_logits=True,
             beam_width=BEAM_WIDTH, beam_branch=BEAM_BRANCH, sampling_strategy=SAMPLING_STRATEGY,
-            top_k=TOP_K, top_p=TOP_P, min_p=MIN_P)
+            top_k=TOP_K, top_p=TOP_P, min_p=MIN_P,
+            avoid_sequences=avoid_sequences)
 
         # perplexity per sample: n_samples x 1
         n_nodes = logits.shape[1]

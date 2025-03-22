@@ -23,6 +23,55 @@ from src.models import (
     NonAutoregressiveMultiGNNv1,
 )
 from src.constants import DATA_PATH
+from src.evaluator import evaluate
+
+def set_seed(seed=0, device_type='cpu'):
+    """
+    Sets random seed for reproducibility.
+    """
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    
+    if device_type == 'xpu':
+        import intel_extension_for_pytorch as ipex
+        torch.xpu.manual_seed(seed)
+        torch.xpu.manual_seed_all(seed)
+
+def load_avoid_sequences(config):
+    """
+    Load sequences to avoid from .fasta.out files in the processed_rfam_path directory.
+    
+    Args:
+        config: Configuration object containing processed_rfam_path
+        
+    Returns:
+        list: List of sequences to avoid
+    """
+    avoid_sequences = []
+    rfam_dir = config.processed_rfam_path
+    
+    if not os.path.exists(rfam_dir):
+        print(f"Warning: Directory {rfam_dir} does not exist. No sequences will be avoided.")
+        return avoid_sequences
+        
+    for filename in os.listdir(rfam_dir):
+        if filename.endswith('.fasta.out'):
+            file_path = os.path.join(rfam_dir, filename)
+            with open(file_path, 'r') as f:
+                for line in f:
+                    if line.startswith('>'):
+                        continue
+                    sequence = line.strip()
+                    if sequence:  # Only add non-empty sequences
+                        avoid_sequences.append(sequence)
+    
+    print(f"Loaded {len(avoid_sequences)} sequences to avoid from {rfam_dir}")
+    return avoid_sequences
 
 
 def main(config, device):
@@ -50,6 +99,11 @@ def main(config, device):
         testset = get_dataset(config, test_list, split="test")
         test_loader = get_dataloader(config, testset, shuffle=False)
 
+        # Load sequences to avoid if enabled
+        avoid_sequences = None
+        if config.avoid_sequences:
+            avoid_sequences = load_avoid_sequences(config)
+
         # Run evaluator + save designed structures
         results = evaluate(
             model, 
@@ -59,7 +113,8 @@ def main(config, device):
             device, 
             model_name="test",
             metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_ribonanzanet', 'sc_score_rhofold'],
-            save_designs=True
+            save_designs=True,
+            avoid_sequences=avoid_sequences
         )
         df, samples_list, recovery_list, perplexity_list, \
         scscore_list, scscore_ribonanza_list, \
@@ -131,6 +186,11 @@ def get_dataset(config, data_list, split="train"):
     """
     Returns a Dataset for a given split.
     """
+    # Load sequences to avoid if enabled
+    avoid_sequences = None
+    if config.avoid_sequences:
+        avoid_sequences = load_avoid_sequences(config)
+
     return RNADesignDataset(
         data_list = data_list,
         split = split,
@@ -139,7 +199,8 @@ def get_dataset(config, data_list, split="train"):
         num_rbf = config.num_rbf,
         num_posenc = config.num_posenc,
         max_num_conformers = config.max_num_conformers,
-        noise_scale = config.noise_scale
+        noise_scale = config.noise_scale,
+        avoid_sequences = avoid_sequences
     )
 
 
@@ -192,24 +253,6 @@ def get_model(config):
         drop_rate = config.drop_rate,
         out_dim = config.out_dim
     )
-
-
-def set_seed(seed=0, device_type='cpu'):
-    """
-    Sets random seed for reproducibility.
-    """
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    
-    if device_type == 'xpu':
-        import intel_extension_for_pytorch as ipex
-        torch.xpu.manual_seed(seed)
-        torch.xpu.manual_seed_all(seed)
 
 
 if __name__ == "__main__":

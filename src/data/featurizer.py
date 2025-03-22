@@ -25,6 +25,7 @@ class RNAGraphFeaturizer(object):
     - edge_v     edge vector features, shape [num_edges, num_conf, num_bb_atoms, 3]
     - edge_index edge indices, shape [2, num_edges]
     - mask       node mask, `False` for nodes with missing data
+    - rfam_list  list of RFAM family IDs for the RNA
 
     Args:
         split: train/validation/test split; coords are noised during training
@@ -34,6 +35,7 @@ class RNAGraphFeaturizer(object):
         num_posenc: number of positional encodings per edge
         max_num_conformers: maximum number of conformers sampled per sequence
         noise_scale: standard deviation of gaussian noise added to coordinates
+        avoid_sequences: list of sequences to avoid
     """
     def __init__(
             self,
@@ -45,7 +47,8 @@ class RNAGraphFeaturizer(object):
             max_num_conformers = 3,
             noise_scale = 0.1,
             distance_eps = DISTANCE_EPS,
-            device = 'cpu'
+            device = 'cpu',
+            avoid_sequences = None
         ):
         super().__init__()
 
@@ -58,6 +61,7 @@ class RNAGraphFeaturizer(object):
         self.noise_scale = noise_scale
         self.distance_eps = distance_eps
         self.device = device
+        self.avoid_sequences = avoid_sequences
 
         # nucleotide mapping: {'A': 0, 'G': 1, 'C': 2, 'U': 3, '_': 4}
         self.letter_to_num = dict(zip(
@@ -66,6 +70,63 @@ class RNAGraphFeaturizer(object):
         ))
         self.num_to_letter = {v:k for k, v in self.letter_to_num.items()}
         self.letter_to_num["_"] = len(self.letter_to_num)  # unknown nucleotide
+
+        # Convert avoid_sequences to tensor format if provided
+        if self.avoid_sequences is not None:
+            self.avoid_sequences_tensor = self._convert_sequences_to_tensor(self.avoid_sequences)
+
+    def _convert_sequences_to_tensor(self, sequences):
+        """
+        Convert a list of sequences to tensor format for efficient comparison.
+        
+        Args:
+            sequences (list): List of sequences to avoid
+            
+        Returns:
+            torch.Tensor: Tensor of shape [num_sequences, max_length] containing
+                         the sequences converted to integer indices
+        """
+        if not sequences:
+            return None
+            
+        # Find maximum sequence length
+        max_length = max(len(seq) for seq in sequences)
+        
+        # Convert sequences to tensor
+        tensor_sequences = []
+        for seq in sequences:
+            # Convert sequence to indices
+            indices = [self.letter_to_num.get(nuc, self.letter_to_num["_"]) for nuc in seq]
+            # Pad with zeros if necessary
+            indices.extend([0] * (max_length - len(indices)))
+            tensor_sequences.append(indices)
+            
+        return torch.tensor(tensor_sequences, device=self.device)
+
+    def _check_sequence_match(self, current_sequence, position):
+        """
+        Check if the current sequence matches any of the forbidden sequences up to the given position.
+        
+        Args:
+            current_sequence (torch.Tensor): Current sequence being generated
+            position (int): Current position in the sequence
+            
+        Returns:
+            bool: True if the current sequence matches any forbidden sequence up to this position
+        """
+        if self.avoid_sequences_tensor is None:
+            return False
+            
+        # Get the current sequence up to the position
+        current = current_sequence[:position+1]
+        
+        # Check against each forbidden sequence
+        for forbidden_seq in self.avoid_sequences_tensor:
+            # Only check up to the current position
+            if torch.all(current == forbidden_seq[:position+1]):
+                return True
+                
+        return False
 
     def __call__(self, rna):
         with torch.no_grad():
@@ -146,7 +207,8 @@ class RNAGraphFeaturizer(object):
                 torch.nan_to_num,
                 (node_s, node_v, edge_s, edge_v)
             )
-            
+        
+        print('Featurizer rna:', rna)
         data = torch_geometric.data.Data(
             seq = seq,                  # num_res x 1
             node_s = node_s,            # num_res x num_conf x (num_bb_atoms x 5)
@@ -156,6 +218,7 @@ class RNAGraphFeaturizer(object):
             edge_index = edge_index,    # 2 x num_edges
             mask_confs = mask_confs,    # num_res x num_conf
             mask_coords = mask_coords,  # num_res
+            #rfam_list = rna('rfam_list', None)  # Add rfam_list to the data object
         )
         return data
     
@@ -185,6 +248,7 @@ class RNAGraphFeaturizer(object):
             'sequence': sequence,
             'coords_list': [coords],
             'sec_struct_list': [sec_struct],
+            #'rfam_list': None  # Initialize rfam_list as None, can be updated later
         }
         return self(rna), rna
     
@@ -204,6 +268,7 @@ class RNAGraphFeaturizer(object):
             'sequence': sequence,
             'coords_list': [coords],
             'sec_struct_list': [sec_struct],
+            #'rfam_list': None  # Initialize rfam_list as None, can be updated later
         }
 
         # read remaining pdb files

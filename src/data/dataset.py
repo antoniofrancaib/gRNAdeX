@@ -35,6 +35,7 @@ class RNADesignDataset(data.Dataset):
         num_posenc: number of positional encodings per edge
         max_num_conformers: maximum number of conformers sampled per sequence
         noise_scale: standard deviation of gaussian noise added to coordinates
+        avoid_sequences: List of sequences to avoid during sampling
     """
     def __init__(
             self,
@@ -53,7 +54,8 @@ class RNADesignDataset(data.Dataset):
                 RNA_ATOMS.index("P"), RNA_ATOMS.index("C4'"), RNA_ATOMS.index("N9")
             ],
             distance_eps = DISTANCE_EPS,
-            device = 'cpu'
+            device = 'cpu',
+            avoid_sequences = None
         ):
         super().__init__()
 
@@ -62,7 +64,8 @@ class RNADesignDataset(data.Dataset):
         self.featurizer = RNAGraphFeaturizer(
             split=split, radius=radius, top_k=top_k, num_rbf=num_rbf,
             num_posenc=num_posenc, max_num_conformers=max_num_conformers,
-            noise_scale=noise_scale, distance_eps=distance_eps, device=device
+            noise_scale=noise_scale, distance_eps=distance_eps, device=device,
+            avoid_sequences=avoid_sequences
         )
 
         # Pre-process raw data to prepare self.data_list
@@ -96,7 +99,10 @@ class RNADesignDataset(data.Dataset):
         return len(self.data_list)
     
     def __getitem__(self, i): 
-        return self.featurizer(self.data_list[i])
+        data = self.featurizer(self.data_list[i])
+        # Add RNA type information to the data object
+        data.rfam_list = self.data_list[i].get('rfam_list', None)
+        return data
 
 
 class BatchSampler(data.Sampler):

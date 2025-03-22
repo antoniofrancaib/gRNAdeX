@@ -51,7 +51,7 @@ def evaluate(
             'recovery', 'perplexity', 'sc_score_eternafold', 
             'sc_score_ribonanzanet', 'sc_score_rhofold'
         ],
-        save_designs=False
+        save_designs=False,
     ):
     """
     Run evaluation suite for trained RNA inverse folding model on a dataset.

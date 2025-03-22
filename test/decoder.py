@@ -20,13 +20,18 @@ from gRNAde import gRNAde
 # Create an instance of gRNAde
 gRNAde_module = gRNAde(split='das', max_num_conformers=1, gpu_id=0)
 
+avoid_sequences = ["GGCA"]
+#avoid_sequences = None
+print(f"Avoiding sequences: {avoid_sequences}")
+
 # Single-state design example usage
 sequences, samples, perplexity, recovery_sample, sc_score = gRNAde_module.design_from_pdb_file(
     pdb_filepath = os.path.join(PROJECT_PATH, "tutorial/demo_data/4FE5_1_B.pdb"),
-    output_filepath = os.path.join(PROJECT_PATH, "tutorial/outputs/demo_output.fasta"),
+    output_filepath = os.path.join(PROJECT_PATH, "tutorial/outputs/demo_output_avoid.fasta"),
     n_samples = 16,
     temperature = 1.0,
-    seed = 0
+    seed = 0,
+    avoid_sequences = avoid_sequences
 )
 
 for seq in sequences:

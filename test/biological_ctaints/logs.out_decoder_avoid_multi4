@@ -1,0 +1,201 @@
+/home/ml2169/miniforge3/envs/rna/lib/python3.10/site-packages/Bio/Application/__init__.py:39: BiopythonDeprecationWarning: The Bio.Application modules and modules relying on it have been deprecated.
+
+Due to the on going maintenance burden of keeping command line application
+wrappers up to date, we have decided to deprecate and eventually remove these
+modules.
+
+We instead now recommend building your command line and invoking it directly
+with the subprocess module.
+  warnings.warn(
+/rds/user/ml2169/hpc-work/geometric-rna-design/test/../gRNAde.py:141: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  self.model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
+Arguments:
+  run_type: multi
+  avoid_sequences: ['AGC']
+Avoiding sequences: ['AGC']
+Instantiating gRNAde v0.3
+    Using device: cpu
+    Creating RNA graph featurizer for max_num_conformers=3
+    Initialising GNN encoder-decoder model
+    Loading model checkpoint: /rds/user/ml2169/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_3state_das.h5
+Finished initialising gRNAde v0.3
+
+Coords: 68
+Sequence: GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUGAUUAUCUU
+Len sequence: 68
+Detected base pairs: [[  70 1423]
+ [  92 1403]
+ [ 114 1383]
+ [ 137 1363]
+ [ 159 1341]
+ [ 179 1321]
+ [ 221 1301]
+ [ 265  691]
+ [ 285  668]
+ [ 305  645]
+ [ 325  622]
+ [ 345  602]
+ [ 367  582]
+ [ 389  562]
+ [ 454 1112]
+ [ 474 1090]
+ [ 516 1030]
+ [ 539 1010]
+ [ 713  858]
+ [ 736  836]
+ [ 776 1279]
+ [ 878 1256]
+ [ 898 1236]
+ [ 920 1216]
+ [ 942 1196]
+ [ 965 1176]
+ [ 987 1156]]
+Secondary structure: '...((((((.(.(((((((..[[.[[)))))))((.{..))((((((]]..]].))))))})))))))'
+Sequence length: 68
+Number of residues: 68
+Chain IDs: ['B']
+Base atoms present: ["C1'" 'C2' "C2'" "C3'" 'C4' "C4'" 'C5' "C5'" 'C6' 'C8' 'N1' 'N2' 'N3'
+ 'N4' 'N6' 'N7' 'N9' 'O2' "O2'" "O3'" 'O4' "O4'" "O5'" 'O6' 'OP1' 'OP2'
+ 'OP3' 'P']
+...((((((.(.(((((((.......)))))))((....))((((((.......)))))).)))))))
+Coords: 68
+Sequence: GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUGAUUAUCUU
+Len sequence: 68
+Detected base pairs: [[  70 1423]
+ [  92 1403]
+ [ 114 1383]
+ [ 137 1363]
+ [ 159 1341]
+ [ 179 1321]
+ [ 221 1301]
+ [ 265  691]
+ [ 285  668]
+ [ 305  645]
+ [ 325  622]
+ [ 345  602]
+ [ 367  582]
+ [ 389  562]
+ [ 454 1112]
+ [ 474 1090]
+ [ 516 1030]
+ [ 539 1010]
+ [ 713  858]
+ [ 736  836]
+ [ 776 1279]
+ [ 878 1256]
+ [ 898 1236]
+ [ 920 1216]
+ [ 942 1196]
+ [ 965 1176]
+ [ 987 1156]]
+Secondary structure: '...((((((.(.(((((((..[[.[[)))))))((.{..))((((((]]..]].))))))})))))))'
+Sequence length: 68
+Number of residues: 68
+Chain IDs: ['B']
+Base atoms present: ["C1'" 'C2' "C2'" "C3'" 'C4' "C4'" 'C5' "C5'" 'C6' 'C8' 'N1' 'N2' 'N3'
+ 'N4' 'N6' 'N7' 'N9' 'O2' "O2'" "O3'" 'O4' "O4'" "O5'" 'O6' 'OP1' 'OP2'
+ 'OP3' 'P']
+...((((((.(.(((((((.......)))))))((....))((((((.......)))))).)))))))
+Coords: 68
+Sequence: GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUGAUUAUCUU
+Len sequence: 68
+Detected base pairs: [[  69 1422]
+ [  91 1402]
+ [ 113 1382]
+ [ 136 1362]
+ [ 158 1340]
+ [ 178 1320]
+ [ 200  835]
+ [ 264  690]
+ [ 284  667]
+ [ 304  644]
+ [ 324  621]
+ [ 344  601]
+ [ 366  581]
+ [ 388  561]
+ [ 515 1029]
+ [ 538 1009]
+ [ 712  857]
+ [ 877 1255]
+ [ 897 1235]
+ [ 919 1215]
+ [ 941 1195]
+ [ 964 1175]
+ [ 986 1155]]
+Secondary structure: '...(((((((..(((((((.....[[)))))))[.....)]((((((]].....))))))..))))))'
+Sequence length: 68
+Number of residues: 68
+Chain IDs: ['X']
+Base atoms present: ["C1'" 'C2' "C2'" "C3'" 'C4' "C4'" 'C5' "C5'" 'C6' 'C8' 'N1' 'N2' 'N3'
+ 'N4' 'N6' 'N7' 'N9' 'O2' "O2'" "O3'" 'O4' "O4'" "O5'" 'O6' 'OP1' 'OP2'
+ 'P']
+...(((((((..(((((((.......)))))))......).((((((.......))))))..))))))
+featurized_data Data(edge_index=[2, 2710], seq=[68], node_s=[68, 3, 15], node_v=[68, 3, 4, 3], edge_s=[2710, 3, 131], edge_v=[2710, 3, 3, 3], mask_confs=[68, 3], mask_coords=[68])
+>input_sequence, gRNAde_version=0.3, model=AutoregressiveMultiGNNv1, max_num_conformers=3, checkpoint=/rds/user/ml2169/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_3state_das.h5, seed=0
+GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUG
+AUUAUCUU
+
+>sample=0, seed=0, temperature=1.0, perplexity=1.1403, recovery=0.5441, edit_dist=31, sc_score=0.8293
+GAAGCGAGGUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUCCUCGC
+
+>sample=1, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=2, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=3, seed=0, temperature=1.0, perplexity=1.1449, recovery=0.5147, edit_dist=33, sc_score=0.7935
+GAAGCGAGCUAAGCGUCUUAUUAUGGUAGGCGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=4, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=5, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=6, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=7, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=8, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=9, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=10, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=11, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=12, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=13, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=14, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+
+>sample=15, seed=0, temperature=1.0, perplexity=1.1424, recovery=0.5441, edit_dist=31, sc_score=0.8108
+GAAGCGAGCUAAGCCUCUUAUUAUGGUAGGGGCGUUUAAGCGGACUCCCUUAAAGAGUCC
+AUGCUCGC
+

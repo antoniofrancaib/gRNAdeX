@@ -18,6 +18,7 @@ def choose_nts(lgts, strategy='categorical', beam_branch=2, top_k=2, top_p=0.9, 
     Returns: sample from the next_token probabilities
     """
     lgts = lgts / temperature
+    print('Sampling strategy:', strategy)
 
     if strategy.lower() == 'categorical':
         # original code

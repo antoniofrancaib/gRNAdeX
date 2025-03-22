@@ -247,9 +247,9 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             for seq_str in avoid_sequences:
                 seq_tensor = torch.tensor([LETTER_TO_NUM[residue] for residue in seq_str], device=device)
                 avoid_tensors.append(seq_tensor)
-            avoid_tensors = torch.stack(avoid_tensors)
-
-        print('Avoid tensors:', avoid_tensors)
+            print('Avoid tensor:', avoid_tensors)
+            #avoid_tensors = torch.stack(avoid_tensors)
+            
         # Decode one token at a time
         for i in range(num_nodes):
             print('Iteration:', i)

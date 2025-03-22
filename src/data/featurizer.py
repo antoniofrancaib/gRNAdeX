@@ -248,7 +248,7 @@ class RNAGraphFeaturizer(object):
             'sequence': sequence,
             'coords_list': [coords],
             'sec_struct_list': [sec_struct],
-            #'rfam_list': None  # Initialize rfam_list as None, can be updated later
+            'pdb_list': [os.path.basename(pdb_filepath).split('.pdb')[0]]  # Extract basename without extension
         }
         return self(rna), rna
     
@@ -268,7 +268,7 @@ class RNAGraphFeaturizer(object):
             'sequence': sequence,
             'coords_list': [coords],
             'sec_struct_list': [sec_struct],
-            #'rfam_list': None  # Initialize rfam_list as None, can be updated later
+            'pdb_list': []  # Initialize rfam_list as None, can be updated later
         }
 
         # read remaining pdb files
@@ -279,6 +279,7 @@ class RNAGraphFeaturizer(object):
             assert sequence == rna['sequence'], "All PDBs must have the same sequence"
             rna['coords_list'].append(coords)
             rna['sec_struct_list'].append(sec_struct)
+            rna['pdb_list'].append(os.path.basename(pdb_filepath).split('.pdb')[0])
         
         return self(rna), rna
 

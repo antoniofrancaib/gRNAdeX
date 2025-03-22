@@ -29,7 +29,8 @@ from src.constants import (
     SAMPLING_STRATEGY,
     TOP_K,
     TOP_P,
-    MIN_P
+    MIN_P,
+    RNA_CORR
 )
 
 
@@ -265,7 +266,7 @@ class gRNAde(object):
         """
         # set random seed
         set_seed(seed)
-
+    
         if raw_data['coords_list'][0].shape[1] == 3:
             # Expected input: num_conf x num_res x num_bb_atoms x 3
             # Backbone atoms: (P, C4', N1 or N9)
@@ -290,9 +291,29 @@ class gRNAde(object):
             # featurize raw data
             featurized_data = self.featurizer.featurize(raw_data)
 
+        print('raw_data', raw_data)
+        print('featurized_data', featurized_data)
+
+        # Access RNA_CORR dictionary in featurized_data.pdb_list
+        # for each element in featurized_data.pdb_list, get the corresponding value from RNA_CORR
+        rna_corr = [RNA_CORR[pdb] for pdb in raw_data['pdb_list']]
+        # now access 
+        print('rna_corr', rna_corr)
+
+        # load nullomers in data/nullomers/ file that matches rna_corr
+        # access the nullomer file that matches the first element of rna_corr
+        NULLOMERS_PATH = os.environ.get("DATA_PATH") + '/nullomers/'
+        nullomer_filepath = os.path.join(NULLOMERS_PATH, rna_corr[0] + '.fasta.out')
+        print('nullomer_filepath', nullomer_filepath)
+
+        # load nullomer .fasta.out file excluding header and getting all elements as a list
+        # nullomers is a list of strings, each string is a nullomer
+        with open(nullomer_filepath, 'r') as file:
+            nullomers = file.read().splitlines()[1:] # exclude header
+        print('nullomers', nullomers)
+
         # transfer data to device
         featurized_data = featurized_data.to(self.device)
-        print('featurized_data', featurized_data)
 
         # create logit bias matrix if partial sequence is provided
         if partial_seq is not None:
@@ -312,12 +333,13 @@ class gRNAde(object):
         else:
             logit_bias = None
         
+
         # sample n_samples from model for single data point: n_samples x seq_len
         samples, logits = self.model.sample(
             featurized_data, n_samples, temperature, logit_bias, return_logits=True,
             beam_width=BEAM_WIDTH, beam_branch=BEAM_BRANCH, sampling_strategy=SAMPLING_STRATEGY,
             top_k=TOP_K, top_p=TOP_P, min_p=MIN_P,
-            avoid_sequences=avoid_sequences)
+            avoid_sequences=nullomers)
 
         # perplexity per sample: n_samples x 1
         n_nodes = logits.shape[1]
@@ -616,5 +638,4 @@ if __name__ == "__main__":
         )
 
     for seq in sequences:
-        print(seq.format("fasta"))
-    
+        print(seq.format("fasta"))    

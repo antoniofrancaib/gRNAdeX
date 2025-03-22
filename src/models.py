@@ -14,6 +14,10 @@ import torch_geometric
 from src.layers import *
 from src.sampling import choose_nts
 
+#import transformers
+#from transformers import AutoModelForMaskedLM, AutoTokenizer
+from src.constants import NUM_TO_LETTER, LETTER_TO_NUM
+
 
 class AutoregressiveMultiGNNv1(torch.nn.Module):
     '''
@@ -45,6 +49,7 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         num_layers = 3, 
         drop_rate = 0.1,
         out_dim = 4,
+        #bert_dim = 768
     ):
         super().__init__()
         self.node_in_dim = node_in_dim
@@ -53,6 +58,7 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         self.edge_h_dim = edge_h_dim
         self.num_layers = num_layers
         self.out_dim = out_dim
+        #self.bert_dim = bert_dim
         activations = (F.silu, None)
         
         # Node input embedding
@@ -87,12 +93,14 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         
         # Output
         self.W_out = GVP(self.node_h_dim, (self.out_dim, 0), activations=(None, None))
-    
-    def forward(self, batch):
+        # Add a linear projection layer to map BERT embeddings to the output dimension
+        #self.bert_projection = nn.Linear(self.bert_dim, self.out_dim)
 
+    def forward(self, batch):
         h_V = (batch.node_s, batch.node_v)
         h_E = (batch.edge_s, batch.edge_v)
         edge_index = batch.edge_index
+        device = edge_index.device
         seq = batch.seq
 
         h_V = self.W_v(h_V)  # (n_nodes, n_conf, d_s), (n_nodes, n_conf, d_v, 3)
@@ -117,6 +125,39 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             h_V = layer(h_V, edge_index, h_E, autoregressive_x = encoder_embeddings)
         
         logits = self.W_out(h_V)
+
+        # TODO: change later!
+        use_bert = False
+        # Add bert-birna embeddings
+        if use_bert and len(seq) <= 128: # TODO: adjust tokenizer or finetune it to our specific use-case
+            # TODO: change this later !
+            tokenizer = AutoTokenizer.from_pretrained("../BiRNA-BERT/TOKENIZER")
+            bert_config = transformers.BertConfig.from_pretrained("buetnlpbio/birna-bert")
+            #config.alibi_starting_size = 5000 # maximum sequence length updated to 5000 from config default of 1024 -- IF INCREASED TO 5,00 IT KILLS PROCESS !
+            mysterybert = AutoModelForMaskedLM.from_pretrained("buetnlpbio/birna-bert",config=bert_config,trust_remote_code=True).to(device)
+            mysterybert.cls = torch.nn.Identity()
+
+            # Convert sequence tensor to strings for BERT tokenizer
+            print('Shape of seq in tokens:', seq.shape)
+            print('Length of sequence:', len(seq))
+            seq_strings = " ".join([NUM_TO_LETTER[int(token)] for token in seq])
+            bert_inputs = tokenizer(seq_strings, return_tensors='pt', add_special_tokens=False, padding=True, truncation=True).to(device)
+            print('bert inputs:', bert_inputs)
+            print('seq strings:', seq_strings)
+
+            with torch.no_grad():
+                bert_outputs = mysterybert(**bert_inputs)
+                bert_embeddings = bert_outputs.logits.to(device)  # Shape: (batch_size, seq_len, hidden_dim)
+                print('Shape of bert embeddings:', bert_embeddings.shape)
+
+                # Project BERT embeddings to match the output dimension
+                bert_logits = self.bert_projection(bert_embeddings).to(device)  # Shape: (batch_size, seq_len, out_dim)
+                print('Shape of bert logits:', bert_logits.shape)
+
+                # Add BERT logits to the model's logits
+                print('Logits:', logits)
+                print('Shape of logits:', logits.shape)
+                logits += bert_logits  # Add BERT logits for the current position
         
         return logits
     
@@ -134,6 +175,8 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             top_k: Optional[int] = 0,
             top_p: Optional[float] = 0.0,
             min_p: Optional[float] = 0.0,
+            use_bert: Optional[bool] = False,
+            avoid_sequences: Optional[list] = None
         ):
         '''
         Samples sequences autoregressively from the distribution
@@ -155,6 +198,7 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             min_p (float): if using min-p sampling, probability threshold w.r.t max prob
             beam_width (int): number of beams to maintain during search
             beam_branch (int): number of samples to get from sampling strategy
+            avoid_sequences (list): list of sequences to avoid sampling
         Returns:
             seq (torch.Tensor): int tensor of shape [n_samples, n_nodes]
                                 based on the residue-to-int mapping of
@@ -181,7 +225,6 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         h_V, h_E = self.pool_multi_conf(h_V, h_E, batch.mask_confs, edge_index)
         
         # Repeat features for sampling n_samples times
-        # might have to change this
         h_V = (h_V[0].repeat(beam_width*n_samples, 1),
             h_V[1].repeat(beam_width*n_samples, 1, 1))
         h_E = (h_E[0].repeat(beam_width*n_samples, 1),
@@ -191,103 +234,135 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
         edge_index = edge_index.expand(beam_width*n_samples, -1, -1)
         offset = num_nodes * torch.arange(beam_width*n_samples, device=device).view(beam_width*n_samples, 1, 1)
         edge_index = torch.cat(tuple(edge_index + offset), dim=-1)
-        # This is akin to 'batching' (in PyG style) n_samples copies of the graph
         
         scores = torch.zeros(beam_width*n_samples, dtype=torch.float, device=device)  # cumulative log-probability
         seq = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)  # decoded tokens (to be filled)
         h_S = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
-        # Each decoder layer keeps its own cache (here cloned from the pooled encoder features)
         h_V_cache = [(h_V[0].clone(), h_V[1].clone()) for _ in self.decoder_layers]
-        # Optionally, you can store logits for later inspection
         logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
 
+        # Convert avoid_sequences to tensor format if provided
+        if avoid_sequences is not None:
+            avoid_tensors = []
+            for seq_str in avoid_sequences:
+                seq_tensor = torch.tensor([LETTER_TO_NUM[residue] for residue in seq_str], device=device)
+                avoid_tensors.append(seq_tensor)
+            avoid_tensors = torch.stack(avoid_tensors)
+
+        print('Avoid tensors:', avoid_tensors)
         # Decode one token at a time
         for i in range(num_nodes):
-
-            # --- Prepare messages for decoding token at position i ---
-            # In the original sample(), h_S is used via indexing with edge_index.
-            # Here we prepare the subset h_S_ corresponding to incoming edges for node i.
+            print('Iteration:', i)
+            if i > 0:
+                print('Sequence so far:', seq[i-1::num_nodes])
+            #print('Sequence entire so far:', seq)
             h_S_ = h_S[edge_index[0]]
-            # Zero out contributions from nodes not yet decoded:
             h_S_[edge_index[0] >= edge_index[1]] = 0
-
-            # Concatenate h_S_ with edge features
             h_E_ = (torch.cat([h_E[0], h_S_], dim=-1), h_E[1])
-            # Select only the incoming edges for node i:
-            edge_mask = edge_index[1] % num_nodes == i  # True for all edges where dst is node i
-            edge_index_ = edge_index[:, edge_mask]  # subset all incoming edges to node i
+            edge_mask = edge_index[1] % num_nodes == i
+            edge_index_ = edge_index[:, edge_mask]
             h_E_ = tuple_index(h_E_, edge_mask)
 
-            # Create a mask that is True only for the current node i (across all copies in the beam)
             node_mask = torch.zeros(beam_width*n_samples*num_nodes, device=device, dtype=torch.bool)
-            node_mask[i::num_nodes] = True  # True for all nodes i and its repeats
-            # not entirely sure if the thing above is correct
+            node_mask[i::num_nodes] = True
 
-            # --- Pass through decoder layers ---
-            # We simulate the same decoder forward pass as in sample(), updating the cache.
             for j, layer in enumerate(self.decoder_layers):
                 out = layer(h_V_cache[j], edge_index_, h_E_,
                         autoregressive_x=h_V_cache[0], node_mask=node_mask)
-                out = tuple_index(out, node_mask)  # subset out to only node i and its repeats
-                # Update the cache for the next layer if needed
+                out = tuple_index(out, node_mask)
                 if j < len(self.decoder_layers)-1:
                     h_V_cache[j+1][0][i::num_nodes] = out[0]
                     h_V_cache[j+1][1][i::num_nodes] = out[1]
-            # Final logits for node i:
             lgts = self.W_out(out)
 
-            # Add logit bias if provided to fix or bias positions
             if logit_bias is not None:
                 lgts += logit_bias[i]
-            # Sample from logits
-            # ADD HERE THE BRANCHING FACTOR !!
+            
+            print(f"lgts before avoiding: {lgts}")
+
+            # Add negative infinity to logits for sequences to avoid
+            if avoid_sequences is not None:
+                for avoid_seq in avoid_tensors:
+                    print(f"Avoiding sequences: {avoid_seq}")
+                    # Direct avoidance of current position in avoid_seq
+                    #if i < len(avoid_seq):
+                    #    lgts[..., avoid_seq[i]] = float('-inf')
+                    #    print(f"lgts after avoiding: {lgts}")
+                    
+                    # Check if we're about to complete an avoid_seq pattern
+                    if i >= len(avoid_seq) - 1:
+                        print('Entering in iteration:', i)
+                        # Get the current sequence window that would match all but the last token of avoid_seq
+                        sequence_reshaped = seq.view(beam_width*n_samples, num_nodes)
+                        print('sequence_reshaped:', sequence_reshaped)
+                        # Extract the window of tokens that would match the avoid_seq pattern
+                        # Get the last len(avoid_seq)-1 tokens generated so far
+                        start_idx = i - (len(avoid_seq) - 1)
+                        if start_idx < 0:
+                            # Not enough tokens generated yet to match the pattern
+                            seq_window = torch.zeros((beam_width*n_samples, len(avoid_seq)-1), dtype=torch.long, device=device)
+                        else:
+                            # Extract the relevant window from the sequence
+                            seq_window = sequence_reshaped[:, start_idx:i]
+                        print('seq_window:', seq_window)
+                        # Make sure avoid_window has the same shape as seq_window
+                        avoid_window = avoid_seq[:-1]
+                        print('avoid_window:', avoid_window)
+                        
+                        # Check which rows match the avoid pattern
+                        if len(avoid_window) == seq_window.size(1):  # Make sure dimensions match
+                            # Compare each row with avoid_window
+                            matches = torch.all(seq_window == avoid_window.unsqueeze(0), dim=1)
+                            print('matches:', matches)
+                            # Only set -inf for matching rows
+                            if torch.any(matches):
+                                # Create a mask for the matching rows
+                                mask = matches  # Add dimension for broadcasting
+                                
+                                # Only modify logits for rows that match the pattern
+                                lgts[mask, avoid_seq[-1]] = float('-inf')
+                                print(f"Preventing completion of avoid_seq pattern in {torch.sum(matches)} sequences.")
+                                print(f"Setting logit for {avoid_seq[-1]} to -inf for matching sequences")
+                                print(f"lgts after preventing completion: {lgts}")
+
             top_tokens, log_probs = choose_nts(lgts, strategy=sampling_strategy, beam_branch=beam_branch,
                                     temperature=temperature, top_k=top_k, top_p=top_p, min_p=min_p)
-            # log probs will return probabilities for each nucleotide type
-            # top tokens will return beam_branch samples of tokens for each of the sequences in n_samples
 
-            # For each candidate token, create a new beam candidate.
             new_beam_seq = seq.clone().repeat(beam_branch, 1)
-            new_beam_h_S = h_S.clone().repeat(beam_branch, 1, 1) ## ADD STH HERE !!!!!
+            new_beam_h_S = h_S.clone().repeat(beam_branch, 1, 1)
             new_beam_logits = logits.clone().repeat(beam_branch, 1, 1)
             top_log_probs_beam = log_probs.gather(dim=1, index=top_tokens)
             top_log_probs_beam = top_log_probs_beam.transpose(0, 1)
             new_beam_scores = scores.repeat(beam_branch, 1) + top_log_probs_beam
 
-
             new_beam_seq[:,i::num_nodes] = top_tokens.transpose(0,1)
-            new_beam_logits[:,i::num_nodes] = lgts  # store the logits for analysis
-            new_beam_h_S[:,i::num_nodes] = self.W_s(new_beam_seq[:,i::num_nodes]) # weird [0] indexing
+            new_beam_logits[:,i::num_nodes] = lgts
+            new_beam_h_S[:,i::num_nodes] = self.W_s(new_beam_seq[:,i::num_nodes])
             
             sorted_scores, sorted_indices = torch.sort(new_beam_scores, dim=0, descending=True)
             new_beam_seq[:,i::num_nodes] = torch.gather(new_beam_seq[:,i::num_nodes], dim=0, index=sorted_indices)
 
-            # reorganize h_S and logits
             expanded_indices = sorted_indices.unsqueeze(-1).expand(-1, -1, new_beam_h_S[:, i::num_nodes].size(-1))
             new_beam_h_S[:,i::num_nodes] =  torch.gather(new_beam_h_S[:,i::num_nodes], dim=0, index=expanded_indices)
             new_beam_logits[:,i::num_nodes] =  torch.gather(new_beam_logits[:,i::num_nodes], dim=0, index=expanded_indices)
 
-            # update metrics for both beams
             seq[i::num_nodes] = new_beam_seq[0,i::num_nodes]
             logits[i::num_nodes] = new_beam_logits[0,i::num_nodes]
             h_S[i::num_nodes] = new_beam_h_S[0,i::num_nodes]
-            scores = sorted_scores[0]            
+            scores = sorted_scores[0]
+            print('Sequence new:', seq[i::num_nodes])
         
-        # get ordered scores
         beamw_scores = scores.view(beam_width, -1)
         beamw_sorted_scores, beamw_sorted_indices = torch.sort(beamw_scores, dim=0, descending=True)
 
-        # reshape tensors
         final_seq = seq.view(beam_width, n_samples, num_nodes)
         final_logits = logits.view(beam_width, n_samples, num_nodes, self.out_dim)
 
-        # reorganize according to indices
         expanded_indices = beamw_sorted_indices.unsqueeze(-1).expand(-1, n_samples, num_nodes)
         final_seq = torch.gather(final_seq, dim=0, index=expanded_indices)
         expanded_indices = beamw_sorted_indices.unsqueeze(-1).unsqueeze(-1).expand(-1, n_samples, num_nodes, self.out_dim)
         final_logits = torch.gather(final_logits, dim=0, index=expanded_indices)
 
-        # use sorted indices to get final tensors
         final_scores = beamw_sorted_scores[0]
         final_seq = final_seq[0]
         final_logits = final_logits[0]

@@ -2,6 +2,7 @@
 backup/
 train_job_gpu.sh
 eval_job_gpu.sh
+test_model.py
 
 /notebooks/designs/
 /tools

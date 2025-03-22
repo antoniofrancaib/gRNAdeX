@@ -94,6 +94,10 @@ def test_forward_pass():
         
         # Create a subclass of AutoregressiveMultiGNNv1 that prints dimensions
         class DebugModel(AutoregressiveMultiGNNv1):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.scalar_values = {}  # Dictionary to store scalar values at each stage
+            
             def forward(self, batch):
                 print("\n==== MODEL TRANSFORMATIONS ====")
                 
@@ -102,62 +106,41 @@ def test_forward_pass():
                 edge_index = batch.edge_index
                 seq = batch.seq
                 
-                print(f"Raw input h_V: node_s {h_V[0].shape}, node_v {h_V[1].shape}")
-                print(f"Raw input h_E: edge_s {h_E[0].shape}, edge_v {h_E[1].shape}")
-                print(f"Raw input edge_index: {edge_index.shape}")
-                print(f"Raw input seq: {seq.shape}")
+                # Store initial scalar values
+                self.scalar_values['input'] = h_V[0].mean(dim=-1).detach().cpu().numpy()
                 
                 # Node embedding
                 h_V = self.W_v(h_V)
-                print(f"\nAfter W_v embedding: node_s {h_V[0].shape}, node_v {h_V[1].shape}")
+                self.scalar_values['embedding'] = h_V[0].mean(dim=-1).detach().cpu().numpy()
                 
                 # Edge embedding
                 h_E = self.W_e(h_E)
-                print(f"After W_e embedding: edge_s {h_E[0].shape}, edge_v {h_E[1].shape}")
                 
                 # Encoder layers
                 for i, layer in enumerate(self.encoder_layers):
-                    print(f"\n-- Encoder Layer {i+1} --")
-                    h_V_before = h_V
                     h_V = layer(h_V, edge_index, h_E)
-                    print(f"After encoder layer {i+1}: node_s {h_V[0].shape}, node_v {h_V[1].shape}")
-                    
-                    # Check if dimensions changed
-                    if h_V[0].shape != h_V_before[0].shape or h_V[1].shape != h_V_before[1].shape:
-                        print(f"Warning: Dimensions changed in encoder layer {i+1}")
+                    self.scalar_values[f'encoder_{i+1}'] = h_V[0].mean(dim=-1).detach().cpu().numpy()
                 
-                print("\n-- Pooling Multi-Conformations --")
                 # Pool multi-conformation features
                 h_V, h_E = self.pool_multi_conf(h_V, h_E, batch.mask_confs, edge_index)
-                print(f"After pooling: node_s {h_V[0].shape}, node_v {h_V[1].shape}")
-                print(f"After pooling: edge_s {h_E[0].shape}, edge_v {h_E[1].shape}")
+                self.scalar_values['pooling'] = h_V[0].mean(dim=-1).detach().cpu().numpy()
                 
                 encoder_embeddings = h_V
-                print(f"Encoder embeddings shape: node_s {encoder_embeddings[0].shape}, node_v {encoder_embeddings[1].shape}")
                 
                 # Sequence embeddings
                 h_S = self.W_s(seq)
-                print(f"After W_s embedding: seq {h_S.shape}")
-                
                 h_S = h_S[edge_index[0]]
                 h_S[edge_index[0] >= edge_index[1]] = 0
                 h_E = (torch.cat([h_E[0], h_S], dim=-1), h_E[1])
-                print(f"After edge attribute update: edge_s {h_E[0].shape}, edge_v {h_E[1].shape}")
                 
                 # Decoder layers
                 for i, layer in enumerate(self.decoder_layers):
-                    print(f"\n-- Decoder Layer {i+1} --")
-                    h_V_before = h_V
                     h_V = layer(h_V, edge_index, h_E, autoregressive_x=encoder_embeddings)
-                    print(f"After decoder layer {i+1}: node_s {h_V[0].shape}, node_v {h_V[1].shape}")
-                    
-                    # Check if dimensions changed
-                    if h_V[0].shape != h_V_before[0].shape or h_V[1].shape != h_V_before[1].shape:
-                        print(f"Warning: Dimensions changed in decoder layer {i+1}")
+                    self.scalar_values[f'decoder_{i+1}'] = h_V[0].mean(dim=-1).detach().cpu().numpy()
                 
-                print("\n-- Final Output Projection --")
+                # Final output projection
                 logits = self.W_out(h_V)
-                print(f"After W_out projection: logits {logits.shape}")
+                self.scalar_values['output'] = logits.mean(dim=-1).detach().cpu().numpy()
                 
                 return logits
                 

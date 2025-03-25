@@ -1,0 +1,12 @@
+Changed directory to /rds/user/jaf98/hpc-work/geometric-rna-design.
+
+JobID: 7397617
+======
+Time: Tue Mar 25 10:49:54 GMT 2025
+Running on master node: gpu-q-29
+Current directory: /rds/user/jaf98/hpc-work/geometric-rna-design
+
+Executing command:
+==================
+python -u main.py --config configs/eval.yaml --evaluate True --tags hpc_csd3 --expt_name rna_eval_filt_baseline > logs/out.eval_gpu 2>&1
+

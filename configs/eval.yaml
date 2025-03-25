@@ -50,7 +50,7 @@ split:
 
 # Model configurations
 model:
-  value: 'ARv1'
+  value: 'ARv2'
   desc: Model architecture (AR/NAR)
 node_in_dim:
   value: [15, 4]  # (num_bb_atoms x 5, 2 + (num_bb_atoms - 1))
@@ -104,7 +104,7 @@ val_every:
 
 # Evaluation configurations
 model_path:
-  value: 'checkpoints/gRNAde_ARv1_das.h5'
+  value: '/home/jaf98/rds/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_das.h5'
   desc: Path to model checkpoint for evaluation or reloading
 evaluate:
   value: True

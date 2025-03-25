@@ -20,6 +20,7 @@ from src.trainer import train, evaluate
 from src.data.dataset import RNADesignDataset, BatchSampler
 from src.models import (
     AutoregressiveMultiGNNv1, 
+    AutoregressiveMultiGNNv2,
     NonAutoregressiveMultiGNNv1,
 )
 from src.constants import DATA_PATH
@@ -67,25 +68,27 @@ def main(config, device):
         scscore_rmsd_list, scscore_tm_list, scscore_gdt_list, \
         rmsd_within_thresh, tm_within_thresh, gdt_within_thresh = results.values()"""
 
-        # Get basic metrics that are always present
         df = results['df']
         samples_list = results['samples_list']
         recovery_list = results['recovery_list']
         perplexity_list = results['perplexity_list']
-        scscore_list = results['scscore_list']
-        scscore_rmsd_list = results['scscore_rmsd_list']
-        scscore_tm_list = results['scscore_tm_list']
-        scscore_gdt_list = results['scscore_gdt_list']
+        # remove scscore_list if it doesn’t exist
+        # scscore_list = results['scscore_list']  
+
+        scscore_rmsd_list = results['sc_score_rmsd']
+        scscore_tm_list   = results['sc_score_tm']
+        scscore_gdt_list  = results['sc_score_gddt']
+
         rmsd_within_thresh = results['rmsd_within_thresh']
-        tm_within_thresh = results['tm_within_thresh']
-        gdt_within_thresh = results['gdt_within_thresh']
-        
+        tm_within_thresh   = results['tm_within_thresh']
+        gdt_within_thresh  = results['gdt_within_thresh']
+
         # Save results
         torch.save(results, os.path.join(wandb.run.dir, f"test_results.pt"))
         # Update wandb summary metrics
         wandb.run.summary[f"best_test_recovery"] = np.mean(recovery_list)
         wandb.run.summary[f"best_test_perplexity"] = np.mean(perplexity_list)
-        wandb.run.summary[f"best_test_scscore"] = np.mean(scscore_list)
+        # wandb.run.summary[f"best_test_scscore"] = np.mean(scscore_list)
         
         # Conditionally handle RibonanzaNet score if available
         if 'sc_score_ribonanzanet' in results:
@@ -101,11 +104,12 @@ def main(config, device):
         wandb.run.summary[f"best_test_gdt_within_thresh"] = np.mean(gdt_within_thresh)
         
         # Create print message
-        print_message = f"BEST test recovery: {np.mean(recovery_list):.4f}\
+        """print_message = f"BEST test recovery: {np.mean(recovery_list):.4f}\
                 perplexity: {np.mean(perplexity_list):.4f}\
                 scscore: {np.mean(scscore_list):.4f}\
                 "
-        
+        """
+        print_message = ""
         if 'sc_score_ribonanzanet' in results and len(scscore_ribonanza_list) > 0:
             print_message += f"scscore_ribonanza: {np.mean(scscore_ribonanza_list):.4f}\
                 "
@@ -220,6 +224,7 @@ def get_model(config):
     """
     model_class = {
         'ARv1' : AutoregressiveMultiGNNv1,
+        'ARv2' : AutoregressiveMultiGNNv2,
         'NARv1': NonAutoregressiveMultiGNNv1,
     }[config.model]
     

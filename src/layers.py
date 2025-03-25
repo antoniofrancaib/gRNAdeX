@@ -19,9 +19,6 @@ class GraphAttentionLayer(nn.Module):
     """
     Graph Attention Layer for operating on both scalar and vector node features.
     
-    Implements multi-head attention as described in:
-    "Graph Attention Networks" (Veličković et al., ICLR 2018)
-    
     This version incorporates vector norms concatenated with scalar features 
     when computing attention weights.
     

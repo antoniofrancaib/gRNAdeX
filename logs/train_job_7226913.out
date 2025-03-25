@@ -1,0 +1,12 @@
+Changed directory to /rds/user/jaf98/hpc-work/geometric-rna-design.
+
+JobID: 7226913
+======
+Time: Sat Mar 22 20:41:43 GMT 2025
+Running on master node: gpu-q-18
+Current directory: /rds/user/jaf98/hpc-work/geometric-rna-design
+
+Executing command:
+==================
+python -u main.py --config configs/default.yaml --expt_name all_data_hybrid_multi_tensor_pool --tags hybrid_enc,multi_tensor_pool, hybrid_enc, all_data, train > logs/out.train_job 2>&1
+

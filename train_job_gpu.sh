@@ -19,7 +19,7 @@
 ####### SBATCH directives end here ###############################
 
 # Application options and environment
-options="--config configs/default.yaml --expt_name hybrid_multi_tensor_pool --tags hybrid_enc,multi_tensor_pool, train"
+options="--config configs/default.yaml --expt_name all_data_hybrid_multi_tensor_pool --tags hybrid_enc,multi_tensor_pool, hybrid_enc, all_data, train"
 
 # Environment setup
 . /etc/profile.d/modules.sh

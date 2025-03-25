@@ -10,11 +10,11 @@ with the subprocess module.
 wandb: Currently logged in as: jaf98 (jaf98-university-of-cambridge) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
 wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
 wandb: Tracking run with wandb version 0.19.6
-wandb: Run data is saved locally in /rds/user/jaf98/hpc-work/geometric-rna-design/wandb/wandb/run-20250223_140151-zyftgcc4
+wandb: Run data is saved locally in /rds/user/jaf98/hpc-work/geometric-rna-design/wandb/wandb/run-20250323_091046-ah9m0iur
 wandb: Run `wandb offline` to turn off syncing.
 wandb: Syncing run rna_eval_filt_baseline
 wandb: ⭐️ View project at https://wandb.ai/jaf98-university-of-cambridge/gRNAde
-wandb: 🚀 View run at https://wandb.ai/jaf98-university-of-cambridge/gRNAde/runs/zyftgcc4
+wandb: 🚀 View run at https://wandb.ai/jaf98-university-of-cambridge/gRNAde/runs/ah9m0iur
 
 CONFIG
     device: gpu
@@ -29,7 +29,7 @@ CONFIG
     max_num_conformers: 1
     noise_scale: 0.1
     max_nodes_batch: 3000
-    max_nodes_sample: 500
+    max_nodes_sample: 5000
     split: das
     model: ARv1
     node_in_dim: [15, 4]
@@ -39,22 +39,18 @@ CONFIG
     num_layers: 4
     drop_rate: 0.5
     out_dim: 4
-    model_variant: Hybrid
-    transformer_layers: 1
-    transformer_heads: 4
-    transformer_hidden_dim: 128
-    transformer_dropout: 0.1
+    attention_heads: 4
+    attention_dropout: 0.1
     epochs: 50
     lr: 0.0001
     label_smoothing: 0.05
     batch_size: 8
     num_workers: 8
     val_every: 5
-    model_path: checkpoints/gRNAde_ARv1_1state_das.h5
+    model_path: checkpoints/gRNAde_ARv1_das.h5
     evaluate: True
     n_samples: 16
     temperature: 0.1
-    beam_width: 5
 
 MODEL
     AutoregressiveMultiGNNv1(
@@ -81,49 +77,74 @@ MODEL
     )
   )
   (encoder_layers): ModuleList(
-    (0-3): 4 x MultiGVPConvLayer(
+    (0-3): 4 x MultiAttentiveGVPLayer(
       (conv): MultiGVPConv()
-      (norm): ModuleList(
-        (0-1): 2 x LayerNorm(
-          (scalar_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
-        )
+      (attention): GraphAttentionLayer(
+        (W_Q): Linear(in_features=144, out_features=576, bias=True)
+        (W_K): Linear(in_features=144, out_features=576, bias=True)
+        (W_V): Linear(in_features=128, out_features=512, bias=True)
+        (W_O): Linear(in_features=128, out_features=128, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
       )
-      (dropout): ModuleList(
-        (0-1): 2 x Dropout(
-          (sdropout): Dropout(p=0.5, inplace=False)
-          (vdropout): _VDropout()
-        )
+      (norm): LayerNorm(
+        (scalar_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
       )
-      (ff_func): Sequential(
-        (0): GVP(
-          (wh): Linear(in_features=16, out_features=32, bias=False)
-          (ws): Linear(in_features=160, out_features=512, bias=True)
-          (wv): Linear(in_features=32, out_features=32, bias=False)
-          (wsv): Linear(in_features=512, out_features=32, bias=True)
-        )
-        (1): GVP(
-          (wh): Linear(in_features=32, out_features=32, bias=False)
-          (ws): Linear(in_features=544, out_features=128, bias=True)
-          (wv): Linear(in_features=32, out_features=16, bias=False)
-          (wsv): Linear(in_features=128, out_features=16, bias=True)
-        )
+      (dropout): Dropout(
+        (sdropout): Dropout(p=0.5, inplace=False)
+        (vdropout): _VDropout()
       )
     )
   )
+  (psi): Sequential(
+    (0): Linear(in_features=16512, out_features=256, bias=True)
+    (1): SiLU()
+    (2): Dropout(p=0.5, inplace=False)
+    (3): Linear(in_features=256, out_features=128, bias=True)
+  )
   (W_s): Embedding(4, 4)
   (decoder_layers): ModuleList(
-    (0-3): 4 x GVPConvLayer(
-      (conv): GVPConv()
-      (norm): ModuleList(
-        (0-1): 2 x LayerNorm(
-          (scalar_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+    (0-3): 4 x AttentiveGVPLayer(
+      (gvp_branch): GVPConvLayer(
+        (conv): GVPConv()
+        (norm): ModuleList(
+          (0-1): 2 x LayerNorm(
+            (scalar_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+          )
+        )
+        (dropout): ModuleList(
+          (0-1): 2 x Dropout(
+            (sdropout): Dropout(p=0.5, inplace=False)
+            (vdropout): _VDropout()
+          )
+        )
+        (ff_func): Sequential(
+          (0): GVP(
+            (wh): Linear(in_features=16, out_features=32, bias=False)
+            (ws): Linear(in_features=160, out_features=512, bias=True)
+            (wv): Linear(in_features=32, out_features=32, bias=False)
+            (wsv): Linear(in_features=512, out_features=32, bias=True)
+          )
+          (1): GVP(
+            (wh): Linear(in_features=32, out_features=32, bias=False)
+            (ws): Linear(in_features=544, out_features=128, bias=True)
+            (wv): Linear(in_features=32, out_features=16, bias=False)
+            (wsv): Linear(in_features=128, out_features=16, bias=True)
+          )
         )
       )
-      (dropout): ModuleList(
-        (0-1): 2 x Dropout(
-          (sdropout): Dropout(p=0.5, inplace=False)
-          (vdropout): _VDropout()
-        )
+      (attention_branch): GraphAttentionLayer(
+        (W_Q): Linear(in_features=144, out_features=576, bias=True)
+        (W_K): Linear(in_features=144, out_features=576, bias=True)
+        (W_V): Linear(in_features=128, out_features=512, bias=True)
+        (W_O): Linear(in_features=128, out_features=128, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+      )
+      (norm): LayerNorm(
+        (scalar_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+      )
+      (dropout): Dropout(
+        (sdropout): Dropout(p=0.5, inplace=False)
+        (vdropout): _VDropout()
       )
       (ff_func): Sequential(
         (0): GVP(
@@ -138,6 +159,9 @@ MODEL
           (wv): Linear(in_features=32, out_features=16, bias=False)
           (wsv): Linear(in_features=128, out_features=16, bias=True)
         )
+      )
+      (final_norm): LayerNorm(
+        (scalar_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
       )
     )
   )
@@ -146,39 +170,26 @@ MODEL
     (ws): Linear(in_features=144, out_features=4, bias=True)
   )
 )
-    Total parameters: 2147944
+    Total parameters: 8405992
 
 TEST DATASET
     Pre-processing 98 samples
-  0%|          | 0/98 [00:00<?, ?it/s]  1%|          | 1/98 [00:00<00:10,  9.63it/s]100%|██████████| 98/98 [00:00<00:00, 703.79it/s]
+  0%|          | 0/98 [00:00<?, ?it/s]  1%|          | 1/98 [00:01<03:00,  1.86s/it]100%|██████████| 98/98 [00:01<00:00, 51.61it/s]
     Finished: 98 pre-processed samples
-Loading RibonanzaNet checkpoint: /rds/user/jaf98/hpc-work/geometric-rna-design/tools/ribonanzanet/ribonanzanet.pt
 Loading RhoFold checkpoint: /rds/user/jaf98/hpc-work/geometric-rna-design/tools/rhofold/model_20221010_params.pt
-  0%|          | 0/98 [00:00<?, ?it/s]  0%|          | 0/98 [00:10<?, ?it/s]
+  0%|          | 0/98 [00:00<?, ?it/s]  1%|          | 1/98 [00:29<47:16, 29.24s/it]  2%|▏         | 2/98 [00:51<40:24, 25.26s/it]  3%|▎         | 3/98 [01:13<37:25, 23.64s/it]  4%|▍         | 4/98 [01:35<35:59, 22.97s/it]  5%|▌         | 5/98 [01:57<34:58, 22.57s/it]  6%|▌         | 6/98 [02:19<34:21, 22.41s/it]  7%|▋         | 7/98 [02:41<33:37, 22.17s/it]  8%|▊         | 8/98 [03:00<32:06, 21.40s/it]  9%|▉         | 9/98 [03:22<32:05, 21.64s/it] 10%|█         | 10/98 [03:45<32:05, 21.88s/it] 11%|█         | 11/98 [04:06<31:32, 21.75s/it] 12%|█▏        | 12/98 [04:28<31:11, 21.77s/it] 13%|█▎        | 13/98 [04:47<29:35, 20.89s/it] 14%|█▍        | 14/98 [05:09<29:41, 21.21s/it] 15%|█▌        | 15/98 [05:31<29:31, 21.35s/it] 16%|█▋        | 16/98 [05:52<29:24, 21.51s/it] 17%|█▋        | 17/98 [06:14<29:10, 21.61s/it] 18%|█▊        | 18/98 [06:38<29:40, 22.25s/it] 19%|█▉        | 19/98 [07:01<29:40, 22.53s/it] 20%|██        | 20/98 [07:25<29:37, 22.78s/it] 21%|██▏       | 21/98 [07:48<29:22, 22.89s/it] 22%|██▏       | 22/98 [08:12<29:31, 23.31s/it] 23%|██▎       | 23/98 [08:36<29:28, 23.58s/it] 24%|██▍       | 24/98 [09:00<28:58, 23.49s/it] 26%|██▌       | 25/98 [09:23<28:35, 23.50s/it] 27%|██▋       | 26/98 [09:47<28:20, 23.62s/it] 28%|██▊       | 27/98 [10:10<27:48, 23.50s/it] 29%|██▊       | 28/98 [10:34<27:24, 23.50s/it] 30%|██▉       | 29/98 [10:57<27:01, 23.50s/it] 31%|███       | 30/98 [11:20<26:32, 23.42s/it] 32%|███▏      | 31/98 [11:44<26:14, 23.50s/it] 33%|███▎      | 32/98 [12:07<25:41, 23.35s/it] 34%|███▎      | 33/98 [12:31<25:26, 23.49s/it] 35%|███▍      | 34/98 [12:54<25:00, 23.44s/it] 36%|███▌      | 35/98 [13:18<24:37, 23.45s/it] 37%|███▋      | 36/98 [13:42<24:22, 23.59s/it] 38%|███▊      | 37/98 [14:06<24:07, 23.73s/it] 39%|███▉      | 38/98 [14:29<23:38, 23.65s/it] 40%|███▉      | 39/98 [14:53<23:18, 23.71s/it] 41%|████      | 40/98 [15:16<22:50, 23.62s/it] 42%|████▏     | 41/98 [15:40<22:25, 23.61s/it] 43%|████▎     | 42/98 [16:05<22:17, 23.88s/it] 44%|████▍     | 43/98 [16:28<21:43, 23.71s/it] 45%|████▍     | 44/98 [16:52<21:23, 23.77s/it] 46%|████▌     | 45/98 [17:15<20:50, 23.60s/it] 47%|████▋     | 46/98 [17:38<20:19, 23.46s/it] 48%|████▊     | 47/98 [18:02<20:09, 23.72s/it] 49%|████▉     | 48/98 [18:26<19:41, 23.63s/it] 50%|█████     | 49/98 [18:49<19:05, 23.37s/it] 51%|█████     | 50/98 [19:12<18:39, 23.32s/it] 52%|█████▏    | 51/98 [19:35<18:13, 23.27s/it] 53%|█████▎    | 52/98 [20:00<18:16, 23.83s/it] 54%|█████▍    | 53/98 [20:26<18:16, 24.36s/it] 55%|█████▌    | 54/98 [20:51<18:10, 24.79s/it] 56%|█████▌    | 55/98 [21:17<17:56, 25.04s/it] 57%|█████▋    | 56/98 [21:43<17:38, 25.20s/it] 58%|█████▊    | 57/98 [22:08<17:09, 25.12s/it] 59%|█████▉    | 58/98 [22:31<16:24, 24.61s/it] 60%|██████    | 59/98 [22:57<16:18, 25.08s/it] 61%|██████    | 60/98 [23:22<15:46, 24.90s/it] 62%|██████▏   | 61/98 [23:47<15:23, 24.97s/it] 63%|██████▎   | 62/98 [24:12<15:03, 25.09s/it] 64%|██████▍   | 63/98 [24:30<13:27, 23.06s/it] 65%|██████▌   | 64/98 [24:49<12:19, 21.74s/it] 66%|██████▋   | 65/98 [25:30<15:04, 27.41s/it] 67%|██████▋   | 66/98 [26:21<18:23, 34.47s/it] 68%|██████▊   | 67/98 [27:02<18:48, 36.42s/it] 69%|██████▉   | 68/98 [27:52<20:19, 40.64s/it] 70%|███████   | 69/98 [28:43<21:03, 43.55s/it] 71%|███████▏  | 70/98 [29:23<19:54, 42.66s/it] 72%|███████▏  | 71/98 [30:03<18:52, 41.94s/it] 73%|███████▎  | 72/98 [30:43<17:50, 41.19s/it] 74%|███████▍  | 73/98 [31:22<16:57, 40.68s/it] 76%|███████▌  | 74/98 [32:12<17:20, 43.35s/it] 77%|███████▋  | 75/98 [32:51<16:07, 42.05s/it] 78%|███████▊  | 76/98 [33:10<12:55, 35.23s/it] 79%|███████▊  | 77/98 [33:29<10:35, 30.25s/it] 80%|███████▉  | 78/98 [33:47<08:55, 26.75s/it] 81%|████████  | 79/98 [34:49<11:46, 37.17s/it] 82%|████████▏ | 80/98 [35:50<13:18, 44.36s/it] 83%|████████▎ | 81/98 [36:51<13:58, 49.34s/it] 84%|████████▎ | 82/98 [37:51<14:01, 52.57s/it] 85%|████████▍ | 83/98 [38:52<13:45, 55.02s/it] 86%|████████▌ | 84/98 [39:53<13:15, 56.81s/it] 87%|████████▋ | 85/98 [40:54<12:34, 58.00s/it] 88%|████████▊ | 86/98 [41:55<11:48, 59.03s/it] 89%|████████▉ | 87/98 [42:55<10:53, 59.37s/it] 90%|████████▉ | 88/98 [43:56<09:57, 59.79s/it] 91%|█████████ | 89/98 [44:17<07:14, 48.29s/it] 92%|█████████▏| 90/98 [44:39<05:22, 40.26s/it] 93%|█████████▎| 91/98 [45:00<04:01, 34.55s/it] 94%|█████████▍| 92/98 [45:21<03:01, 30.30s/it] 95%|█████████▍| 93/98 [45:43<02:19, 28.00s/it] 96%|█████████▌| 94/98 [46:02<01:40, 25.13s/it] 97%|█████████▋| 95/98 [46:20<01:09, 23.11s/it] 98%|█████████▊| 96/98 [46:38<00:43, 21.58s/it] 99%|█████████▉| 97/98 [46:58<00:21, 21.13s/it]100%|██████████| 98/98 [47:16<00:00, 20.22s/it]100%|██████████| 98/98 [47:16<00:00, 28.95s/it]
 Traceback (most recent call last):
-  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 259, in <module>
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 299, in <module>
     main(config, device)
-  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 54, in main
-    results = evaluate(
-  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 165, in evaluate
-    samples, logits = model.sample(data, n_samples, temperature, return_logits=True, beam_width=beam_width)
-  File "/home/jaf98/miniforge3/envs/rna/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-    return func(*args, **kwargs)
-  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/models.py", line 157, in sample
-    h_V = (h_V[0].unsqueeze(0).repeat(n_samples, 1),
-RuntimeError: Number of dimensions of repeat dims can not be smaller than number of dimensions of tensor
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 75, in main
+    scscore_list = results['scscore_list']
+KeyError: 'scscore_list'
 Traceback (most recent call last):
-  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 259, in <module>
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 299, in <module>
     main(config, device)
-  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 54, in main
-    results = evaluate(
-  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/evaluator.py", line 165, in evaluate
-    samples, logits = model.sample(data, n_samples, temperature, return_logits=True, beam_width=beam_width)
-  File "/home/jaf98/miniforge3/envs/rna/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-    return func(*args, **kwargs)
-  File "/rds/user/jaf98/hpc-work/geometric-rna-design/src/models.py", line 157, in sample
-    h_V = (h_V[0].unsqueeze(0).repeat(n_samples, 1),
-RuntimeError: Number of dimensions of repeat dims can not be smaller than number of dimensions of tensor
+  File "/rds/user/jaf98/hpc-work/geometric-rna-design/main.py", line 75, in main
+    scscore_list = results['scscore_list']
+KeyError: 'scscore_list'
 [1;34mwandb[0m: 
-[1;34mwandb[0m: 🚀 View run [33mrna_eval_filt_baseline[0m at: [34mhttps://wandb.ai/jaf98-university-of-cambridge/gRNAde/runs/zyftgcc4[0m
-[1;34mwandb[0m: Find logs at: [1;35mwandb/wandb/run-20250223_140151-zyftgcc4/logs[0m
+[1;34mwandb[0m: 🚀 View run [33mrna_eval_filt_baseline[0m at: [34mhttps://wandb.ai/jaf98-university-of-cambridge/gRNAde/runs/ah9m0iur[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/wandb/run-20250323_091046-ah9m0iur/logs[0m

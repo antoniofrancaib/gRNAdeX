@@ -61,10 +61,25 @@ def main(config, device):
             metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_rhofold'],
             save_designs=True
         )
-        df, samples_list, recovery_list, perplexity_list, \
+        
+        """df, samples_list, recovery_list, perplexity_list, \
         scscore_list, \
         scscore_rmsd_list, scscore_tm_list, scscore_gdt_list, \
-        rmsd_within_thresh, tm_within_thresh, gdt_within_thresh = results.values()
+        rmsd_within_thresh, tm_within_thresh, gdt_within_thresh = results.values()"""
+
+        # Get basic metrics that are always present
+        df = results['df']
+        samples_list = results['samples_list']
+        recovery_list = results['recovery_list']
+        perplexity_list = results['perplexity_list']
+        scscore_list = results['scscore_list']
+        scscore_rmsd_list = results['scscore_rmsd_list']
+        scscore_tm_list = results['scscore_tm_list']
+        scscore_gdt_list = results['scscore_gdt_list']
+        rmsd_within_thresh = results['rmsd_within_thresh']
+        tm_within_thresh = results['tm_within_thresh']
+        gdt_within_thresh = results['gdt_within_thresh']
+        
         # Save results
         torch.save(results, os.path.join(wandb.run.dir, f"test_results.pt"))
         # Update wandb summary metrics
@@ -121,6 +136,16 @@ def main(config, device):
         # Run trainer
         train(config, model, train_loader, val_loader, test_loader, device)
 
+        # Save the model after training with a .h5 extension
+        # Define the checkpoint directory
+        checkpoint_dir = "/home/jaf98/rds/hpc-work/geometric-rna-design/checkpoints"
+        os.makedirs(checkpoint_dir, exist_ok=True)
+
+        # Create the checkpoint file path using your naming convention
+        checkpoint_path = os.path.join(checkpoint_dir, f"gRNAde_{config.model}_max_nodes_{config.max_nodes_sample}_das.h5")
+
+        torch.save(model.state_dict(), checkpoint_path)
+        print(f"Model saved to {checkpoint_path}")
 
 def get_data_splits(config, split_type="structsim_v2"):
     """

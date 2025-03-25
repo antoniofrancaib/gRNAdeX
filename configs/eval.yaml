@@ -40,7 +40,7 @@ max_nodes_batch:
   value: 3000
   desc: Maximum number of nodes in batch
 max_nodes_sample:
-  value: 500
+  value: 5000
   desc: Maximum number of nodes in batches with single samples (ie. maximum RNA length)
 
 # Splitting configurations
@@ -104,7 +104,7 @@ val_every:
 
 # Evaluation configurations
 model_path:
-  value: 'checkpoints/gRNAde_ARv1_1state_das.h5'
+  value: 'checkpoints/gRNAde_ARv1_das.h5'
   desc: Path to model checkpoint for evaluation or reloading
 evaluate:
   value: True

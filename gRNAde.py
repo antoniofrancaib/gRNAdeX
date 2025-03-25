@@ -23,7 +23,13 @@ from src.constants import (
     NUM_TO_LETTER, 
     RNA_ATOMS, 
     FILL_VALUE,
-    PROJECT_PATH
+    PROJECT_PATH,
+    BEAM_WIDTH,
+    BEAM_BRANCH,
+    SAMPLING_STRATEGY,
+    TOP_K,
+    TOP_P,
+    MIN_P
 )
 
 
@@ -220,7 +226,13 @@ class gRNAde(object):
         n_samples: Optional[int] = DEFAULT_N_SAMPLES,
         temperature: Optional[float] = DEFAULT_TEMPERATURE,
         partial_seq: Optional[str] = None,
-        seed: Optional[int] = 0
+        seed: Optional[int] = 0,
+        beam_width: Optional[int] = BEAM_WIDTH,
+        beam_branch: Optional[int] = BEAM_BRANCH,
+        sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+        top_k: Optional[int] = TOP_K,
+        top_p: Optional[float] = TOP_P,
+        min_p: Optional[float] = MIN_P
     ):
         """
         Design RNA sequences from raw data.
@@ -297,8 +309,9 @@ class gRNAde(object):
             logit_bias = None
         
         # sample n_samples from model for single data point: n_samples x seq_len
-        samples, logits = self.model.sample(
-            featurized_data, n_samples, temperature, logit_bias, return_logits=True)
+        samples, logits = self.model.sample(data, n_samples, temperature, return_logits=True,
+                beam_width=BEAM_WIDTH, beam_branch=BEAM_BRANCH, sampling_strategy=SAMPLING_STRATEGY,
+                top_k=TOP_K, top_p=TOP_P, min_p=MIN_P)
 
         # perplexity per sample: n_samples x 1
         n_nodes = logits.shape[1]

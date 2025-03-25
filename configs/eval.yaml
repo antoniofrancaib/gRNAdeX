@@ -104,7 +104,7 @@ val_every:
 
 # Evaluation configurations
 model_path:
-  value: '/home/jaf98/rds/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_das.h5'
+  value: '/home/jaf98/rds/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_max_nodes_500_das.h5'
   desc: Path to model checkpoint for evaluation or reloading
 evaluate:
   value: True

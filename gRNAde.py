@@ -155,7 +155,8 @@ class gRNAde(object):
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
             seed: Optional[int] = 0,
-            avoid_sequences: Optional[list] = None
+            avoid_sequences: Optional[list] = None,
+            use_nullomers: Optional[bool] = False
         ):
         """
         Design RNA sequences for a PDB file, i.e. fixed backbone re-design
@@ -191,7 +192,8 @@ class gRNAde(object):
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
             seed: Optional[int] = 0,
-            avoid_sequences: Optional[list] = None
+            avoid_sequences: Optional[list] = None,
+            use_nullomers: Optional[bool] = False
         ):
         """
         Design RNA sequences for directory of PDB files corresponding to the 
@@ -233,7 +235,9 @@ class gRNAde(object):
         temperature: Optional[float] = DEFAULT_TEMPERATURE,
         partial_seq: Optional[str] = None,
         seed: Optional[int] = 0,
-        avoid_sequences: Optional[list] = None
+        avoid_sequences: Optional[list] = None,
+        # TODO: CHANGE THIS LATER !
+        use_nullomers: Optional[bool] = False
     ):
         """
         Design RNA sequences from raw data.
@@ -294,23 +298,26 @@ class gRNAde(object):
         print('raw_data', raw_data)
         print('featurized_data', featurized_data)
 
-        # Access RNA_CORR dictionary in featurized_data.pdb_list
-        # for each element in featurized_data.pdb_list, get the corresponding value from RNA_CORR
-        rna_corr = [RNA_CORR[pdb] for pdb in raw_data['pdb_list']]
-        # now access 
-        print('rna_corr', rna_corr)
+        if use_nullomers:
+            # Access RNA_CORR dictionary in featurized_data.pdb_list
+            # for each element in featurized_data.pdb_list, get the corresponding value from RNA_CORR
+            rna_corr = [RNA_CORR[pdb] for pdb in raw_data['pdb_list']]
+            # now access 
+            print('rna_corr', rna_corr)
 
-        # load nullomers in data/nullomers/ file that matches rna_corr
-        # access the nullomer file that matches the first element of rna_corr
-        NULLOMERS_PATH = os.environ.get("DATA_PATH") + '/nullomers/'
-        nullomer_filepath = os.path.join(NULLOMERS_PATH, rna_corr[0] + '.fasta.out')
-        print('nullomer_filepath', nullomer_filepath)
+            # load nullomers in data/nullomers/ file that matches rna_corr
+            # access the nullomer file that matches the first element of rna_corr
+            NULLOMERS_PATH = os.environ.get("DATA_PATH") + '/nullomers/'
+            nullomer_filepath = os.path.join(NULLOMERS_PATH, rna_corr[0] + '.fasta.out')
+            print('nullomer_filepath', nullomer_filepath)
 
-        # load nullomer .fasta.out file excluding header and getting all elements as a list
-        # nullomers is a list of strings, each string is a nullomer
-        with open(nullomer_filepath, 'r') as file:
-            nullomers = file.read().splitlines()[1:] # exclude header
-        print('nullomers', nullomers)
+            # load nullomer .fasta.out file excluding header and getting all elements as a list
+            # nullomers is a list of strings, each string is a nullomer
+            with open(nullomer_filepath, 'r') as file:
+                nullomers = file.read().splitlines()[1:] # exclude header
+            print('nullomers', nullomers)
+        else:
+            nullomers = None
 
         # transfer data to device
         featurized_data = featurized_data.to(self.device)
@@ -494,6 +501,7 @@ class gRNAde(object):
         if featurized_data is None:
             # featurize raw data
             featurized_data = self.featurizer.featurize(raw_data)
+        print('featurized_data', featurized_data)
 
         # transfer data to device
         featurized_data = featurized_data.to(self.device)

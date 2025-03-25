@@ -42,7 +42,8 @@ RNA_NUCLEOTIDES = [
     'G', 
     'C', 
     'U',
-    'N'  # placeholder for missing/unknown nucleotides
+    # might have to add N back in later when sampling
+    #'N'  # placeholder for missing/unknown nucleotides
 ]
 
 
@@ -89,3 +90,18 @@ BEAM_WIDTH = 2
 BEAM_BRANCH = 4
 
 RNA_CORR = {'5T2A_1_D': '5S_rRNA'}
+
+# Records to keep in PDB files
+RECORDS_TO_KEEP = ['ATOM']
+
+# Protein residues to be aware of in PDB files
+PROT_RESIDUES = [
+    "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", 
+    "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER", 
+    "THR", "TRP", "TYR", "VAL",  # Standard Amino Acids
+
+    "SEC", "PYL",  # Non-standard Amino Acids
+
+    "PHS", "PHT", "PHY",  # Post-Translational Modifications (PTMs)
+    "MEK", "MER", "ACK", "HYP"  # Modified Amino Acids
+]

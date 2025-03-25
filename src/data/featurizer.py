@@ -70,6 +70,7 @@ class RNAGraphFeaturizer(object):
         ))
         self.num_to_letter = {v:k for k, v in self.letter_to_num.items()}
         self.letter_to_num["_"] = len(self.letter_to_num)  # unknown nucleotide
+        self.letter_to_num["P"] = -1000  # protein
 
         # Convert avoid_sequences to tensor format if provided
         if self.avoid_sequences is not None:

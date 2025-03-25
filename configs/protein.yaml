@@ -18,12 +18,6 @@ save:
 data_path:
   value: "./data/"
   desc: Data directory (preprocessed and raw)
-processed_rfam_path:
-  value: "./data/processed_unique_rfam_maw/"
-  desc: Path to directory containing .fasta.out files with sequences to avoid
-avoid_sequences:
-  value: True
-  desc: Whether to avoid sequences from .fasta.out files during sampling
 radius:
   value: 4.5
   desc: Radius for determining local neighborhoods in Angstrom (currently not used)
@@ -51,8 +45,8 @@ max_nodes_sample:
 
 # Splitting configurations
 split:
-  value: 'das'
-  desc: Type of data split (das/structsim/seqid)
+  value: 'prot_try'
+  desc: Type of data split (das/structsim/seqid/prot_try/dasprot)
 
 # Model configurations
 model:
@@ -105,7 +99,7 @@ model_path:
   value: ''
   desc: Path to model checkpoint for evaluation or reloading
 evaluate:
-  value: True
+  value: False
   desc: Whether to run evaluation (or training)
 n_samples:
   value: 16

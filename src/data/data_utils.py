@@ -17,7 +17,9 @@ from src.constants import (
     RNA_NUCLEOTIDES, 
     PURINES,
     PYRIMIDINES,
-    FILL_VALUE
+    FILL_VALUE,
+    RECORDS_TO_KEEP,
+    PROT_RESIDUES
 )
 
 
@@ -74,7 +76,11 @@ def pdb_to_tensor(
     # get sequence
     nt_list = [res.split(":")[1] for res in df.residue_id.unique()]
     # replace non-standard nucleotides with placeholder
-    nt_list = [nt if nt in RNA_NUCLEOTIDES else "_" for nt in nt_list]
+    # here is to make clear what is a protein
+    
+    # change so it is nt if it is a nucleotide or if in protein residues
+    nt_list = [nt if nt in RNA_NUCLEOTIDES or nt in PROT_RESIDUES else "_" for nt in nt_list]
+    nt_list = ['P' if nt in PROT_RESIDUES else nt for nt in nt_list]
     sequence = "".join(nt_list)
     if len(sequence) <= 1: return  # do not include single bases as data points
 
@@ -110,7 +116,8 @@ def df_to_tensor(
     df: pd.DataFrame,
     atoms_to_keep: List[str] = RNA_ATOMS,
     fill_value: float = FILL_VALUE,
-    center: bool = True
+    center: bool = True,
+    records_to_keep: List[str] = RECORDS_TO_KEEP
 ):
     """
     Transforms a DataFrame of an RNA structure into a
@@ -136,6 +143,13 @@ def df_to_tensor(
 
     num_residues = len([res.split(":")[1] for res in df.residue_id.unique()])
     df = df.loc[df["atom_name"].isin(atoms_to_keep)]
+    df = df.loc[df["record_name"].isin(records_to_keep)]
+
+    # save df to csv
+    # get fullpath of two folders up
+    #folder = "/rds/user/ml2169/hpc-work/geometric-rna-design/data/"
+    #df.to_csv(os.path.join(folder, "test_df.csv"), index=False)
+
     residue_indices = pd.factorize(np.array(df.residue_id))[0]
     atom_indices = df["atom_name"].map(lambda x: atoms_to_keep.index(x)).values
 

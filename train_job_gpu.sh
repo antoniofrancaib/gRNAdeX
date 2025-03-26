@@ -6,7 +6,7 @@
 
 ####### SBATCH directives begin here ###############################
 #SBATCH -J gRNAde_train_gpu             # Job name for training
-#SBATCH -A MLMI-jaf98-SL2-GPU          # GPU job account
+#SBATCH -A MLMI-ml2169-SL2-GPU          # GPU job account
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4              # Adjust CPU count as needed
@@ -19,7 +19,7 @@
 ####### SBATCH directives end here ###############################
 
 # Application options and environment
-options="--config configs/default.yaml --expt_name all_data_hybrid_multi_tensor_pool --tags hybrid_enc,multi_tensor_pool, hybrid_enc, all_data, train"
+options="--config configs/eval.yaml --expt_name all_data_hybrid_multi_tensor_pool --tags trying_sampling_strategies"
 
 # Environment setup
 . /etc/profile.d/modules.sh
@@ -27,7 +27,7 @@ module purge
 module load rhel8/default-amp      
 
 source /home/$USER/.bashrc
-source /home/jaf98/miniforge3/bin/activate
+source /home/ml2169/miniforge3/bin/activate
 mamba activate rna             
 
 # Python script to run (training)

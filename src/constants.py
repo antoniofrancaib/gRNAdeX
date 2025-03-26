@@ -73,7 +73,13 @@ DOTBRACKET_TO_NUM = {
 }
 
 
-# 3D self-consistency score thresholds for desingability/validity
+# RNA correlation dictionary
+RNA_CORR = {
+    '5T2A_1_D': '5S_rRNA'
+}
+
+
+# Thresholds for evaluation metrics
 RMSD_THRESHOLD = 2.0
 TM_THRESHOLD = 0.45
 GDT_THRESHOLD = 0.50

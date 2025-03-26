@@ -6,6 +6,7 @@ import random
 import argparse
 import numpy as np
 from typing import Optional
+import yaml
 
 import torch
 import torch.nn.functional as F
@@ -23,15 +24,23 @@ from src.constants import (
     NUM_TO_LETTER, 
     RNA_ATOMS, 
     FILL_VALUE,
-    PROJECT_PATH,
-    BEAM_WIDTH,
-    BEAM_BRANCH,
-    SAMPLING_STRATEGY,
-    TOP_K,
-    TOP_P,
-    MIN_P
+    PROJECT_PATH
 )
 
+# Load config
+def load_config(config_path='configs/eval.yaml'):
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+    return config
+
+# Get sampling parameters from config
+CONFIG = load_config()
+SAMPLING_STRATEGY = CONFIG.get("sampling_strategy", {}).get("value", "min_p")
+TOP_K_SAMPLING = CONFIG.get("top_k_sampling", {}).get("value", 2)
+TOP_P_SAMPLING = CONFIG.get("top_p_sampling", {}).get("value", 0.9)
+MIN_P_SAMPLING = CONFIG.get("min_p_sampling", {}).get("value", 0.05)
+BEAM_WIDTH = CONFIG.get("beam_width", {}).get("value", 2)
+BEAM_BRANCH = CONFIG.get("beam_branch", {}).get("value", 6)
 
 # Model checkpoint paths corresponding to data split and maximum no. of conformers
 CHECKPOINT_PATH = {
@@ -146,12 +155,18 @@ class gRNAde(object):
 
     def design_from_pdb_file(
             self, 
-            pdb_filepath: str,
+            pdb_filepath: str,  
             output_filepath: Optional[str] = None, 
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0
+            seed: Optional[int] = 0,
+            sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+            top_k_sampling: Optional[int] = TOP_K_SAMPLING,
+            top_p_sampling: Optional[float] = TOP_P_SAMPLING,
+            min_p_sampling: Optional[float] = MIN_P_SAMPLING,
+            beam_width: Optional[int] = BEAM_WIDTH,
+            beam_branch: Optional[int] = BEAM_BRANCH
         ):
         """
         Design RNA sequences for a PDB file, i.e. fixed backbone re-design
@@ -167,7 +182,12 @@ class gRNAde(object):
                 and underscores (e.g. "AUG___") where letters are fixed 
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
-        
+            sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
+            top_k_sampling (int): k value for top-k sampling
+            top_p_sampling (float): p value for nucleus sampling
+            min_p_sampling (float): minimum probability threshold for min-p sampling
+            beam_width (int): number of beams to maintain during search
+            beam_branch (int): number of samples to get from sampling strategy
         Returns:
             sequences (List[SeqRecord]): designed sequences in fasta format
             samples (Tensor): designed sequences with shape `(n_samples, seq_len)`
@@ -176,7 +196,21 @@ class gRNAde(object):
             sc_score (Tensor): global self consistency score per sample with shape `(n_samples, 1)`
         """
         featurized_data, raw_data = self.featurizer.featurize_from_pdb_file(pdb_filepath)
-        return self.design(raw_data, featurized_data, output_filepath, n_samples, temperature, partial_seq, seed)
+        return self.design(
+            raw_data,
+            featurized_data,
+            output_filepath,
+            n_samples,
+            temperature,
+            partial_seq,
+            seed,
+            sampling_strategy,
+            top_k_sampling,
+            top_p_sampling,
+            min_p_sampling, 
+            beam_width, 
+            beam_branch
+        )
 
     def design_from_directory(
             self,
@@ -185,7 +219,13 @@ class gRNAde(object):
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0
+            seed: Optional[int] = 0,
+            sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+            top_k_sampling: Optional[int] = TOP_K_SAMPLING,
+            top_p_sampling: Optional[float] = TOP_P_SAMPLING,
+            min_p_sampling: Optional[float] = MIN_P_SAMPLING,
+            beam_width: Optional[int] = BEAM_WIDTH,
+            beam_branch: Optional[int] = BEAM_BRANCH
         ):
         """
         Design RNA sequences for directory of PDB files corresponding to the 
@@ -202,7 +242,12 @@ class gRNAde(object):
                 and underscores (e.g. "AUG___") where letters are fixed 
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
-        
+            sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
+            top_k_sampling (int): k value for top-k sampling
+            top_p_sampling (float): p value for nucleus sampling
+            min_p_sampling (float): minimum probability threshold for min-p sampling
+            beam_width (int): number of beams to maintain during search
+            beam_branch (int): number of samples to get from sampling strategy
         Returns:
             sequences (List[SeqRecord]): designed sequences in fasta format
             samples (Tensor): designed sequences with shape `(n_samples, seq_len)`
@@ -215,7 +260,21 @@ class gRNAde(object):
             if pdb_filepath.endswith(".pdb"):
                 pdb_filelist.append(os.path.join(directory_filepath, pdb_filepath))
         featurized_data, raw_data = self.featurizer.featurize_from_pdb_filelist(pdb_filelist)
-        return self.design(raw_data, featurized_data, output_filepath, n_samples, temperature, partial_seq, seed)
+        return self.design(
+            raw_data,
+            featurized_data,
+            output_filepath,
+            n_samples,
+            temperature,
+            partial_seq,
+            seed,
+            sampling_strategy,
+            top_k_sampling,
+            top_p_sampling,
+            min_p_sampling,
+            beam_width,
+            beam_branch
+        )
 
     @torch.no_grad()
     def design(
@@ -227,12 +286,12 @@ class gRNAde(object):
         temperature: Optional[float] = DEFAULT_TEMPERATURE,
         partial_seq: Optional[str] = None,
         seed: Optional[int] = 0,
-        beam_width: Optional[int] = BEAM_WIDTH,
-        beam_branch: Optional[int] = BEAM_BRANCH,
         sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
-        top_k: Optional[int] = TOP_K,
-        top_p: Optional[float] = TOP_P,
-        min_p: Optional[float] = MIN_P
+        top_k_sampling: Optional[int] = TOP_K_SAMPLING,
+        top_p_sampling: Optional[float] = TOP_P_SAMPLING,
+        min_p_sampling: Optional[float] = MIN_P_SAMPLING,
+        beam_width: Optional[int] = BEAM_WIDTH,
+        beam_branch: Optional[int] = BEAM_BRANCH
     ):
         """
         Design RNA sequences from raw data.
@@ -253,6 +312,12 @@ class gRNAde(object):
                 and underscores (e.g. "AUG___") where letters are fixed 
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
+            sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
+            top_k_sampling (int): k value for top-k sampling
+            top_p_sampling (float): p value for nucleus sampling
+            min_p_sampling (float): minimum probability threshold for min-p sampling
+            beam_width (int): number of beams to maintain during search
+            beam_branch (int): number of samples to get from sampling strategy
         
         Returns:
             sequences (List[SeqRecord]): designed sequences in fasta format
@@ -309,9 +374,19 @@ class gRNAde(object):
             logit_bias = None
         
         # sample n_samples from model for single data point: n_samples x seq_len
-        samples, logits = self.model.sample(data, n_samples, temperature, return_logits=True,
-                beam_width=BEAM_WIDTH, beam_branch=BEAM_BRANCH, sampling_strategy=SAMPLING_STRATEGY,
-                top_k=TOP_K, top_p=TOP_P, min_p=MIN_P)
+        samples, logits = self.model.sample(
+            featurized_data,
+            n_samples,
+            temperature,
+            logit_bias=logit_bias,
+            return_logits=True,
+            sampling_strategy=sampling_strategy,
+            top_k=top_k_sampling,
+            top_p=top_p_sampling,
+            min_p=min_p_sampling,
+            beam_width=beam_width,
+            beam_branch=beam_branch
+        )
 
         # perplexity per sample: n_samples x 1
         n_nodes = logits.shape[1]
@@ -330,6 +405,7 @@ class gRNAde(object):
             raw_data['sec_struct_list'], 
             featurized_data.mask_coords.cpu().numpy()
         )
+        print('sec_struct_list:', raw_data['sec_struct_list'])
 
         # collate designed sequences in fasta format
         sequences = [
@@ -579,6 +655,55 @@ if __name__ == "__main__":
         help="GPU ID to use for inference \
             (defaults to cpu if no GPU is available)"
     )
+    parser.add_argument(
+        '--sampling_strategy',
+        dest='sampling_strategy',
+        default=SAMPLING_STRATEGY,
+        type=str,
+        help="Strategy for sampling (min_p/top_k/top_p)"
+    )
+    parser.add_argument(
+        '--top_k_sampling',
+        dest='top_k_sampling',
+        default=TOP_K_SAMPLING,
+        type=int,
+        help="k value for top-k sampling"
+    )
+    parser.add_argument(
+        '--top_p_sampling',
+        dest='top_p_sampling',
+        default=TOP_P_SAMPLING,
+        type=float,
+        help="p value for nucleus sampling"
+    )
+    parser.add_argument(
+        '--min_p_sampling',
+        dest='min_p_sampling',
+        default=MIN_P_SAMPLING,
+        type=float,
+        help="Minimum probability threshold for min-p sampling"
+    )
+    parser.add_argument(
+        '--beam_width',
+        dest='beam_width',
+        default=BEAM_WIDTH,
+        type=int,
+        help="Number of beams to maintain during search"
+    )
+    parser.add_argument(
+        '--beam_branch',
+        dest='beam_branch',
+        default=BEAM_BRANCH,
+        type=int,
+        help="Number of samples to get from sampling strategy"
+    )
+    parser.add_argument(
+        '--config',
+        dest='config',
+        default="configs/eval.yaml",
+        type=str,
+        help="Path to config file"
+    )
     args, unknown = parser.parse_known_args()
 
     if args.pdb_filepath is None and args.directory_filepath is None:
@@ -597,7 +722,13 @@ if __name__ == "__main__":
             n_samples=args.n_samples,
             temperature=args.temperature,
             partial_seq=args.partial_seq,
-            seed=args.seed
+            seed=args.seed,
+            sampling_strategy=args.sampling_strategy,
+            top_k_sampling=args.top_k_sampling,
+            top_p_sampling=args.top_p_sampling,
+            min_p_sampling=args.min_p_sampling,
+            beam_width=args.beam_width,
+            beam_branch=args.beam_branch
         )
     elif args.directory_filepath is not None:
         sequences, samples, logits, recovery_sample, sc_score = g.design_from_directory(
@@ -606,7 +737,13 @@ if __name__ == "__main__":
             n_samples=args.n_samples,
             temperature=args.temperature,
             partial_seq=args.partial_seq,
-            seed=args.seed
+            seed=args.seed,
+            sampling_strategy=args.sampling_strategy,
+            top_k_sampling=args.top_k_sampling,
+            top_p_sampling=args.top_p_sampling,
+            min_p_sampling=args.min_p_sampling,
+            beam_width=args.beam_width,
+            beam_branch=args.beam_branch
         )
 
     for seq in sequences:

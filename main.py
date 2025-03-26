@@ -60,7 +60,13 @@ def main(config, device):
             device, 
             model_name="test",
             metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_rhofold'],
-            save_designs=True
+            save_designs=True,
+            sampling_strategy=config.sampling_strategy,
+            top_k_sampling=config.top_k_sampling,
+            top_p_sampling=config.top_p_sampling,
+            min_p_sampling=config.min_p_sampling,
+            beam_width=config.beam_width,
+            beam_branch=config.beam_branch
         )
         
         """df, samples_list, recovery_list, perplexity_list, \

@@ -16,7 +16,7 @@ save:
 
 # Data configurations
 data_path:
-  value: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/" # prev: "./data/"
+  value: "/rds/user/ml2169/hpc-work/geometric-rna-design/data/" # prev: "./data/"
   desc: Data directory (preprocessed and raw)
 radius:
   value: 4.5
@@ -40,7 +40,7 @@ max_nodes_batch:
   value: 3000
   desc: Maximum number of nodes in batch
 max_nodes_sample:
-  value: 5000
+  value: 500
   desc: Maximum number of nodes in batches with single samples (ie. maximum RNA length)
 
 # Splitting configurations
@@ -104,7 +104,7 @@ val_every:
 
 # Evaluation configurations
 model_path:
-  value: '/home/jaf98/rds/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_max_nodes_500_das.h5'
+  value: '/home/ml2169/rds/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_max_nodes_500_das.h5'
   desc: Path to model checkpoint for evaluation or reloading
 evaluate:
   value: True

@@ -29,9 +29,12 @@ except ImportError:
 # Import the gRNAde module
 from gRNAde import gRNAde
 
+
+# Define functions
 def create_test_dir(model_type):
     if not os.path.exists(os.path.join(PROJECT_PATH, "tutorial/tests", model_type)):
         os.makedirs(os.path.join(PROJECT_PATH, "tutorial/tests", model_type))
+
 
 def create_output_filepath(args):
     # Create output filepath if not provided
@@ -57,6 +60,7 @@ def create_output_filepath(args):
         output_filepath = os.path.join(PROJECT_PATH, "tutorial/tests", args.model_type, args.output_filepath)
     return output_filepath
 
+
 # Choose the appropriate design function based on input type
 def choose_design_function(args):
     if os.path.isdir(args.pdb_input):
@@ -73,6 +77,7 @@ def choose_design_function(args):
         design_function = gRNAde_module.design_from_pdb_file
         sampling_params['pdb_filepath'] = os.path.join(PROJECT_PATH, args.pdb_input)
     return design_function, sampling_params
+
 
 def write_output_file(output_filepath, args, sequences):
     with open(output_filepath, 'w') as f:
@@ -99,6 +104,7 @@ def write_output_file(output_filepath, args, sequences):
         for seq in sequences:
             f.write(seq.format('fasta'))
 
+
 def create_benchmark_output_filepath(args):
     # Create descriptive filename with sampling parameters
     sampling_value = ""
@@ -111,6 +117,7 @@ def create_benchmark_output_filepath(args):
     
     output_filepath = f"benchmark_conf{args.max_num_conformers}_{args.sampling_strategy}_{sampling_value}_temp{args.temperature}_beam{args.beam_width}x{args.beam_branch}_seed{args.seed}_max_temp{args.max_temperature}_temp_factor{args.temperature_factor}.csv"
     return os.path.join(PROJECT_PATH, "tutorial/tests", args.model_type, output_filepath)
+
 
 def run_benchmark(args, gRNAde_module):
     # Metadata and recoveries from Das et al.
@@ -199,6 +206,28 @@ def run_benchmark(args, gRNAde_module):
     print(df_sample.groupby("model_name").mean())
     return df, df_sample
 
+
+def instantiate_gRNAde(args):
+    # Create an instance of gRNAde
+    gRNAde_module = gRNAde(
+        split=args.split,
+        max_num_conformers=args.max_num_conformers,
+        gpu_id=args.gpu_id,
+        sampling_strategy=args.sampling_strategy,
+        top_k_sampling=args.top_k_sampling,
+        top_p_sampling=args.top_p_sampling,
+        min_p_sampling=args.min_p_sampling,
+        beam_width=args.beam_width,
+        beam_branch=args.beam_branch,
+        temperature=args.temperature,
+        max_temperature=args.max_temperature,
+        temperature_factor=args.temperature_factor,
+        model_type=args.model_type
+    )
+    print('Created gRNAde instance of model type', args.model_type)
+    return gRNAde_module
+
+
 # 6UGG 1 A, 6UGI 1 A
 # add argparse to specify test directory
 def parse_args():
@@ -225,6 +254,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+# Main function
 if __name__ == "__main__":
     # Parse arguments
     args = parse_args()
@@ -234,23 +264,7 @@ if __name__ == "__main__":
     create_test_dir(args.model_type)
     print('Created test directory')
 
-    # Create an instance of gRNAde
-    gRNAde_module = gRNAde(
-        split=args.split,
-        max_num_conformers=args.max_num_conformers,
-        gpu_id=args.gpu_id,
-        sampling_strategy=args.sampling_strategy,
-        top_k_sampling=args.top_k_sampling,
-        top_p_sampling=args.top_p_sampling,
-        min_p_sampling=args.min_p_sampling,
-        beam_width=args.beam_width,
-        beam_branch=args.beam_branch,
-        temperature=args.temperature,
-        max_temperature=args.max_temperature,
-        temperature_factor=args.temperature_factor,
-        model_type=args.model_type
-    )
-    print('Created gRNAde instance of model type', args.model_type)
+    gRNAde_module = instantiate_gRNAde(args)
 
     # Check if benchmark should be run
     if args.run_benchmark:

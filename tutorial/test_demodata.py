@@ -83,6 +83,7 @@ def write_output_file(output_filepath, args, sequences):
     with open(output_filepath, 'w') as f:
         # Write configuration header as a comment
         f.write(f"# Configuration:\n")
+        f.write(f"# model_type: {args.model_type}\n")
         f.write(f"# model_split: {args.split}\n")
         f.write(f"# max_num_conformers: {args.max_num_conformers}\n")
         f.write(f"# sampling_strategy: {args.sampling_strategy}\n")
@@ -116,7 +117,11 @@ def create_benchmark_output_filepath(args):
         sampling_value = f"topp{args.top_p_sampling}"
     
     output_filepath = f"benchmark_conf{args.max_num_conformers}_{args.sampling_strategy}_{sampling_value}_temp{args.temperature}_beam{args.beam_width}x{args.beam_branch}_seed{args.seed}_max_temp{args.max_temperature}_temp_factor{args.temperature_factor}.csv"
-    return os.path.join(PROJECT_PATH, "tutorial/tests", args.model_type, output_filepath)
+    output_filepath = os.path.join(PROJECT_PATH, "tutorial/tests", args.model_type, output_filepath)
+
+    summary_output_filepath = f"summary_conf{args.max_num_conformers}_{args.sampling_strategy}_{sampling_value}_temp{args.temperature}_beam{args.beam_width}x{args.beam_branch}_seed{args.seed}_max_temp{args.max_temperature}_temp_factor{args.temperature_factor}.csv"
+    summary_output_filepath = os.path.join(PROJECT_PATH, "tutorial/tests", args.model_type, summary_output_filepath)
+    return output_filepath, summary_output_filepath
 
 
 def run_benchmark(args, gRNAde_module):
@@ -139,10 +144,6 @@ def run_benchmark(args, gRNAde_module):
         "Tetrahymena ribozyme P4-P6 domain",
         "Loop E from E. coli 5S rRNA",
     ]
-
-    vienna_recovery = [0.2566288,0.25852272,0.2951389,0.2448347,0.325,0.27455357,0.2916667,0.26201922,0.2709652,0.24888393,0.25,0.23317307,0.26923078,0.28035715]
-    farna_recovery = [0.20,0.34,0.36,0.45,0.27,0.40,0.28,0.31,0.24,0.26,0.38,0.30,0.36,0.35]
-    rosetta_recovery = [0.44,0.44,0.37,0.48,0.53,0.41,0.36,0.50,0.40,0.44,0.48,0.37,0.53,0.55]
 
     # Evaluate gRNAde on the Das et al. data
     grnade_recovery = []
@@ -175,35 +176,51 @@ def run_benchmark(args, gRNAde_module):
             # Add placeholder values to maintain alignment with other data
 
     # Collate results as dataframes for plotting
-    df = pd.DataFrame.from_dict({
-        "idx": list(range(len(farna_recovery))),
+    df = pd.DataFrame({
         "pdb_id": demo_data_id,
         "description": demo_data_info,
-        "vienna_recovery": np.array(vienna_recovery),
-        "farna_recovery": np.array(farna_recovery),
-        "rosetta_recovery": np.array(rosetta_recovery),
-        "grnade_recovery": np.array(grnade_recovery),
-        "grnade_perplexity": np.array(grnade_perplexity),
-        "grnade_sc_score": np.array(grnade_sc_score),
-    })
-    
-    df_sample = pd.DataFrame.from_dict({
-        "idx": list(range(len(farna_recovery) * 4)),
-        "mean_recovery": np.array(vienna_recovery + farna_recovery + rosetta_recovery + grnade_recovery),
-        "model_name": ["ViennaRNA\n(2D only)"] * len(vienna_recovery) + ["FARNA"] * len(farna_recovery) + ["Rosetta"] * len(rosetta_recovery) + ["gRNAde"] * len(grnade_recovery),
+        "model_type": [args.model_type] * len(grnade_recovery),
+        "model_recovery": np.array(grnade_recovery),
+        "model_perplexity": np.array(grnade_perplexity),
+        "model_sc_score": np.array(grnade_sc_score),
+        "sampling_strategy": [args.sampling_strategy] * len(grnade_recovery),
+        "temperature": [args.temperature] * len(grnade_recovery),
+        "beam_width": [args.beam_width] * len(grnade_recovery),
+        "beam_branch": [args.beam_branch] * len(grnade_recovery),
+        "max_temperature": [args.max_temperature] * len(grnade_recovery),
+        "temperature_factor": [args.temperature_factor] * len(grnade_recovery),
+        "min_p_sampling": [args.min_p_sampling] * len(grnade_recovery),
+        "top_k_sampling": [args.top_k_sampling] * len(grnade_recovery),
+        "top_p_sampling": [args.top_p_sampling] * len(grnade_recovery),
+        })
+
+    df_sample = pd.DataFrame({
+        "mean_recovery": [np.mean(grnade_recovery)],
+        "model_type": [args.model_type],
+        "sampling_strategy": [args.sampling_strategy],
+        "beam_width": [args.beam_width],
+        "beam_branch": [args.beam_branch],
+        "min_p_sampling": [args.min_p_sampling],
+        "top_k_sampling": [args.top_k_sampling],
+        "top_p_sampling": [args.top_p_sampling],
+        "temperature": [args.temperature],
+        "max_temperature": [args.max_temperature],
+        "temperature_factor": [args.temperature_factor],
     })
     
     # Create output directory if it doesn't exist
     os.makedirs(os.path.join(PROJECT_PATH, "tutorial/outputs"), exist_ok=True)
     
     # Create benchmark output filepath
-    benchmark_output_filepath = create_benchmark_output_filepath(args)
+    benchmark_output_filepath, summary_output_filepath = create_benchmark_output_filepath(args)
     df.to_csv(benchmark_output_filepath)
+    df_sample.to_csv(summary_output_filepath)
     print(f"\nBenchmark results saved to {benchmark_output_filepath}")
+    print(f"Summary results saved to {summary_output_filepath}")
 
     # Print mean recovery by model
     print("\nMean Recovery by Model:")
-    print(df_sample.groupby("model_name").mean())
+    print(df_sample['mean_recovery'])
     return df, df_sample
 
 
@@ -253,6 +270,7 @@ def parse_args():
     parser.add_argument("--model_type", type=str, default="ARv2")
     args = parser.parse_args()
     return args
+
 
 # Main function
 if __name__ == "__main__":

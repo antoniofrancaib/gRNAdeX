@@ -120,15 +120,9 @@ temperature:
 sampling_strategy:
   value: "min_p"
   desc: Sampling strategy for sequence generation (categorical/top_k/top_p/min_p)
-top_k_sampling:
-  value: 2
-  desc: Number of top tokens to keep for top-k sampling
-top_p_sampling:
-  value: 0.9
-  desc: Cumulative probability threshold for nucleus sampling
-min_p_sampling:
+sampling_value:
   value: 0.05
-  desc: Minimum probability threshold for min-p sampling
+  desc: Value for sampling strategy
 beam_width:
   value: 2
   desc: Number of beams to maintain during search

@@ -118,9 +118,7 @@ def train(
                 metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_rhofold'],
                 save_designs=True,
                 sampling_strategy=config.sampling_strategy,
-                top_k_sampling=config.top_k_sampling,
-                top_p_sampling=config.top_p_sampling,
-                min_p_sampling=config.min_p_sampling,
+                sampling_value=config.sampling_value,
                 max_temperature=config.max_temperature,
                 temperature_factor=config.temperature_factor
             )

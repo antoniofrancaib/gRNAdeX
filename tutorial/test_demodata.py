@@ -45,15 +45,7 @@ def create_output_filepath(args):
         else:
             base_name = os.path.basename(args.pdb_input).split('.')[0]
         
-        # Create descriptive filename with sampling parameters
-        sampling_value = ""
-        if args.sampling_strategy == "min_p":
-            sampling_value = f"{args.min_p_sampling}"
-        elif args.sampling_strategy == "top_k":
-            sampling_value = f"{args.top_k_sampling}"
-        elif args.sampling_strategy == "top_p":
-            sampling_value = f"{args.top_p_sampling}"
-        
+        # Create descriptive filename with sampling parameters        
         output_filepath = f"{base_name}_conf{args.max_num_conformers}_{args.sampling_strategy}_{sampling_value}_beam{args.beam_width}x{args.beam_branch}_temp{args.temperature}_seed{args.seed}_max_temp{args.max_temperature}_temp_factor{args.temperature_factor}.fasta"
         output_filepath = os.path.join(PROJECT_PATH, "tutorial/tests", args.model_type, output_filepath)
     else:
@@ -87,14 +79,9 @@ def write_output_file(output_filepath, args, sequences):
         f.write(f"# model_split: {args.split}\n")
         f.write(f"# max_num_conformers: {args.max_num_conformers}\n")
         f.write(f"# sampling_strategy: {args.sampling_strategy}\n")
+        f.write(f"# sampling_value: {args.sampling_value}\n")
         f.write(f"# temperature: {args.temperature}\n")
         f.write(f"# seed: {args.seed}\n")
-        if args.sampling_strategy == "top_k":
-            f.write(f"# top_k_sampling: {args.top_k_sampling}\n")
-        elif args.sampling_strategy == "top_p":
-            f.write(f"# top_p_sampling: {args.top_p_sampling}\n")
-        elif args.sampling_strategy == "min_p":
-            f.write(f"# min_p_sampling: {args.min_p_sampling}\n")
         f.write(f"# beam_width: {args.beam_width}\n")
         f.write(f"# beam_branch: {args.beam_branch}\n")
         f.write(f"# n_samples: {args.n_samples}\n")
@@ -105,29 +92,18 @@ def write_output_file(output_filepath, args, sequences):
         for seq in sequences:
             f.write(seq.format('fasta'))
 
-
 def create_benchmark_output_filepath(args):
-    # Create descriptive filename with sampling parameters
-    sampling_value = ""
-    if args.sampling_strategy == "min_p":
-        sampling_value = f"minp{args.min_p_sampling}"
-    elif args.sampling_strategy == "top_k":
-        sampling_value = f"topk{args.top_k_sampling}"
-    elif args.sampling_strategy == "top_p":
-        sampling_value = f"topp{args.top_p_sampling}"
-    
-    output_filepath = f"benchmark_conf{args.max_num_conformers}_{args.sampling_strategy}_{sampling_value}_temp{args.temperature}_beam{args.beam_width}x{args.beam_branch}_seed{args.seed}_max_temp{args.max_temperature}_temp_factor{args.temperature_factor}.csv"
+    # Create descriptive filename with sampling parameters    
+    output_filepath = f"benchmark_conf{args.max_num_conformers}_{args.sampling_strategy}_{args.sampling_value}_temp{args.temperature}_beam{args.beam_width}x{args.beam_branch}_seed{args.seed}_max_temp{args.max_temperature}_temp_factor{args.temperature_factor}.csv"
     output_filepath = os.path.join(PROJECT_PATH, "tutorial/tests", args.model_type, output_filepath)
 
-    summary_output_filepath = f"summary_conf{args.max_num_conformers}_{args.sampling_strategy}_{sampling_value}_temp{args.temperature}_beam{args.beam_width}x{args.beam_branch}_seed{args.seed}_max_temp{args.max_temperature}_temp_factor{args.temperature_factor}.csv"
+    summary_output_filepath = f"summary_conf{args.max_num_conformers}_{args.sampling_strategy}_{args.sampling_value}_temp{args.temperature}_beam{args.beam_width}x{args.beam_branch}_seed{args.seed}_max_temp{args.max_temperature}_temp_factor{args.temperature_factor}.csv"
     summary_output_filepath = os.path.join(PROJECT_PATH, "tutorial/tests", args.model_type, summary_output_filepath)
     return output_filepath, summary_output_filepath
 
 
-def run_benchmark(args, gRNAde_module):
-    # Metadata and recoveries from Das et al.
+def define_demo_data():
     demo_data_id = ["1CSL","1ET4","1F27","1L2X","1LNT","1Q9A","4FE5","1X9C","1XPE","2GCS","2GDI","2OEU","2R8S","354D"]
-
     demo_data_info = [
         "RRE high affinity site",
         "Vitamin B12 binding RNA aptamer",
@@ -144,7 +120,12 @@ def run_benchmark(args, gRNAde_module):
         "Tetrahymena ribozyme P4-P6 domain",
         "Loop E from E. coli 5S rRNA",
     ]
+    return demo_data_id, demo_data_info
 
+
+def run_benchmark(args, gRNAde_module):
+    # Metadata and recoveries from Das et al.
+    demo_data_id, demo_data_info = define_demo_data()
     # Evaluate gRNAde on the Das et al. data
     grnade_recovery = []
     grnade_perplexity = []
@@ -184,25 +165,21 @@ def run_benchmark(args, gRNAde_module):
         "model_perplexity": np.array(grnade_perplexity),
         "model_sc_score": np.array(grnade_sc_score),
         "sampling_strategy": [args.sampling_strategy] * len(grnade_recovery),
+        "sampling_value": [args.sampling_value] * len(grnade_recovery), # convert sampling value to number
         "temperature": [args.temperature] * len(grnade_recovery),
         "beam_width": [args.beam_width] * len(grnade_recovery),
         "beam_branch": [args.beam_branch] * len(grnade_recovery),
         "max_temperature": [args.max_temperature] * len(grnade_recovery),
-        "temperature_factor": [args.temperature_factor] * len(grnade_recovery),
-        "min_p_sampling": [args.min_p_sampling] * len(grnade_recovery),
-        "top_k_sampling": [args.top_k_sampling] * len(grnade_recovery),
-        "top_p_sampling": [args.top_p_sampling] * len(grnade_recovery),
+        "temperature_factor": [args.temperature_factor] * len(grnade_recovery)
         })
 
     df_sample = pd.DataFrame({
         "mean_recovery": [np.mean(grnade_recovery)],
         "model_type": [args.model_type],
         "sampling_strategy": [args.sampling_strategy],
+        "sampling_value": [args.sampling_value], # convert sampling value to number
         "beam_width": [args.beam_width],
         "beam_branch": [args.beam_branch],
-        "min_p_sampling": [args.min_p_sampling],
-        "top_k_sampling": [args.top_k_sampling],
-        "top_p_sampling": [args.top_p_sampling],
         "temperature": [args.temperature],
         "max_temperature": [args.max_temperature],
         "temperature_factor": [args.temperature_factor],
@@ -231,9 +208,7 @@ def instantiate_gRNAde(args):
         max_num_conformers=args.max_num_conformers,
         gpu_id=args.gpu_id,
         sampling_strategy=args.sampling_strategy,
-        top_k_sampling=args.top_k_sampling,
-        top_p_sampling=args.top_p_sampling,
-        min_p_sampling=args.min_p_sampling,
+        sampling_value=args.sampling_value,
         beam_width=args.beam_width,
         beam_branch=args.beam_branch,
         temperature=args.temperature,
@@ -258,9 +233,7 @@ def parse_args():
     parser.add_argument("--temperature_factor", type=float, default=0.01)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--sampling_strategy", type=str, default="categorical")
-    parser.add_argument("--top_k_sampling", type=int, default=2)
-    parser.add_argument("--top_p_sampling", type=float, default=0.9)
-    parser.add_argument("--min_p_sampling", type=float, default=0.05)
+    parser.add_argument("--sampling_value", type=float, default=0.0)
     parser.add_argument("--beam_width", type=int, default=2)
     parser.add_argument("--beam_branch", type=int, default=6)
     parser.add_argument("--split", type=str, default="das")

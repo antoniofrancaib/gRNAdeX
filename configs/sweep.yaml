@@ -3,7 +3,7 @@ method: grid
 name: gRNAde_sweep
 description: "gRNAde W&B sweep template for reproducing benchmark results"
 
-entity: jaf98
+entity: ml2169
 project: gRNAde
 
 parameters:
@@ -23,7 +23,7 @@ parameters:
 
   # Data configurations
   data_path:
-    value: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/"  # Absolute HPC path, prev: "./data/"
+    value: "/rds/user/ml2169/hpc-work/geometric-rna-design/data/"  # Absolute HPC path, prev: "./data/"
   radius:
     value: 4.5
   top_k:

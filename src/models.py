@@ -151,9 +151,7 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
             beam_width: Optional[int] = 2,
             beam_branch: Optional[int] = 2,
             sampling_strategy: Optional[str] = "categorical",
-            top_k_sampling: Optional[int] = 0,
-            top_p_sampling: Optional[float] = 0.0,
-            min_p_sampling: Optional[float] = 0.0,
+            sampling_value: Optional[float] = 0.0,
             max_temperature: Optional[float] = 0.5,
             temperature_factor: Optional[float] = 0,
         ):
@@ -172,9 +170,7 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
                 of shape [n_nodes, 4]
             return_logits (bool): whether to return logits or 
             sampling_strategy (str): one of "categorical", "greedy", "top_k", "top_p", "min_p", etc.
-            top_k (int): if using top-k sampling, how many tokens to keep
-            top_p (float): if using nucleus (top-p) sampling, what cumulative probability threshold
-            min_p (float): if using min-p sampling, probability threshold w.r.t max prob
+            sampling_value (float): value for sampling strategy
             beam_width (int): number of beams to maintain during search
             beam_branch (int): number of samples to get from sampling strategy
         Returns:
@@ -268,7 +264,7 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
             temperature_init = temperature
             temperature = min(temperature_init + temperature * temperature_factor * i, max_temperature)
             top_tokens, log_probs = choose_nts(lgts, strategy=sampling_strategy, beam_branch=beam_branch,
-                                    temperature=temperature, top_k=top_k_sampling, top_p=top_p_sampling, min_p=min_p_sampling)
+                                    temperature=temperature, sampling_value=sampling_value)
 
             # log probs will return probabilities for each nucleotide type
             # top tokens will return beam_branch samples of tokens for each of the sequences in n_samples
@@ -531,9 +527,7 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             beam_width: Optional[int] = 2,
             beam_branch: Optional[int] = 2,
             sampling_strategy: Optional[str] = "categorical",
-            top_k_sampling: Optional[int] = 0,
-            top_p_sampling: Optional[float] = 0.0,
-            min_p_sampling: Optional[float] = 0.0,
+            sampling_value: Optional[float] = 0.0,
             max_temperature: Optional[float] = 0.5,
             temperature_factor: Optional[float] = 0.0,
         ):
@@ -648,7 +642,7 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             temperature_init = temperature
             temperature = min(temperature_init + temperature * temperature_factor * i, max_temperature)
             top_tokens, log_probs = choose_nts(lgts, strategy=sampling_strategy, beam_branch=beam_branch,
-                                    temperature=temperature, top_k=top_k_sampling, top_p=top_p_sampling, min_p=min_p_sampling)
+                                    temperature=temperature, sampling_value=sampling_value)
 
             # log probs will return probabilities for each nucleotide type
             # top tokens will return beam_branch samples of tokens for each of the sequences in n_samples

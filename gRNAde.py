@@ -49,9 +49,17 @@ CHECKPOINT_PATH_GRNADE = {
     }
 }
 
+# Reference point for gRNAde
+CHECKPOINT_PATH_GRNADE = {
+    'das': {
+        1: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv1_1state_max_nodes_500_das.h5")
+    }
+}
+
+# Reference point for gRNAdeX
 CHECKPOINT_PATH_GRNADEX = {
     'das': {
-        1: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv1_max_nodes_500_das.h5")
+        1: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv2_1state_max_nodes_500_das.h5")
     }
 }
 
@@ -94,9 +102,7 @@ class gRNAde(object):
             max_num_conformers: Optional[int] = 1,
             gpu_id: Optional[int] = 0,
             sampling_strategy: Optional[str] = "min_p",
-            top_k_sampling: Optional[int] = 2,
-            top_p_sampling: Optional[float] = 0.9,
-            min_p_sampling: Optional[float] = 0.05,
+            sampling_value: Optional[float] = 0.0,
             beam_width: Optional[int] = 2,
             beam_branch: Optional[int] = 6,
             temperature: Optional[float] = 1.0,
@@ -139,9 +145,7 @@ class gRNAde(object):
 
         # Instantiating sampling parameters
         self.sampling_strategy = sampling_strategy
-        self.top_k_sampling = top_k_sampling
-        self.top_p_sampling = top_p_sampling
-        self.min_p_sampling = min_p_sampling
+        self.sampling_value = sampling_value
         self.beam_width = beam_width
         self.beam_branch = beam_branch
         self.temperature = temperature
@@ -216,9 +220,7 @@ class gRNAde(object):
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
             sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
-            top_k_sampling (int): k value for top-k sampling
-            top_p_sampling (float): p value for nucleus sampling
-            min_p_sampling (float): minimum probability threshold for min-p sampling
+            sampling_value (float): value for sampling strategy
             beam_width (int): number of beams to maintain during search
             beam_branch (int): number of samples to get from sampling strategy
         Returns:
@@ -264,9 +266,7 @@ class gRNAde(object):
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
             sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
-            top_k_sampling (int): k value for top-k sampling
-            top_p_sampling (float): p value for nucleus sampling
-            min_p_sampling (float): minimum probability threshold for min-p sampling
+            sampling_value (float): value for sampling strategy
             beam_width (int): number of beams to maintain during search
             beam_branch (int): number of samples to get from sampling strategy
         Returns:
@@ -322,9 +322,7 @@ class gRNAde(object):
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
             sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
-            top_k_sampling (int): k value for top-k sampling
-            top_p_sampling (float): p value for nucleus sampling
-            min_p_sampling (float): minimum probability threshold for min-p sampling
+            sampling_value (float): value for sampling strategy
             beam_width (int): number of beams to maintain during search
             beam_branch (int): number of samples to get from sampling strategy
         
@@ -390,9 +388,7 @@ class gRNAde(object):
             logit_bias=logit_bias,
             return_logits=True,
             sampling_strategy=self.sampling_strategy,
-            top_k_sampling=self.top_k_sampling,
-            top_p_sampling=self.top_p_sampling,
-            min_p_sampling=self.min_p_sampling,
+            sampling_value=self.sampling_value,
             beam_width=self.beam_width,
             beam_branch=self.beam_branch,
             max_temperature=self.max_temperature,
@@ -674,25 +670,11 @@ if __name__ == "__main__":
         help="Strategy for sampling (min_p/top_k/top_p)"
     )
     parser.add_argument(
-        '--top_k_sampling',
-        dest='top_k_sampling',
-        default=TOP_K_SAMPLING,
-        type=int,
-        help="k value for top-k sampling"
-    )
-    parser.add_argument(
-        '--top_p_sampling',
-        dest='top_p_sampling',
-        default=TOP_P_SAMPLING,
+        '--sampling_value',
+        dest='sampling_value',
+        default=SAMPLING_VALUE,
         type=float,
-        help="p value for nucleus sampling"
-    )
-    parser.add_argument(
-        '--min_p_sampling',
-        dest='min_p_sampling',
-        default=MIN_P_SAMPLING,
-        type=float,
-        help="Minimum probability threshold for min-p sampling"
+        help="Sampling value for sampling strategy"
     )
     parser.add_argument(
         '--beam_width',
@@ -745,9 +727,7 @@ if __name__ == "__main__":
         max_num_conformers=args.max_num_conformers, 
         gpu_id=args.gpu_id,
         sampling_strategy=args.sampling_strategy,
-        top_k_sampling=args.top_k_sampling,
-        top_p_sampling=args.top_p_sampling,
-        min_p_sampling=args.min_p_sampling,
+        sampling_value=args.sampling_value,
         beam_width=args.beam_width,
         beam_branch=args.beam_branch,
         temperature=args.temperature,

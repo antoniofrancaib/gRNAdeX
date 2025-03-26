@@ -47,9 +47,7 @@ def evaluate(
         ],
         save_designs=False,
         sampling_strategy="min_p",
-        top_k_sampling=2,
-        top_p_sampling=0.9,
-        min_p_sampling=0.05,
+        sampling_value=0.05,
         beam_width=2,
         beam_branch=6,
         max_temperature=0.5,
@@ -84,9 +82,7 @@ def evaluate(
         metrics: list of metrics to compute
         save_designs: whether to save designs as fasta with metrics
         sampling_strategy: strategy for sampling ("min_p", "top_k", "top_p")
-        top_k_sampling: k value for top-k sampling
-        top_p_sampling: p value for nucleus sampling
-        min_p_sampling: minimum probability threshold for min-p sampling
+        sampling_value: value for sampling strategy
         beam_width: number of beams to maintain during search
         beam_branch: number of samples to get from sampling strategy
     
@@ -183,9 +179,7 @@ def evaluate(
                 beam_width=beam_width,
                 beam_branch=beam_branch,
                 sampling_strategy=sampling_strategy,
-                top_k_sampling=top_k_sampling,
-                top_p_sampling=top_p_sampling,
-                min_p_sampling=min_p_sampling,
+                sampling_value=sampling_value,
                 max_temperature=max_temperature,
                 temperature_factor=temperature_factor
             )

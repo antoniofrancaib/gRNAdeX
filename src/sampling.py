@@ -11,7 +11,7 @@ from torch.distributions import Categorical
 
 ################################################################
 
-def choose_nts(lgts, strategy='categorical', beam_branch=2, top_k=2, top_p=0.9, min_p=0.05, temperature=0.1):
+def choose_nts(lgts, strategy='categorical', beam_branch=2, sampling_value=0.0, temperature=0.1):
     """
     lgts: tensor with shape batch_size, vocab_size
     samples according to beam_branch (will establish number of samples obtained)
@@ -30,21 +30,21 @@ def choose_nts(lgts, strategy='categorical', beam_branch=2, top_k=2, top_p=0.9, 
 
     elif strategy.lower() == 'top_k':
         # top-k logic
-        filtered_lgts = top_k_filtering(lgts, top_k)
+        filtered_lgts = top_k_filtering(lgts, sampling_value)
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
         sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True)
         return sample, next_token_probs
     
     elif strategy.lower() == 'top_p':
         # top-p logic
-        filtered_lgts = top_p_filtering(lgts, top_p)
+        filtered_lgts = top_p_filtering(lgts, sampling_value)
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
         sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True)
         return sample, next_token_probs
 
     elif strategy.lower() == 'min_p':
         # min-p logic
-        filtered_lgts = min_p_sampling(lgts, min_p)
+        filtered_lgts = min_p_sampling(lgts, sampling_value)
         next_token_probs = F.softmax(filtered_lgts, dim=-1)
         sample = torch.multinomial(next_token_probs, num_samples=beam_branch, replacement=True)
 
@@ -61,9 +61,7 @@ def top_k_filtering(logits, top_k=2, filter_value=-float('Inf')):
             logits: logits distribution shape (vocabulary size)
             top_k >0: keep only top k tokens with highest probability (top-k filtering).
     """
-    top_k = min(top_k, logits.size(-1))  # Safety check
-
-    if top_k > 0:
+    if top_k > 1 and top_k < logits.size(-1):
         # Remove all tokens with a probability less than the last token of the top-k
         indices_to_remove = logits < torch.topk(logits, top_k)[0][..., -1, None]
 
@@ -82,7 +80,7 @@ def top_p_filtering(logits, top_p=0.9, filter_value=-float('Inf')):
             top_p >0.0: keep the top tokens with cumulative probability >= top_p (nucleus filtering).
                 Nucleus filtering is described in Holtzman et al. (http://arxiv.org/abs/1904.09751)
     """
-    if top_p > 0.0:
+    if top_p > 0.0 and top_p < 1.0:
         sorted_logits, sorted_indices = torch.sort(logits, descending=True)
 
         cumulative_probs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
@@ -108,8 +106,9 @@ def min_p_sampling(logits, min_p=0.05, filter_value=-float('Inf')):
             (https://arxiv.org/html/2407.01082v1#S3)
     """
     # Convert logits to probs
-    next_token_probs = F.softmax(logits, dim=-1)
-    max_probs, _ = next_token_probs.max(dim=-1, keepdim=True)
-    min_probs = min_p * max_probs  # Shape: (batch_size, res_len, 1)
-    logits[next_token_probs < min_probs] = filter_value
+    if min_p > 0.0 and min_p < 1.0:
+        next_token_probs = F.softmax(logits, dim=-1)
+        max_probs, _ = next_token_probs.max(dim=-1, keepdim=True)
+        min_probs = min_p * max_probs  # Shape: (batch_size, res_len, 1)
+        logits[next_token_probs < min_probs] = filter_value
     return logits

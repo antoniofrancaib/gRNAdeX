@@ -170,3 +170,5 @@ cython_debug/
 logs/
 tutorial/tests/
 tutorial/tests1/
+tutorial/*.sh
+*.out

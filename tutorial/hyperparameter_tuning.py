@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument("--config", type=str, default="configs/default.yaml")
     
     # Add arguments for each hyperparameter
-    parser.add_argument("--model_type", type=str, nargs='+', default=['ARv1', 'ARv2'],
+    parser.add_argument("--model_type", type=str, nargs='+', default=["ARv1", "ARv2"],
                       help='List of model types to test')
     parser.add_argument("--temperature", type=float, nargs='+', default=[0.1, 0.2, 0.3, 0.5],
                       help='List of temperature values to test')
@@ -27,7 +27,7 @@ def parse_args():
                       help='List of beam width values to test')
     parser.add_argument("--beam_branch", type=int, nargs='+', default=[1],
                       help='List of beam branch values to test')
-    parser.add_argument("--sampling_strategy", type=str, nargs='+', default=['categorical', 'top_p', 'top_k', 'min_p'],
+    parser.add_argument("--sampling_strategy", type=str, nargs='+', default=["categorical", "top_p", "top_k", "min_p"],
                       help='List of sampling strategies to test')
     parser.add_argument("--sampling_value", type=float, nargs='+', default=[0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9, 2.0, 3.0],
                       help='List of sampling values to test')

@@ -151,9 +151,11 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
             beam_width: Optional[int] = 2,
             beam_branch: Optional[int] = 2,
             sampling_strategy: Optional[str] = "categorical",
-            top_k: Optional[int] = 0,
-            top_p: Optional[float] = 0.0,
-            min_p: Optional[float] = 0.0,
+            top_k_sampling: Optional[int] = 0,
+            top_p_sampling: Optional[float] = 0.0,
+            min_p_sampling: Optional[float] = 0.0,
+            max_temperature: Optional[float] = 0.5,
+            temperature_factor: Optional[float] = 0,
         ):
         '''
         Samples sequences autoregressively from the distribution
@@ -261,35 +263,25 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
             if logit_bias is not None:
                 lgts += logit_bias[i]
             # Sample from logits
-            # ADD HERE THE BRANCHING FACTOR !!
+            # Make temperature dependent of sequence length being decoded to increase
+            # stochasticity in beams as we progress through the sequence
+            temperature_init = temperature
+            temperature = min(temperature_init + temperature * temperature_factor * i, max_temperature)
             top_tokens, log_probs = choose_nts(lgts, strategy=sampling_strategy, beam_branch=beam_branch,
-                                    temperature=temperature, top_k=top_k, top_p=top_p, min_p=min_p)
+                                    temperature=temperature, top_k=top_k_sampling, top_p=top_p_sampling, min_p=min_p_sampling)
+
             # log probs will return probabilities for each nucleotide type
             # top tokens will return beam_branch samples of tokens for each of the sequences in n_samples
             # For each candidate token, create a new beam candidate.
-            #new_beam_scores = torch.zeros(beam_branch, beam_width*n_samples, dtype=torch.float, device=device)
-            #new_beam_seq = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)
-            #new_beam_h_S = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)
             new_beam_seq = seq.clone().repeat(beam_branch, 1)
-            new_beam_h_S = h_S.clone().repeat(beam_branch, 1, 1) ## ADD STH HERE !!!!!
-            #new_beam_h_V_cache = [(h_V[0].clone().repeat(beam_branch, 1, 1), h_V[1].clone().repeat(beam_branch, 1, 1)) for _ in self.decoder_layers]
-            #new_beam_logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
+            new_beam_h_S = h_S.clone().repeat(beam_branch, 1, 1)
             new_beam_logits = logits.clone().repeat(beam_branch, 1, 1)
 
             top_log_probs_beam = log_probs.gather(dim=1, index=top_tokens)
             top_log_probs_beam = top_log_probs_beam.transpose(0, 1)
-            
 
-            #print('new_beam_scores size:', new_beam_scores.size())
-            
-            #print('new_beam_scores[:, i::num_nodes]', new_beam_scores[:, i::num_nodes])
             new_beam_scores = scores.repeat(beam_branch, 1) + top_log_probs_beam
-            #new_beam_scores[:,i::num_nodes] = scores.repeat(beam_branch, 1)[:,i::num_nodes] + top_log_probs_beam
-
-            #print(new_beam_scores.size())
-
             new_beam_seq[:,i::num_nodes] = top_tokens.transpose(0,1)
-            #print('new_beam score:', new_beam_scores[:,i::num_nodes])
             new_beam_logits[:,i::num_nodes] = lgts  # store the logits for analysis
             new_beam_h_S[:,i::num_nodes] = self.W_s(new_beam_seq[:,i::num_nodes]) # weird [0] indexing
             
@@ -539,9 +531,11 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             beam_width: Optional[int] = 2,
             beam_branch: Optional[int] = 2,
             sampling_strategy: Optional[str] = "categorical",
-            top_k: Optional[int] = 0,
-            top_p: Optional[float] = 0.0,
-            min_p: Optional[float] = 0.0,
+            top_k_sampling: Optional[int] = 0,
+            top_p_sampling: Optional[float] = 0.0,
+            min_p_sampling: Optional[float] = 0.0,
+            max_temperature: Optional[float] = 0.5,
+            temperature_factor: Optional[float] = 0.0,
         ):
         '''
         Samples sequences autoregressively from the distribution
@@ -649,35 +643,25 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             if logit_bias is not None:
                 lgts += logit_bias[i]
             # Sample from logits
-            # ADD HERE THE BRANCHING FACTOR !!
+            # Make temperature dependent of sequence length being decoded to increase
+            # stochasticity in beams as we progress through the sequence
+            temperature_init = temperature
+            temperature = min(temperature_init + temperature * temperature_factor * i, max_temperature)
             top_tokens, log_probs = choose_nts(lgts, strategy=sampling_strategy, beam_branch=beam_branch,
-                                    temperature=temperature, top_k=top_k, top_p=top_p, min_p=min_p)
+                                    temperature=temperature, top_k=top_k_sampling, top_p=top_p_sampling, min_p=min_p_sampling)
+
             # log probs will return probabilities for each nucleotide type
             # top tokens will return beam_branch samples of tokens for each of the sequences in n_samples
             # For each candidate token, create a new beam candidate.
-            #new_beam_scores = torch.zeros(beam_branch, beam_width*n_samples, dtype=torch.float, device=device)
-            #new_beam_seq = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)
-            #new_beam_h_S = torch.zeros(beam_width*num_nodes*n_samples, dtype=torch.int, device=device)
             new_beam_seq = seq.clone().repeat(beam_branch, 1)
-            new_beam_h_S = h_S.clone().repeat(beam_branch, 1, 1) ## ADD STH HERE !!!!!
-            #new_beam_h_V_cache = [(h_V[0].clone().repeat(beam_branch, 1, 1), h_V[1].clone().repeat(beam_branch, 1, 1)) for _ in self.decoder_layers]
-            #new_beam_logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
+            new_beam_h_S = h_S.clone().repeat(beam_branch, 1, 1)
             new_beam_logits = logits.clone().repeat(beam_branch, 1, 1)
 
             top_log_probs_beam = log_probs.gather(dim=1, index=top_tokens)
             top_log_probs_beam = top_log_probs_beam.transpose(0, 1)
-            
 
-            #print('new_beam_scores size:', new_beam_scores.size())
-            
-            #print('new_beam_scores[:, i::num_nodes]', new_beam_scores[:, i::num_nodes])
             new_beam_scores = scores.repeat(beam_branch, 1) + top_log_probs_beam
-            #new_beam_scores[:,i::num_nodes] = scores.repeat(beam_branch, 1)[:,i::num_nodes] + top_log_probs_beam
-
-            #print(new_beam_scores.size())
-
             new_beam_seq[:,i::num_nodes] = top_tokens.transpose(0,1)
-            #print('new_beam score:', new_beam_scores[:,i::num_nodes])
             new_beam_logits[:,i::num_nodes] = lgts  # store the logits for analysis
             new_beam_h_S[:,i::num_nodes] = self.W_s(new_beam_seq[:,i::num_nodes]) # weird [0] indexing
             
@@ -720,7 +704,7 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             return final_seq.view(n_samples, num_nodes), final_logits.view(n_samples, num_nodes, self.out_dim)
         else:    
             return final_seq.view(n_samples, num_nodes)
-        
+
     def pool_multi_conf(self, h_V, h_E, mask_confs, edge_index):
 
         if mask_confs.size(1) == 1:

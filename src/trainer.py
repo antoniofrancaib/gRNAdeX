@@ -116,7 +116,13 @@ def train(
                 device, 
                 model_name=set_name,
                 metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_rhofold'],
-                save_designs=True
+                save_designs=True,
+                sampling_strategy=config.sampling_strategy,
+                top_k_sampling=config.top_k_sampling,
+                top_p_sampling=config.top_p_sampling,
+                min_p_sampling=config.min_p_sampling,
+                max_temperature=config.max_temperature,
+                temperature_factor=config.temperature_factor
             )
             df, samples_list, recovery_list, perplexity_list, \
             scscore_list, scscore_ribonanza_list, \

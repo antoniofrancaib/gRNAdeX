@@ -135,3 +135,9 @@ beam_width:
 beam_branch:
   value: 6
   desc: Number of samples to get from sampling strategy
+max_temperature:
+  value: 0.5
+  desc: Maximum temperature for sampling
+temperature_factor:
+  value: 0.01
+  desc: Factor to increase temperature by

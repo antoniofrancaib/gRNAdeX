@@ -51,7 +51,9 @@ def evaluate(
         top_p_sampling=0.9,
         min_p_sampling=0.05,
         beam_width=2,
-        beam_branch=6
+        beam_branch=6,
+        max_temperature=0.5,
+        temperature_factor=0.01
     ):
     """
     Run evaluation suite for trained RNA inverse folding model on a dataset.
@@ -181,9 +183,11 @@ def evaluate(
                 beam_width=beam_width,
                 beam_branch=beam_branch,
                 sampling_strategy=sampling_strategy,
-                top_k=top_k_sampling,
-                top_p=top_p_sampling,
-                min_p=min_p_sampling
+                top_k_sampling=top_k_sampling,
+                top_p_sampling=top_p_sampling,
+                min_p_sampling=min_p_sampling,
+                max_temperature=max_temperature,
+                temperature_factor=temperature_factor
             )
             samples_list.append(samples.cpu().numpy())
             

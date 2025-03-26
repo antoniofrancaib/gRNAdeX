@@ -17,7 +17,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from src.data.featurizer import RNAGraphFeaturizer
-from src.models import AutoregressiveMultiGNNv1
+from src.models import AutoregressiveMultiGNNv1, AutoregressiveMultiGNNv2, NonAutoregressiveMultiGNNv1
 from src.data.data_utils import get_backbone_coords
 from src.evaluator import edit_distance, self_consistency_score_eternafold
 from src.constants import (
@@ -27,23 +27,8 @@ from src.constants import (
     PROJECT_PATH
 )
 
-# Load config
-def load_config(config_path='configs/eval.yaml'):
-    with open(config_path, 'r') as f:
-        config = yaml.safe_load(f)
-    return config
-
-# Get sampling parameters from config
-CONFIG = load_config()
-SAMPLING_STRATEGY = CONFIG.get("sampling_strategy", {}).get("value", "min_p")
-TOP_K_SAMPLING = CONFIG.get("top_k_sampling", {}).get("value", 2)
-TOP_P_SAMPLING = CONFIG.get("top_p_sampling", {}).get("value", 0.9)
-MIN_P_SAMPLING = CONFIG.get("min_p_sampling", {}).get("value", 0.05)
-BEAM_WIDTH = CONFIG.get("beam_width", {}).get("value", 2)
-BEAM_BRANCH = CONFIG.get("beam_branch", {}).get("value", 6)
-
 # Model checkpoint paths corresponding to data split and maximum no. of conformers
-CHECKPOINT_PATH = {
+CHECKPOINT_PATH_GRNADE = {
     'all': {
         1: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv1_1state_all.h5"),
         2: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv1_2state_all.h5"),
@@ -64,6 +49,12 @@ CHECKPOINT_PATH = {
     }
 }
 
+CHECKPOINT_PATH_GRNADEX = {
+    'das': {
+        1: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv1_max_nodes_500_das.h5")
+    }
+}
+
 # Default model hyperparameters (do not change)
 VERSION = 0.3
 RADIUS = 0.0
@@ -80,7 +71,8 @@ DROP_RATE = 0.5
 OUT_DIM = 4
 DEFAULT_N_SAMPLES = 16
 DEFAULT_TEMPERATURE = 0.1
-
+ATTENTION_HEADS = 4
+ATTENTION_DROPOUT = 0.1
 
 class gRNAde(object):
     """
@@ -101,6 +93,16 @@ class gRNAde(object):
             split: Optional[str] = "all",
             max_num_conformers: Optional[int] = 1,
             gpu_id: Optional[int] = 0,
+            sampling_strategy: Optional[str] = "min_p",
+            top_k_sampling: Optional[int] = 2,
+            top_p_sampling: Optional[float] = 0.9,
+            min_p_sampling: Optional[float] = 0.05,
+            beam_width: Optional[int] = 2,
+            beam_branch: Optional[int] = 6,
+            temperature: Optional[float] = 1.0,
+            max_temperature: Optional[float] = 0.5,
+            temperature_factor: Optional[float] = 0.01,
+            model_type: Optional[str] = "ARv2",
         ):
 
         # Set version
@@ -108,8 +110,12 @@ class gRNAde(object):
         print(f"Instantiating gRNAde v{self.version}")
 
         # Set maximum number of conformers
-        if max_num_conformers > max(list(CHECKPOINT_PATH[split].keys())):
-            max_num_conformers = max(list(CHECKPOINT_PATH[split].keys()))
+        # Initialise model
+        print(f"    Initialising GNN encoder-decoder model {model_type}")
+        self.select_model(model_type)
+        
+        if max_num_conformers > max(list(self.checkpoint[split].keys())):
+            max_num_conformers = max(list(self.checkpoint[split].keys()))
             print(f"    Invalid max_num_conformers. Setting to maximum value: {max_num_conformers}")
         self.split = split
         self.max_num_conformers = max_num_conformers
@@ -131,19 +137,19 @@ class gRNAde(object):
             noise_scale = NOISE_SCALE
         )
 
-        # Initialise model
-        print(f"    Initialising GNN encoder-decoder model")
-        self.model = AutoregressiveMultiGNNv1(
-            node_in_dim = NODE_IN_DIM,
-            node_h_dim = NODE_H_DIM, 
-            edge_in_dim = EDGE_IN_DIM,
-            edge_h_dim = EDGE_H_DIM, 
-            num_layers = NUM_LAYERS,
-            drop_rate = DROP_RATE,
-            out_dim = OUT_DIM
-        )
+        # Instantiating sampling parameters
+        self.sampling_strategy = sampling_strategy
+        self.top_k_sampling = top_k_sampling
+        self.top_p_sampling = top_p_sampling
+        self.min_p_sampling = min_p_sampling
+        self.beam_width = beam_width
+        self.beam_branch = beam_branch
+        self.temperature = temperature
+        self.max_temperature = max_temperature
+        self.temperature_factor = temperature_factor
+
         # Load model checkpoint
-        self.model_path = CHECKPOINT_PATH[split][max_num_conformers]
+        self.model_path = self.checkpoint[split][max_num_conformers]
         print(f"    Loading model checkpoint: {self.model_path}")
         self.model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
 
@@ -153,6 +159,39 @@ class gRNAde(object):
 
         print(f"Finished initialising gRNAde v{self.version}\n")
 
+    def select_model(self, model_type):
+        model_params = {
+                "node_in_dim": NODE_IN_DIM,
+                "node_h_dim": NODE_H_DIM, 
+                "edge_in_dim": EDGE_IN_DIM,
+                "edge_h_dim": EDGE_H_DIM, 
+                "num_layers": NUM_LAYERS,
+                "drop_rate": DROP_RATE,
+                "out_dim": OUT_DIM
+                }
+
+        if model_type == "ARv1":
+            self.model = AutoregressiveMultiGNNv1(
+                **model_params
+            )
+            self.checkpoint = CHECKPOINT_PATH_GRNADE
+
+        elif model_type == "ARv2":
+            self.model = AutoregressiveMultiGNNv2(
+                **model_params,
+                attention_heads=ATTENTION_HEADS,
+                attention_dropout=ATTENTION_DROPOUT
+            )
+            self.checkpoint = CHECKPOINT_PATH_GRNADEX
+
+        elif model_type == "NARv1":
+            self.model = NonAutoregressiveMultiGNNv1(
+                **model_params
+            )
+            self.checkpoint = CHECKPOINT_PATH_GRNADE
+        else:
+            raise ValueError(f"Invalid model type: {model_type}")
+        
     def design_from_pdb_file(
             self, 
             pdb_filepath: str,  
@@ -160,13 +199,7 @@ class gRNAde(object):
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0,
-            sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
-            top_k_sampling: Optional[int] = TOP_K_SAMPLING,
-            top_p_sampling: Optional[float] = TOP_P_SAMPLING,
-            min_p_sampling: Optional[float] = MIN_P_SAMPLING,
-            beam_width: Optional[int] = BEAM_WIDTH,
-            beam_branch: Optional[int] = BEAM_BRANCH
+            seed: Optional[int] = 0
         ):
         """
         Design RNA sequences for a PDB file, i.e. fixed backbone re-design
@@ -203,13 +236,7 @@ class gRNAde(object):
             n_samples,
             temperature,
             partial_seq,
-            seed,
-            sampling_strategy,
-            top_k_sampling,
-            top_p_sampling,
-            min_p_sampling, 
-            beam_width, 
-            beam_branch
+            seed
         )
 
     def design_from_directory(
@@ -219,13 +246,7 @@ class gRNAde(object):
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0,
-            sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
-            top_k_sampling: Optional[int] = TOP_K_SAMPLING,
-            top_p_sampling: Optional[float] = TOP_P_SAMPLING,
-            min_p_sampling: Optional[float] = MIN_P_SAMPLING,
-            beam_width: Optional[int] = BEAM_WIDTH,
-            beam_branch: Optional[int] = BEAM_BRANCH
+            seed: Optional[int] = 0
         ):
         """
         Design RNA sequences for directory of PDB files corresponding to the 
@@ -267,13 +288,7 @@ class gRNAde(object):
             n_samples,
             temperature,
             partial_seq,
-            seed,
-            sampling_strategy,
-            top_k_sampling,
-            top_p_sampling,
-            min_p_sampling,
-            beam_width,
-            beam_branch
+            seed
         )
 
     @torch.no_grad()
@@ -285,13 +300,7 @@ class gRNAde(object):
         n_samples: Optional[int] = DEFAULT_N_SAMPLES,
         temperature: Optional[float] = DEFAULT_TEMPERATURE,
         partial_seq: Optional[str] = None,
-        seed: Optional[int] = 0,
-        sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
-        top_k_sampling: Optional[int] = TOP_K_SAMPLING,
-        top_p_sampling: Optional[float] = TOP_P_SAMPLING,
-        min_p_sampling: Optional[float] = MIN_P_SAMPLING,
-        beam_width: Optional[int] = BEAM_WIDTH,
-        beam_branch: Optional[int] = BEAM_BRANCH
+        seed: Optional[int] = 0
     ):
         """
         Design RNA sequences from raw data.
@@ -380,12 +389,14 @@ class gRNAde(object):
             temperature,
             logit_bias=logit_bias,
             return_logits=True,
-            sampling_strategy=sampling_strategy,
-            top_k=top_k_sampling,
-            top_p=top_p_sampling,
-            min_p=min_p_sampling,
-            beam_width=beam_width,
-            beam_branch=beam_branch
+            sampling_strategy=self.sampling_strategy,
+            top_k_sampling=self.top_k_sampling,
+            top_p_sampling=self.top_p_sampling,
+            min_p_sampling=self.min_p_sampling,
+            beam_width=self.beam_width,
+            beam_branch=self.beam_branch,
+            max_temperature=self.max_temperature,
+            temperature_factor=self.temperature_factor
         )
 
         # perplexity per sample: n_samples x 1
@@ -704,6 +715,26 @@ if __name__ == "__main__":
         type=str,
         help="Path to config file"
     )
+    parser.add_argument(
+        '--max_temperature',
+        dest='max_temperature',
+        default=0.5,
+        type=float,
+    )
+    parser.add_argument(
+        '--temperature_factor',
+        dest='temperature_factor',
+        default=0.01,
+        type=float,
+        help="Factor to increase temperature by"
+    )
+    parser.add_argument(
+        '--model_type',
+        dest='model_type',
+        default="ARv2",
+        type=str,
+        help="Model type (ARv1/ARv2/NARv1)"
+    )
     args, unknown = parser.parse_known_args()
 
     if args.pdb_filepath is None and args.directory_filepath is None:
@@ -712,7 +743,17 @@ if __name__ == "__main__":
     g = gRNAde(
         split=args.split,
         max_num_conformers=args.max_num_conformers, 
-        gpu_id=args.gpu_id
+        gpu_id=args.gpu_id,
+        sampling_strategy=args.sampling_strategy,
+        top_k_sampling=args.top_k_sampling,
+        top_p_sampling=args.top_p_sampling,
+        min_p_sampling=args.min_p_sampling,
+        beam_width=args.beam_width,
+        beam_branch=args.beam_branch,
+        temperature=args.temperature,
+        max_temperature=args.max_temperature,
+        temperature_factor=args.temperature_factor,
+        model_type=args.model_type
     )
 
     if args.pdb_filepath is not None:
@@ -722,13 +763,7 @@ if __name__ == "__main__":
             n_samples=args.n_samples,
             temperature=args.temperature,
             partial_seq=args.partial_seq,
-            seed=args.seed,
-            sampling_strategy=args.sampling_strategy,
-            top_k_sampling=args.top_k_sampling,
-            top_p_sampling=args.top_p_sampling,
-            min_p_sampling=args.min_p_sampling,
-            beam_width=args.beam_width,
-            beam_branch=args.beam_branch
+            seed=args.seed
         )
     elif args.directory_filepath is not None:
         sequences, samples, logits, recovery_sample, sc_score = g.design_from_directory(
@@ -737,13 +772,7 @@ if __name__ == "__main__":
             n_samples=args.n_samples,
             temperature=args.temperature,
             partial_seq=args.partial_seq,
-            seed=args.seed,
-            sampling_strategy=args.sampling_strategy,
-            top_k_sampling=args.top_k_sampling,
-            top_p_sampling=args.top_p_sampling,
-            min_p_sampling=args.min_p_sampling,
-            beam_width=args.beam_width,
-            beam_branch=args.beam_branch
+            seed=args.seed
         )
 
     for seq in sequences:

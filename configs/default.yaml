@@ -16,7 +16,7 @@ save:
 
 # Data configurations
 data_path:
-  value: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/"  # Absolute HPC path, prev: "./data/"
+  value: "/rds/user/ml2169/hpc-work/geometric-rna-design/data/"  # Absolute HPC path, prev: "./data/"
   desc: Data directory (preprocessed and raw)
 radius:
   value: 4.5
@@ -115,3 +115,29 @@ n_samples:
 temperature:
   value: 0.1
   desc: Sampling temperature for evaluating recovery
+
+# Sampling strategy configurations
+sampling_strategy:
+  value: "categorical"
+  desc: Sampling strategy for sequence generation (categorical/top_k/top_p/min_p)
+top_k_sampling:
+  value: 2
+  desc: Number of top tokens to keep for top-k sampling
+top_p_sampling:
+  value: 0.9
+  desc: Cumulative probability threshold for nucleus sampling
+min_p_sampling:
+  value: 0.05
+  desc: Minimum probability threshold for min-p sampling
+beam_width:
+  value: 2
+  desc: Number of beams to maintain during search
+beam_branch:
+  value: 6
+  desc: Number of samples to get from sampling strategy
+max_temperature:
+  value: 0.5
+  desc: Maximum temperature for sampling
+temperature_factor:
+  value: 0.0
+  desc: Factor to increase temperature by

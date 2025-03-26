@@ -19,7 +19,6 @@ def choose_nts(lgts, strategy='categorical', beam_branch=2, top_k=2, top_p=0.9, 
     """
     # First rescale with temperature -- is this right ? or should I rescale after filtering ?
     lgts = lgts / temperature
-    print('Using sampling strategy:', strategy)
 
     if strategy.lower() == 'categorical':
         # Original code
@@ -83,7 +82,6 @@ def top_p_filtering(logits, top_p=0.9, filter_value=-float('Inf')):
             top_p >0.0: keep the top tokens with cumulative probability >= top_p (nucleus filtering).
                 Nucleus filtering is described in Holtzman et al. (http://arxiv.org/abs/1904.09751)
     """
-    print('top_p', top_p)
     if top_p > 0.0:
         sorted_logits, sorted_indices = torch.sort(logits, descending=True)
 

@@ -21,19 +21,19 @@ def parse_args():
                       help='List of temperature values to test')
     parser.add_argument("--max_temperature", type=float, nargs='+', default=[0.5],
                       help='List of max temperature values to test')
-    parser.add_argument("--temperature_factor", type=float, nargs='+', default=[0.0, 1e-5],
+    parser.add_argument("--temperature_factor", type=float, nargs='+', default=[0.0],
                       help='List of temperature factor values to test')
-    parser.add_argument("--beam_width", type=int, nargs='+', default=[1, 2, 4, 6, 8],
+    parser.add_argument("--beam_width", type=int, nargs='+', default=[1],
                       help='List of beam width values to test')
-    parser.add_argument("--beam_branch", type=int, nargs='+', default=[1, 2, 4, 6, 8],
+    parser.add_argument("--beam_branch", type=int, nargs='+', default=[1],
                       help='List of beam branch values to test')
-    parser.add_argument("--sampling_strategy", type=str, nargs='+', default=["min_p"],
+    parser.add_argument("--sampling_strategy", type=str, nargs='+', default=["top_p", "top_k", "min_p"],
                       help='List of sampling strategies to test')
-    parser.add_argument("--sampling_value", type=float, nargs='+', default=[0.05, 0.1],
+    parser.add_argument("--sampling_value", type=float, nargs='+', default=[0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9, 2.0, 3.0],
                       help='List of sampling values to test')
     
     # Add argument for output directory
-    parser.add_argument("--output_dir", type=str, default="tutorial/tests/hyperparameters/comparison_best",
+    parser.add_argument("--output_dir", type=str, default="tutorial/tests/hyperparameters",
                       help='Directory to save results')
     
     return parser.parse_args()  
@@ -76,7 +76,7 @@ def grid_search(args):
                             for sampling in hyperparameters['sampling_strategy']:
                                 for sampling_value in hyperparameters['sampling_value']:
                                         # Set sampling parameters based on strategy
-                                        if sampling == 'top_p' and sampling_value < 1.0:
+                                        if sampling == 'top_p' and sampling_value > 1.0:
                                             df, df_sample = run_benchmark_with_params(
                                                 model_type, temp, max_temp, temp_factor,
                                                 beam_w, beam_b, sampling, sampling_value,
@@ -85,10 +85,6 @@ def grid_search(args):
                                             )
                                             all_benchmark_results = pd.concat([all_benchmark_results, df], ignore_index=True)
                                             all_summary_results = pd.concat([all_summary_results, df_sample], ignore_index=True)
-                                            # save immediate results to csv, overwriting if file exists
-                                            os.makedirs(args.output_dir, exist_ok=True)
-                                            all_benchmark_results.to_csv(os.path.join(args.output_dir, "benchmark_hyperparams.csv"), index=False, mode='w')
-                                            all_summary_results.to_csv(os.path.join(args.output_dir, "summary_hyperparams.csv"), index=False, mode='w')
                                         elif sampling == 'min_p' and sampling_value < 0.5:
                                             df, df_sample = run_benchmark_with_params(
                                                 model_type, temp, max_temp, temp_factor,
@@ -98,10 +94,6 @@ def grid_search(args):
                                             )
                                             all_benchmark_results = pd.concat([all_benchmark_results, df], ignore_index=True)
                                             all_summary_results = pd.concat([all_summary_results, df_sample], ignore_index=True)
-                                            # save immediate results to csv
-                                            os.makedirs(args.output_dir, exist_ok=True)
-                                            all_benchmark_results.to_csv(os.path.join(args.output_dir, "benchmark_hyperparams.csv"), index=False)
-                                            all_summary_results.to_csv(os.path.join(args.output_dir, "summary_hyperparams.csv"), index=False)
                                         elif sampling == 'top_k' and int(sampling_value) > 1:
                                             sampling_value = int(sampling_value)
                                             df, df_sample = run_benchmark_with_params(
@@ -112,10 +104,6 @@ def grid_search(args):
                                             )
                                             all_benchmark_results = pd.concat([all_benchmark_results, df], ignore_index=True)
                                             all_summary_results = pd.concat([all_summary_results, df_sample], ignore_index=True)
-                                            # save immediate results to csv
-                                            os.makedirs(args.output_dir, exist_ok=True)
-                                            all_benchmark_results.to_csv(os.path.join(args.output_dir, "benchmark_hyperparams.csv"), index=False)
-                                            all_summary_results.to_csv(os.path.join(args.output_dir, "summary_hyperparams.csv"), index=False)
     # Save final results
     os.makedirs(args.output_dir, exist_ok=True)
 
@@ -173,7 +161,8 @@ def run_benchmark_with_params(model_type, temperature, max_temperature, temperat
     df['beam_branch'] = beam_branch
     df_sample['temperature'] = temperature
     df_sample['max_temperature'] = max_temperature
-    df_sample['temperature_factor'] = temperature_factor    
+    df_sample['temperature_factor'] = temperature_factor
+
     return df, df_sample
 
 # Main function

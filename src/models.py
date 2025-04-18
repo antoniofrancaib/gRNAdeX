@@ -140,7 +140,44 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
         logits = self.W_out(h_V)
         
         return logits
-    
+
+
+    @torch.no_grad()
+    def convert_sequences_to_tensors(self, sequences, device):
+        '''
+        Convert a list of sequences to a list of tensors
+        '''
+        avoid_tensors = []
+        for seq_str in sequences:
+            seq_tensor = torch.tensor([LETTER_TO_NUM[residue] for residue in seq_str], device=device)
+            avoid_tensors.append(seq_tensor)
+        return avoid_tensors
+
+
+    @torch.no_grad()
+    def prevent_forbidden_sequences(self, lgts, idx, seq, avoid_tensors, beam_width, n_samples, num_nodes, device):
+        '''
+        Prevent forbidden sequences from being generated
+        '''
+        for avoid_seq in avoid_tensors:
+            # only if about to complete an avoid_seq pattern
+            if idx >= len(avoid_seq) - 1:
+                sequence_reshaped = seq.view(beam_width*n_samples, num_nodes)
+                start_idx = idx - (len(avoid_seq) - 1)
+                if start_idx < 0:
+                    seq_window = torch.zeros((beam_width*n_samples, len(avoid_seq)-1), dtype=torch.long, device=device)
+                else:
+                    seq_window = sequence_reshaped[:, start_idx:idx]
+                avoid_window = avoid_seq[:-1]
+                            
+                if len(avoid_window) == seq_window.size(1):
+                    matches = torch.all(seq_window == avoid_window.unsqueeze(0), dim=1)
+                    if torch.any(matches):
+                        mask = matches
+                        lgts[mask, avoid_seq[-1]] = float('-inf')
+        return lgts
+
+
     @torch.no_grad()
     def sample(
             self, 
@@ -224,12 +261,7 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
         logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
         
         # Convert avoid_sequences to tensor format if provided
-        if avoid_sequences is not None:
-            avoid_tensors = []
-            for seq_str in avoid_sequences:
-                seq_tensor = torch.tensor([LETTER_TO_NUM[residue] for residue in seq_str], device=device)
-                avoid_tensors.append(seq_tensor)
-            print('Avoid tensor:', avoid_tensors)
+        avoid_tensors = self.convert_sequences_to_tensors(avoid_sequences, device)
 
         # Decode one token at a time
         for i in range(num_nodes):
@@ -272,48 +304,7 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
 
             # Add negative infinity to logits for sequences to avoid
             if avoid_sequences is not None:
-                for avoid_seq in avoid_tensors:
-                    print(f"Avoiding sequences: {avoid_seq}")
-                    # Direct avoidance of current position in avoid_seq
-                    #if i < len(avoid_seq):
-                    #    lgts[..., avoid_seq[i]] = float('-inf')
-                    #    print(f"lgts after avoiding: {lgts}")
-                    
-                    # Check if we're about to complete an avoid_seq pattern
-                    if i >= len(avoid_seq) - 1:
-                        print('Entering in iteration:', i)
-                        # Get the current sequence window that would match all but the last token of avoid_seq
-                        sequence_reshaped = seq.view(beam_width*n_samples, num_nodes)
-                        print('sequence_reshaped:', sequence_reshaped)
-                        # Extract the window of tokens that would match the avoid_seq pattern
-                        # Get the last len(avoid_seq)-1 tokens generated so far
-                        start_idx = i - (len(avoid_seq) - 1)
-                        if start_idx < 0:
-                            # Not enough tokens generated yet to match the pattern
-                            seq_window = torch.zeros((beam_width*n_samples, len(avoid_seq)-1), dtype=torch.long, device=device)
-                        else:
-                            # Extract the relevant window from the sequence
-                            seq_window = sequence_reshaped[:, start_idx:i]
-                        print('seq_window:', seq_window)
-                        # Make sure avoid_window has the same shape as seq_window
-                        avoid_window = avoid_seq[:-1]
-                        print('avoid_window:', avoid_window)
-                        
-                        # Check which rows match the avoid pattern
-                        if len(avoid_window) == seq_window.size(1):  # Make sure dimensions match
-                            # Compare each row with avoid_window
-                            matches = torch.all(seq_window == avoid_window.unsqueeze(0), dim=1)
-                            print('matches:', matches)
-                            # Only set -inf for matching rows
-                            if torch.any(matches):
-                                # Create a mask for the matching rows
-                                mask = matches  # Add dimension for broadcasting
-                                
-                                # Only modify logits for rows that match the pattern
-                                lgts[mask, avoid_seq[-1]] = float('-inf')
-                                print(f"Preventing completion of avoid_seq pattern in {torch.sum(matches)} sequences.")
-                                print(f"Setting logit for {avoid_seq[-1]} to -inf for matching sequences")
-                                print(f"lgts after preventing completion: {lgts}")
+                lgts = self.prevent_forbidden_sequences(lgts, i, seq, avoid_tensors, beam_width, n_samples, num_nodes, device)
             
             # Sample from logits
             # Make temperature dependent of sequence length being decoded to increase
@@ -339,7 +330,6 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
             new_beam_h_S[:,i::num_nodes] = self.W_s(new_beam_seq[:,i::num_nodes]) # weird [0] indexing
             
             sorted_scores, sorted_indices = torch.sort(new_beam_scores, dim=0, descending=True)
-
             new_beam_seq[:,i::num_nodes] = torch.gather(new_beam_seq[:,i::num_nodes], dim=0, index=sorted_indices)
 
             # reorganize h_S and logits

@@ -187,23 +187,34 @@ class gRNAde(object):
             self.checkpoint = CHECKPOINT_PATH_GRNADE
         else:
             raise ValueError(f"Invalid model type: {model_type}")
-        
+
+    def load_nullomers_from_file(self, nullomers_filepath: str):
+        """
+        Load nullomers from a file.
+        """
+        # load nullomer .fasta.out file excluding header and getting all elements as a list
+        # nullomers is a list of strings, each string is a nullomer
+        #TODO: add more checks here for file format
+        with open(nullomers_filepath, 'r') as file:
+            avoid_sequences = file.read().splitlines()[1:] # exclude header
+        return avoid_sequences
+    
     def design_from_pdb_file(
             self, 
             pdb_filepath: str,  
             output_filepath: Optional[str] = None, 
+            nullomers_filepath: Optional[str] = None,
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
             seed: Optional[int] = 0,
-            avoid_sequences: Optional[list] = None,
-            use_nullomers: Optional[bool] = False,
             sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
             sampling_value: Optional[float] = SAMPLING_VALUE,
             beam_width: Optional[int] = BEAM_WIDTH,
             beam_branch: Optional[int] = BEAM_BRANCH,
             max_temperature: Optional[float] = MAX_TEMPERATURE,
-            temperature_factor: Optional[float] = TEMPERATURE_FACTOR
+            temperature_factor: Optional[float] = TEMPERATURE_FACTOR,
+            avoid_sequences: Optional[list] = None
         ):
         """
         Design RNA sequences for a PDB file, i.e. fixed backbone re-design
@@ -231,6 +242,9 @@ class gRNAde(object):
             sc_score (Tensor): global self consistency score per sample with shape `(n_samples, 1)`
         """
         featurized_data, raw_data = self.featurizer.featurize_from_pdb_file(pdb_filepath)
+        # load nullomers if provided
+        if nullomers_filepath is not None:
+            avoid_sequences = self.load_nullomers_from_file(nullomers_filepath)
         return self.design(
             raw_data,
             featurized_data,
@@ -239,32 +253,31 @@ class gRNAde(object):
             temperature,
             partial_seq,
             seed,
-            avoid_sequences,
-            use_nullomers,
             sampling_strategy,
             sampling_value,
             beam_width,
             beam_branch,
             max_temperature,
-            temperature_factor
+            temperature_factor,
+            avoid_sequences,
         )
 
     def design_from_directory(
             self,
             directory_filepath: str,
             output_filepath: Optional[str] = None, 
+            nullomers_filepath: Optional[str] = None,
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
             seed: Optional[int] = 0,
-            avoid_sequences: Optional[list] = None,
-            use_nullomers: Optional[bool] = False,
             sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
             sampling_value: Optional[float] = SAMPLING_VALUE,
             beam_width: Optional[int] = BEAM_WIDTH,
             beam_branch: Optional[int] = BEAM_BRANCH,
             max_temperature: Optional[float] = MAX_TEMPERATURE,
-            temperature_factor: Optional[float] = TEMPERATURE_FACTOR
+            temperature_factor: Optional[float] = TEMPERATURE_FACTOR,
+            avoid_sequences: Optional[list] = None
         ):
         """
         Design RNA sequences for directory of PDB files corresponding to the 
@@ -297,6 +310,9 @@ class gRNAde(object):
             if pdb_filepath.endswith(".pdb"):
                 pdb_filelist.append(os.path.join(directory_filepath, pdb_filepath))
         featurized_data, raw_data = self.featurizer.featurize_from_pdb_filelist(pdb_filelist)
+        # load nullomers if provided
+        if nullomers_filepath is not None:
+            avoid_sequences = self.load_nullomers_from_file(nullomers_filepath)
         return self.design(
             raw_data,
             featurized_data,
@@ -305,14 +321,13 @@ class gRNAde(object):
             temperature,
             partial_seq,
             seed,
-            avoid_sequences,
-            use_nullomers,
             sampling_strategy,
             sampling_value,
             beam_width,
             beam_branch,
             max_temperature,
-            temperature_factor
+            temperature_factor,
+            avoid_sequences,
         )
 
     @torch.no_grad()
@@ -325,14 +340,13 @@ class gRNAde(object):
         temperature: Optional[float] = DEFAULT_TEMPERATURE,
         partial_seq: Optional[str] = None,
         seed: Optional[int] = 0,
-        avoid_sequences: Optional[list] = None,
-        use_nullomers: Optional[bool] = False,
         sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
         sampling_value: Optional[float] = SAMPLING_VALUE,
         beam_width: Optional[int] = BEAM_WIDTH,
         beam_branch: Optional[int] = BEAM_BRANCH,
         max_temperature: Optional[float] = MAX_TEMPERATURE,
-        temperature_factor: Optional[float] = TEMPERATURE_FACTOR
+        temperature_factor: Optional[float] = TEMPERATURE_FACTOR,
+        avoid_sequences: Optional[list] = None,
     ):
         """
         Design RNA sequences from raw data.
@@ -393,27 +407,6 @@ class gRNAde(object):
 
         # transfer data to device
         featurized_data = featurized_data.to(self.device)
-
-        #TODO: Change this later
-        if use_nullomers:
-            # Access RNA_CORR dictionary in featurized_data.pdb_list
-            # for each element in featurized_data.pdb_list, get the corresponding value from RNA_CORR
-            rna_corr = [RNA_CORR[pdb] for pdb in raw_data['pdb_list']]
-            # now access 
-            print('rna_corr', rna_corr)
-
-            # load nullomers in data/nullomers/ file that matches rna_corr
-            # access the nullomer file that matches the first element of rna_corr
-            NULLOMERS_PATH = os.environ.get("DATA_PATH") + '/nullomers/'
-            nullomer_filepath = os.path.join(NULLOMERS_PATH, rna_corr[0] + '.fasta.out')
-            print('nullomer_filepath', nullomer_filepath)
-
-            # load nullomer .fasta.out file excluding header and getting all elements as a list
-            # nullomers is a list of strings, each string is a nullomer
-            with open(nullomer_filepath, 'r') as file:
-                nullomers = file.read().splitlines()[1:] # exclude header
-        else:
-            nullomers = None
         
         # create logit bias matrix if partial sequence is provided
         if partial_seq is not None:
@@ -433,6 +426,7 @@ class gRNAde(object):
         else:
             logit_bias = None
         
+        print('Avoiding sequences:', avoid_sequences)
         # sample n_samples from model for single data point: n_samples x seq_len
         samples, logits = self.model.sample(
             featurized_data,
@@ -766,11 +760,11 @@ if __name__ == "__main__":
         help="Model type (ARv1/ARv2/NARv1)"
     )
     parser.add_argument(
-        '--avoid_sequences',
-        dest='avoid_sequences',
+        '--nullomers_filepath',
+        dest='nullomers_filepath',
         default=None,
         type=str,
-        help="Sequences to avoid during design"
+        help="Filepath to nullomers fasta file"
     )
 
     args, unknown = parser.parse_known_args()
@@ -799,7 +793,7 @@ if __name__ == "__main__":
             beam_branch=args.beam_branch,
             max_temperature=args.max_temperature,
             temperature_factor=args.temperature_factor,
-            avoid_sequences=args.avoid_sequences
+            nullomers_filepath=args.nullomers_filepath
         )
     elif args.directory_filepath is not None:
         sequences, samples, logits, recovery_sample, sc_score = g.design_from_directory(
@@ -815,7 +809,7 @@ if __name__ == "__main__":
             beam_branch=args.beam_branch,
             max_temperature=args.max_temperature,
             temperature_factor=args.temperature_factor,
-            avoid_sequences=args.avoid_sequences
+            nullomers_filepath=args.nullomers_filepath
         )
 
     for seq in sequences:

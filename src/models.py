@@ -261,7 +261,8 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
         logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
         
         # Convert avoid_sequences to tensor format if provided
-        avoid_tensors = self.convert_sequences_to_tensors(avoid_sequences, device)
+        if avoid_sequences is not None:
+            avoid_tensors = self.convert_sequences_to_tensors(avoid_sequences, device)
 
         # Decode one token at a time
         for i in range(num_nodes):

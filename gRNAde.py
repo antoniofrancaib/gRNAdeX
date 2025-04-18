@@ -64,7 +64,7 @@ CHECKPOINT_PATH_GRNADEX = {
     }
 }
 
-# Default model hyperparameters (do not change)
+# Default model hyperparameters for gRNAdeX (do not change)
 VERSION = 0.3
 RADIUS = 0.0
 TOP_K = 32
@@ -82,6 +82,13 @@ DEFAULT_N_SAMPLES = 16
 DEFAULT_TEMPERATURE = 0.1
 ATTENTION_HEADS = 4
 ATTENTION_DROPOUT = 0.1
+SAMPLING_STRATEGY = "min_p"
+SAMPLING_VALUE = 0.05
+BEAM_WIDTH = 2
+BEAM_BRANCH = 6
+MAX_TEMPERATURE = 0.5
+TEMPERATURE_FACTOR = 0.01
+MODEL_TYPE = "ARv2"
 
 class gRNAde(object):
     """
@@ -102,13 +109,6 @@ class gRNAde(object):
             split: Optional[str] = "all",
             max_num_conformers: Optional[int] = 1,
             gpu_id: Optional[int] = 0,
-            sampling_strategy: Optional[str] = "min_p",
-            sampling_value: Optional[float] = 0.0,
-            beam_width: Optional[int] = 2,
-            beam_branch: Optional[int] = 6,
-            temperature: Optional[float] = 1.0,
-            max_temperature: Optional[float] = 0.5,
-            temperature_factor: Optional[float] = 0.01,
             model_type: Optional[str] = "ARv2",
         ):
 
@@ -143,15 +143,6 @@ class gRNAde(object):
             max_num_conformers = max_num_conformers,
             noise_scale = NOISE_SCALE
         )
-
-        # Instantiating sampling parameters
-        self.sampling_strategy = sampling_strategy
-        self.sampling_value = sampling_value
-        self.beam_width = beam_width
-        self.beam_branch = beam_branch
-        self.temperature = temperature
-        self.max_temperature = max_temperature
-        self.temperature_factor = temperature_factor
 
         # Load model checkpoint
         self.model_path = self.checkpoint[split][max_num_conformers]
@@ -206,7 +197,13 @@ class gRNAde(object):
             partial_seq: Optional[str] = None,
             seed: Optional[int] = 0,
             avoid_sequences: Optional[list] = None,
-            use_nullomers: Optional[bool] = False
+            use_nullomers: Optional[bool] = False,
+            sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+            sampling_value: Optional[float] = SAMPLING_VALUE,
+            beam_width: Optional[int] = BEAM_WIDTH,
+            beam_branch: Optional[int] = BEAM_BRANCH,
+            max_temperature: Optional[float] = MAX_TEMPERATURE,
+            temperature_factor: Optional[float] = TEMPERATURE_FACTOR
         ):
         """
         Design RNA sequences for a PDB file, i.e. fixed backbone re-design
@@ -243,7 +240,13 @@ class gRNAde(object):
             partial_seq,
             seed,
             avoid_sequences,
-            use_nullomers
+            use_nullomers,
+            sampling_strategy,
+            sampling_value,
+            beam_width,
+            beam_branch,
+            max_temperature,
+            temperature_factor
         )
 
     def design_from_directory(
@@ -255,7 +258,13 @@ class gRNAde(object):
             partial_seq: Optional[str] = None,
             seed: Optional[int] = 0,
             avoid_sequences: Optional[list] = None,
-            use_nullomers: Optional[bool] = False
+            use_nullomers: Optional[bool] = False,
+            sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+            sampling_value: Optional[float] = SAMPLING_VALUE,
+            beam_width: Optional[int] = BEAM_WIDTH,
+            beam_branch: Optional[int] = BEAM_BRANCH,
+            max_temperature: Optional[float] = MAX_TEMPERATURE,
+            temperature_factor: Optional[float] = TEMPERATURE_FACTOR
         ):
         """
         Design RNA sequences for directory of PDB files corresponding to the 
@@ -297,7 +306,13 @@ class gRNAde(object):
             partial_seq,
             seed,
             avoid_sequences,
-            use_nullomers
+            use_nullomers,
+            sampling_strategy,
+            sampling_value,
+            beam_width,
+            beam_branch,
+            max_temperature,
+            temperature_factor
         )
 
     @torch.no_grad()
@@ -311,7 +326,13 @@ class gRNAde(object):
         partial_seq: Optional[str] = None,
         seed: Optional[int] = 0,
         avoid_sequences: Optional[list] = None,
-        use_nullomers: Optional[bool] = False
+        use_nullomers: Optional[bool] = False,
+        sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+        sampling_value: Optional[float] = SAMPLING_VALUE,
+        beam_width: Optional[int] = BEAM_WIDTH,
+        beam_branch: Optional[int] = BEAM_BRANCH,
+        max_temperature: Optional[float] = MAX_TEMPERATURE,
+        temperature_factor: Optional[float] = TEMPERATURE_FACTOR
     ):
         """
         Design RNA sequences from raw data.
@@ -391,7 +412,6 @@ class gRNAde(object):
             # nullomers is a list of strings, each string is a nullomer
             with open(nullomer_filepath, 'r') as file:
                 nullomers = file.read().splitlines()[1:] # exclude header
-            print('nullomers', nullomers)
         else:
             nullomers = None
         
@@ -420,12 +440,12 @@ class gRNAde(object):
             temperature,
             logit_bias=logit_bias,
             return_logits=True,
-            sampling_strategy=self.sampling_strategy,
-            sampling_value=self.sampling_value,
-            beam_width=self.beam_width,
-            beam_branch=self.beam_branch,
-            max_temperature=self.max_temperature,
-            temperature_factor=self.temperature_factor,
+            sampling_strategy=sampling_strategy,
+            sampling_value=sampling_value,
+            beam_width=beam_width,
+            beam_branch=beam_branch,
+            max_temperature=max_temperature,
+            temperature_factor=temperature_factor,
             avoid_sequences=avoid_sequences
         )
 
@@ -670,7 +690,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--temperature', 
         dest='temperature', 
-        default=0.2, 
+        default=DEFAULT_TEMPERATURE, 
         type=float,
         help="Temperature for sampling"
     )
@@ -725,32 +745,34 @@ if __name__ == "__main__":
         help="Number of samples to get from sampling strategy"
     )
     parser.add_argument(
-        '--config',
-        dest='config',
-        default="configs/eval.yaml",
-        type=str,
-        help="Path to config file"
-    )
-    parser.add_argument(
         '--max_temperature',
         dest='max_temperature',
-        default=0.5,
+        default=MAX_TEMPERATURE,
         type=float,
+        help="Maximum temperature for sampling"
     )
     parser.add_argument(
         '--temperature_factor',
         dest='temperature_factor',
-        default=0.01,
+        default=TEMPERATURE_FACTOR,
         type=float,
         help="Factor to increase temperature by"
     )
     parser.add_argument(
         '--model_type',
         dest='model_type',
-        default="ARv2",
+        default=MODEL_TYPE,
         type=str,
         help="Model type (ARv1/ARv2/NARv1)"
     )
+    parser.add_argument(
+        '--avoid_sequences',
+        dest='avoid_sequences',
+        default=None,
+        type=str,
+        help="Sequences to avoid during design"
+    )
+
     args, unknown = parser.parse_known_args()
 
     if args.pdb_filepath is None and args.directory_filepath is None:
@@ -760,13 +782,6 @@ if __name__ == "__main__":
         split=args.split,
         max_num_conformers=args.max_num_conformers, 
         gpu_id=args.gpu_id,
-        sampling_strategy=args.sampling_strategy,
-        sampling_value=args.sampling_value,
-        beam_width=args.beam_width,
-        beam_branch=args.beam_branch,
-        temperature=args.temperature,
-        max_temperature=args.max_temperature,
-        temperature_factor=args.temperature_factor,
         model_type=args.model_type
     )
 
@@ -777,7 +792,14 @@ if __name__ == "__main__":
             n_samples=args.n_samples,
             temperature=args.temperature,
             partial_seq=args.partial_seq,
-            seed=args.seed
+            seed=args.seed,
+            sampling_strategy=args.sampling_strategy,
+            sampling_value=args.sampling_value,
+            beam_width=args.beam_width,
+            beam_branch=args.beam_branch,
+            max_temperature=args.max_temperature,
+            temperature_factor=args.temperature_factor,
+            avoid_sequences=args.avoid_sequences
         )
     elif args.directory_filepath is not None:
         sequences, samples, logits, recovery_sample, sc_score = g.design_from_directory(
@@ -786,7 +808,14 @@ if __name__ == "__main__":
             n_samples=args.n_samples,
             temperature=args.temperature,
             partial_seq=args.partial_seq,
-            seed=args.seed
+            seed=args.seed,
+            sampling_strategy=args.sampling_strategy,
+            sampling_value=args.sampling_value,
+            beam_width=args.beam_width,
+            beam_branch=args.beam_branch,
+            max_temperature=args.max_temperature,
+            temperature_factor=args.temperature_factor,
+            avoid_sequences=args.avoid_sequences
         )
 
     for seq in sequences:

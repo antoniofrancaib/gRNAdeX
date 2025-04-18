@@ -24,7 +24,8 @@ from src.constants import (
     NUM_TO_LETTER, 
     RNA_ATOMS, 
     FILL_VALUE,
-    PROJECT_PATH
+    PROJECT_PATH,
+    RNA_CORR
 )
 
 # Model checkpoint paths corresponding to data split and maximum no. of conformers
@@ -203,7 +204,9 @@ class gRNAde(object):
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0
+            seed: Optional[int] = 0,
+            avoid_sequences: Optional[list] = None,
+            use_nullomers: Optional[bool] = False
         ):
         """
         Design RNA sequences for a PDB file, i.e. fixed backbone re-design
@@ -238,7 +241,9 @@ class gRNAde(object):
             n_samples,
             temperature,
             partial_seq,
-            seed
+            seed,
+            avoid_sequences,
+            use_nullomers
         )
 
     def design_from_directory(
@@ -248,7 +253,9 @@ class gRNAde(object):
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0
+            seed: Optional[int] = 0,
+            avoid_sequences: Optional[list] = None,
+            use_nullomers: Optional[bool] = False
         ):
         """
         Design RNA sequences for directory of PDB files corresponding to the 
@@ -288,7 +295,9 @@ class gRNAde(object):
             n_samples,
             temperature,
             partial_seq,
-            seed
+            seed,
+            avoid_sequences,
+            use_nullomers
         )
 
     @torch.no_grad()
@@ -300,7 +309,9 @@ class gRNAde(object):
         n_samples: Optional[int] = DEFAULT_N_SAMPLES,
         temperature: Optional[float] = DEFAULT_TEMPERATURE,
         partial_seq: Optional[str] = None,
-        seed: Optional[int] = 0
+        seed: Optional[int] = 0,
+        avoid_sequences: Optional[list] = None,
+        use_nullomers: Optional[bool] = False
     ):
         """
         Design RNA sequences from raw data.
@@ -362,6 +373,28 @@ class gRNAde(object):
         # transfer data to device
         featurized_data = featurized_data.to(self.device)
 
+        #TODO: Change this later
+        if use_nullomers:
+            # Access RNA_CORR dictionary in featurized_data.pdb_list
+            # for each element in featurized_data.pdb_list, get the corresponding value from RNA_CORR
+            rna_corr = [RNA_CORR[pdb] for pdb in raw_data['pdb_list']]
+            # now access 
+            print('rna_corr', rna_corr)
+
+            # load nullomers in data/nullomers/ file that matches rna_corr
+            # access the nullomer file that matches the first element of rna_corr
+            NULLOMERS_PATH = os.environ.get("DATA_PATH") + '/nullomers/'
+            nullomer_filepath = os.path.join(NULLOMERS_PATH, rna_corr[0] + '.fasta.out')
+            print('nullomer_filepath', nullomer_filepath)
+
+            # load nullomer .fasta.out file excluding header and getting all elements as a list
+            # nullomers is a list of strings, each string is a nullomer
+            with open(nullomer_filepath, 'r') as file:
+                nullomers = file.read().splitlines()[1:] # exclude header
+            print('nullomers', nullomers)
+        else:
+            nullomers = None
+        
         # create logit bias matrix if partial sequence is provided
         if partial_seq is not None:
             # convert partial sequence to tensor
@@ -392,7 +425,8 @@ class gRNAde(object):
             beam_width=self.beam_width,
             beam_branch=self.beam_branch,
             max_temperature=self.max_temperature,
-            temperature_factor=self.temperature_factor
+            temperature_factor=self.temperature_factor,
+            avoid_sequences=avoid_sequences
         )
 
         # perplexity per sample: n_samples x 1
@@ -660,7 +694,7 @@ if __name__ == "__main__":
         default=0, 
         type=int,
         help="GPU ID to use for inference \
-            (defaults to cpu if no GPU is available)"
+            (defaults to cpu if no GPU is avaiºlable)"
     )
     parser.add_argument(
         '--sampling_strategy',

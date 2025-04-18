@@ -13,6 +13,7 @@ import torch_geometric
 
 from src.layers import *
 from src.sampling import choose_nts
+from src.constants import LETTER_TO_NUM
 
 class AutoregressiveMultiGNNv2(torch.nn.Module):
     '''
@@ -154,6 +155,7 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
             sampling_value: Optional[float] = 0.0,
             max_temperature: Optional[float] = 0.5,
             temperature_factor: Optional[float] = 0,
+            avoid_sequences: Optional[list] = None
         ):
         '''
         Samples sequences autoregressively from the distribution
@@ -173,6 +175,7 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
             sampling_value (float): value for sampling strategy
             beam_width (int): number of beams to maintain during search
             beam_branch (int): number of samples to get from sampling strategy
+            avoid_sequences (list): list of sequences to avoid
         Returns:
             seq (torch.Tensor): int tensor of shape [n_samples, n_nodes]
                                 based on the residue-to-int mapping of
@@ -219,6 +222,14 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
         h_V_cache = [(h_V[0].clone(), h_V[1].clone()) for _ in self.decoder_layers]
         # Optionally, you can store logits for later inspection
         logits = torch.zeros(beam_width*num_nodes*n_samples, self.out_dim, device=device)
+        
+        # Convert avoid_sequences to tensor format if provided
+        if avoid_sequences is not None:
+            avoid_tensors = []
+            for seq_str in avoid_sequences:
+                seq_tensor = torch.tensor([LETTER_TO_NUM[residue] for residue in seq_str], device=device)
+                avoid_tensors.append(seq_tensor)
+            print('Avoid tensor:', avoid_tensors)
 
         # Decode one token at a time
         for i in range(num_nodes):
@@ -258,6 +269,52 @@ class AutoregressiveMultiGNNv2(torch.nn.Module):
             # Add logit bias if provided to fix or bias positions
             if logit_bias is not None:
                 lgts += logit_bias[i]
+
+            # Add negative infinity to logits for sequences to avoid
+            if avoid_sequences is not None:
+                for avoid_seq in avoid_tensors:
+                    print(f"Avoiding sequences: {avoid_seq}")
+                    # Direct avoidance of current position in avoid_seq
+                    #if i < len(avoid_seq):
+                    #    lgts[..., avoid_seq[i]] = float('-inf')
+                    #    print(f"lgts after avoiding: {lgts}")
+                    
+                    # Check if we're about to complete an avoid_seq pattern
+                    if i >= len(avoid_seq) - 1:
+                        print('Entering in iteration:', i)
+                        # Get the current sequence window that would match all but the last token of avoid_seq
+                        sequence_reshaped = seq.view(beam_width*n_samples, num_nodes)
+                        print('sequence_reshaped:', sequence_reshaped)
+                        # Extract the window of tokens that would match the avoid_seq pattern
+                        # Get the last len(avoid_seq)-1 tokens generated so far
+                        start_idx = i - (len(avoid_seq) - 1)
+                        if start_idx < 0:
+                            # Not enough tokens generated yet to match the pattern
+                            seq_window = torch.zeros((beam_width*n_samples, len(avoid_seq)-1), dtype=torch.long, device=device)
+                        else:
+                            # Extract the relevant window from the sequence
+                            seq_window = sequence_reshaped[:, start_idx:i]
+                        print('seq_window:', seq_window)
+                        # Make sure avoid_window has the same shape as seq_window
+                        avoid_window = avoid_seq[:-1]
+                        print('avoid_window:', avoid_window)
+                        
+                        # Check which rows match the avoid pattern
+                        if len(avoid_window) == seq_window.size(1):  # Make sure dimensions match
+                            # Compare each row with avoid_window
+                            matches = torch.all(seq_window == avoid_window.unsqueeze(0), dim=1)
+                            print('matches:', matches)
+                            # Only set -inf for matching rows
+                            if torch.any(matches):
+                                # Create a mask for the matching rows
+                                mask = matches  # Add dimension for broadcasting
+                                
+                                # Only modify logits for rows that match the pattern
+                                lgts[mask, avoid_seq[-1]] = float('-inf')
+                                print(f"Preventing completion of avoid_seq pattern in {torch.sum(matches)} sequences.")
+                                print(f"Setting logit for {avoid_seq[-1]} to -inf for matching sequences")
+                                print(f"lgts after preventing completion: {lgts}")
+            
             # Sample from logits
             # Make temperature dependent of sequence length being decoded to increase
             # stochasticity in beams as we progress through the sequence
@@ -636,6 +693,7 @@ class AutoregressiveMultiGNNv1(torch.nn.Module):
             # Add logit bias if provided to fix or bias positions
             if logit_bias is not None:
                 lgts += logit_bias[i]
+
             # Sample from logits
             # Make temperature dependent of sequence length being decoded to increase
             # stochasticity in beams as we progress through the sequence

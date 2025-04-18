@@ -172,3 +172,5 @@ tutorial/tests/
 tutorial/tests1/
 tutorial/*.sh
 *.out
+tutorial/outputs/
+test/

@@ -94,3 +94,5 @@ MIN_P = 0.05
 # Define beam width and beam branch
 BEAM_WIDTH = 2
 BEAM_BRANCH = 6
+
+RNA_CORR = {'5T2A_1_D': '5S_rRNA'}

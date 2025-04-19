@@ -1,51 +1,51 @@
 >input_sequence, gRNAde_version=0.3, model=AutoregressiveMultiGNNv2, max_num_conformers=1, checkpoint=/rds/user/ml2169/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv2_1state_max_nodes_500_das.h5, seed=0
 GGACAUAUAAUCGCGUGGAUAUGGCACGCAAGUUUCUACCGGGCACCGUAAAUGUCCGAC
 UAUGUCC
->sample=0, seed=0, temperature=1.0, perplexity=1.6450, recovery=0.3636, edit_dist=36, sc_score=0.2374
-GGGGGUAAGGCCGGGGUAAGUGGCCCCGGCUAAAAAAGGCGGGGCCUCAAACCUCGCAAU
-CCCCCG
->sample=1, seed=0, temperature=1.0, perplexity=1.6426, recovery=0.3636, edit_dist=36, sc_score=0.2374
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=2, seed=0, temperature=1.0, perplexity=1.6495, recovery=0.3939, edit_dist=37, sc_score=0.9002
+>sample=0, seed=0, temperature=1.0, perplexity=1.6465, recovery=0.3939, edit_dist=36, sc_score=0.2434
+GGGGGUAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAU
+CCCCCC
+>sample=1, seed=0, temperature=1.0, perplexity=1.6451, recovery=0.3788, edit_dist=37, sc_score=-0.0095
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=2, seed=0, temperature=1.0, perplexity=1.6588, recovery=0.4091, edit_dist=37, sc_score=0.9002
 GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGGGGGGCCUCAAACCUCCCAAC
-CCCCUC
->sample=3, seed=0, temperature=1.0, perplexity=1.6527, recovery=0.3636, edit_dist=36, sc_score=0.2374
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=4, seed=0, temperature=1.0, perplexity=1.6530, recovery=0.3636, edit_dist=36, sc_score=0.2374
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=5, seed=0, temperature=1.0, perplexity=1.6526, recovery=0.3939, edit_dist=37, sc_score=0.8793
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGCAAAAAUGGGGGGCCUCAAACCUCCCAAC
-CCCCUC
->sample=6, seed=0, temperature=1.0, perplexity=1.6532, recovery=0.3636, edit_dist=36, sc_score=0.2374
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=7, seed=0, temperature=1.0, perplexity=1.6533, recovery=0.3636, edit_dist=36, sc_score=0.2374
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=8, seed=0, temperature=1.0, perplexity=1.6477, recovery=0.3485, edit_dist=37, sc_score=0.2266
+CCCCCC
+>sample=3, seed=0, temperature=1.0, perplexity=1.6683, recovery=0.3788, edit_dist=37, sc_score=-0.0095
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=4, seed=0, temperature=1.0, perplexity=1.6686, recovery=0.3788, edit_dist=37, sc_score=-0.0095
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=5, seed=0, temperature=1.0, perplexity=1.6688, recovery=0.3788, edit_dist=37, sc_score=-0.0095
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=6, seed=0, temperature=1.0, perplexity=1.6689, recovery=0.3788, edit_dist=37, sc_score=-0.0095
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=7, seed=0, temperature=1.0, perplexity=1.6690, recovery=0.3788, edit_dist=37, sc_score=-0.0095
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=8, seed=0, temperature=1.0, perplexity=1.6711, recovery=0.3636, edit_dist=37, sc_score=-0.0097
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGCAAAAGUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=9, seed=0, temperature=1.0, perplexity=1.6692, recovery=0.3788, edit_dist=37, sc_score=-0.0095
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=10, seed=0, temperature=1.0, perplexity=1.6625, recovery=0.3636, edit_dist=37, sc_score=-0.0099
 GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGCAAAAGUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=9, seed=0, temperature=1.0, perplexity=1.6535, recovery=0.3636, edit_dist=36, sc_score=0.2374
+CCCCCC
+>sample=11, seed=0, temperature=1.0, perplexity=1.6693, recovery=0.3788, edit_dist=37, sc_score=-0.0095
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=12, seed=0, temperature=1.0, perplexity=1.6630, recovery=0.3788, edit_dist=36, sc_score=-0.0095
 GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=10, seed=0, temperature=1.0, perplexity=1.6535, recovery=0.3636, edit_dist=36, sc_score=0.2374
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=11, seed=0, temperature=1.0, perplexity=1.6477, recovery=0.3485, edit_dist=37, sc_score=0.2266
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGCAAAAGUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=12, seed=0, temperature=1.0, perplexity=1.6536, recovery=0.3636, edit_dist=36, sc_score=0.2374
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGAAAAAAUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=13, seed=0, temperature=1.0, perplexity=1.6580, recovery=0.3485, edit_dist=36, sc_score=0.2318
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGCAAAAGUGCGGGGCCUGAAACCUCGCAAC
-CCCCUC
->sample=14, seed=0, temperature=1.0, perplexity=1.6477, recovery=0.3485, edit_dist=37, sc_score=0.2266
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGCAAAAGUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
->sample=15, seed=0, temperature=1.0, perplexity=1.6477, recovery=0.3485, edit_dist=37, sc_score=0.2266
-GGGGGGAAGGCCGGGGUAAGUGGCCCCGGCGCAAAAGUGCGGGGCCUCAAACCUCGCAAC
-CCCCUC
+CCCCCC
+>sample=13, seed=0, temperature=1.0, perplexity=1.6805, recovery=0.3788, edit_dist=38, sc_score=0.2434
+GGGGGCAAGCCCGGGGUAAGUGGCCCCGGGGAAAAAAUGCGGGGCCUCAAACCUCGCAAA
+CCCCCC
+>sample=14, seed=0, temperature=1.0, perplexity=1.6711, recovery=0.3636, edit_dist=37, sc_score=-0.0097
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGCAAAAGUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC
+>sample=15, seed=0, temperature=1.0, perplexity=1.6711, recovery=0.3636, edit_dist=37, sc_score=-0.0097
+GGGGGGAAGCCCGGGGUAAGUGGCCCCGGGGCAAAAGUGCGGGGCCUCAAACCUCGCAAC
+CCCCCC

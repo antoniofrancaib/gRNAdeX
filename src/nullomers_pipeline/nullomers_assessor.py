@@ -31,6 +31,7 @@ if __name__ == "__main__":
     level = sys.argv[4]
     correction_method = sys.argv[5]
     print_log = sys.argv[6]
+    output_file = sys.argv[7]
 else:
     print("\n**An error occured**\n")
     raise SystemExit() 
@@ -321,8 +322,13 @@ with open(nullomers_file, encoding='utf8') as f:
         if ids_in_common.size:
             if (print_log == 'TRUE'):
                 print("\n** Results **\n")
-            for index in ids_in_common:
-                print(str(lines[index]) + '\t' + str(max(prob_corr_zero_occur_list_zero_order[1][index], prob_corr_zero_occur_list_first_order[1][index], prob_corr_zero_occur_list_second_order[1][index], prob_corr_zero_occur_list_third_order[1][index])))
+            # TODO: Make more generalizable !
+            with open(output_file, "w") as fasta_file:
+                fasta_file.write(f">nullomers_output\n")
+                for index in ids_in_common:
+                    print(str(lines[index]) + '\t' + str(max(prob_corr_zero_occur_list_zero_order[1][index], prob_corr_zero_occur_list_first_order[1][index], prob_corr_zero_occur_list_second_order[1][index], prob_corr_zero_occur_list_third_order[1][index])))
+                    print(f"Writing results to {output_file}")
+                    fasta_file.write(str(lines[index]+"\n"))
         else:        
             print("No significant results found")
             
@@ -427,9 +433,14 @@ with open(nullomers_file, encoding='utf8') as f:
         else:
             if (print_log == 'TRUE'):
                 print("\n** Results **\n")
-            for itm1, itm2, itm3, itm4, itm5 in zip(nullomer_list, prob_corr_zero_occur_list_zero_order, prob_corr_zero_occur_list_first_order, prob_corr_zero_occur_list_second_order, prob_corr_zero_occur_list_third_order):
-                max_prob = max(itm2, itm3, itm4, itm5)
-                print(str(itm1) + '\t' + str(max_prob))
+            # TODO: Make more generalizable !
+            with open(output_file, "w") as fasta_file:
+                fasta_file.write(f">nullomers_output\n")
+                for itm1, itm2, itm3, itm4, itm5 in zip(nullomer_list, prob_corr_zero_occur_list_zero_order, prob_corr_zero_occur_list_first_order, prob_corr_zero_occur_list_second_order, prob_corr_zero_occur_list_third_order):
+                    max_prob = max(itm2, itm3, itm4, itm5)
+                    print(str(itm1) + '\t' + str(max_prob))
+                    print(f"Writing results to {output_file}")
+                    fasta_file.write(f"{itm1}\n")
 
 #####################
         
@@ -524,8 +535,14 @@ with open(nullomers_file, encoding='utf8') as f:
         if len(results.keys()) == 0:
             print('No significant results found')
         else:
-            for key, val in results.items():
-                print(str(key) + "\t" + str(val))
+            # TODO: Make more generalizable !
+            with open(output_file, "w") as fasta_file:
+                print(f"Writing results to {output_file}")
+                fasta_file.write(f">nullomers_output\n")
+                for key, val in results.items():
+                    print(str(key) + "\t" + str(val))
+                    nullomer = str(key)
+                    fasta_file.write(f"{nullomer}\n")
 
 
 end_time = process_time() - start_time

@@ -1,0 +1,3 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['7OL0_1_P', '7OKX_1_P', '7OKY_1_P']","['mir-TAR', 'mir-TAR', 'mir-TAR']","['95458', '95458', 'unknown']","['Protein-RNA Complex', 'Protein-RNA Complex', 'unknown']",0,988,AGGGAACCCACUA,13,0.2096408615992155,0.3140099632487047,3
+"['7PKS_1_P', '6GML_1_P']","['unknown', 'mir-TAR']","['51639', '93158']","['Protein-RNA Complex', 'Protein-RNA Complex']",43,845,UAACUAGGGAACCCACU,17,0.9470322329026372,0.9470322329026372,2

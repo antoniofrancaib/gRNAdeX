@@ -1,0 +1,3 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['7QR3_1_D', '7QR3_1_C']","['CPEB3_ribozyme', 'CPEB3_ribozyme']","['82540', '82540']","['Protein-RNA Complex', 'Protein-RNA Complex']",609,245,GGGGGCCACAGCAGAAGCGUUCACGUCGCGGCCCCUGUCAGCCAUUGCACUCCGGCUGCGAAUUCUGCU,69,2.8783770686151318,2.8783770686151318,2
+['7QR4_1_B'],['CPEB3_ribozyme'],['07720'],['Protein-RNA Complex'],609,245,GGGGGCCACAGCAGAAGCGUUCACGUCGCAGCCCCUGUCAGCCAUUGCACUCCGGCUGCGAAUUCUGCU,69,0.0,0.0,1

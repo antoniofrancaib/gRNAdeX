@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+['7JJU_1_A-B'],['PLRV_xrRNA'],['29875'],['Solo RNA'],431,169,GAACUAGCUCAGCAUACACGAGUUGCAAGCAUGGGAAGUUCAAGCCUCGGAACUAGCUCAGCAUACACGAGUUGCAAGCAUGGGAAGUUCAAGCCUCG,98,0.0,0.0,1

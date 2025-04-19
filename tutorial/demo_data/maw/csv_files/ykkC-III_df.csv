@@ -1,0 +1,6 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['5NZ3_1_A', '5NZD_1_B', '5O69_1_A', '5NZD_1_A', '5NZ3_1_B', '5O62_1_A']","['ykkC-III', 'ykkC-III', 'ykkC-III', 'ykkC-III', 'ykkC-III', 'ykkC-III']","['01073', '01073', '01073', '01073', '01073', '01073']","['Solo RNA', 'Solo RNA', 'Solo RNA', 'Solo RNA', 'Solo RNA', 'Solo RNA']",825,446,CGGACGAGGUGCGCCGUACCCGGUCAGGACAAGACGGGC,39,0.5940144864230485,0.6545283143186872,6
+['5O62_1_B'],['ykkC-III'],['01073'],['Solo RNA'],175,446,CGGACGAGGUGCGCCGUACCCGGAGACGGGC,31,0.0,0.0,1
+['5NZ6_1_A'],['ykkC-III'],['01073'],['Solo RNA'],825,446,CGGACGAGGUGCGCCGUACCCGGUCACGACAAGACGGGC,39,0.0,0.0,1
+"['5NY8_1_A', '5NWQ_1_A', '5NY8_1_B', '5NWQ_1_B']","['ykkC-III', 'ykkC-III', 'ykkC-III', 'ykkC-III']","['01073', '01073', '01073', '01073']","['Solo RNA', 'Solo RNA', 'Solo RNA', 'Solo RNA']",825,446,CCGGACGAGGUGCGCCGUACCCGGUCAGGACAAGACGGGC,40,0.5585018841290034,0.7262084857704652,4
+['5O69_1_B'],['ykkC-III'],['01073'],['Solo RNA'],825,446,CGGACGAGGUGCGCCGUACCCGGAGCAAGACGGGC,35,0.0,0.0,1

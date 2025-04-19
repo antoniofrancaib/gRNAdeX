@@ -1,0 +1,8 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+['4QOZ_1_D'],['Histone3'],['26321'],['Protein-RNA Complex'],27,794,UCUUUUCAGAGCCACCCA,18,0.0,0.0,1
+['4TUX_1_C'],['Histone3'],['52096'],['Protein-RNA Complex'],50,579,GGCCAAAGGCCCUUUUCAGGGCCAC,25,0.0,0.0,1
+"['4TUX_1_D', '4TUW_1_D', '4TV0_1_B']","['Histone3', 'Histone3', 'Histone3']","['52096', '52096', '52096']","['Protein-RNA Complex', 'Protein-RNA Complex', 'Protein-RNA Complex']",50,579,GGCCAAAGGCCCUUUUCAGGGCCACC,26,1.0873210769238302,1.1420028754208786,3
+"['4L8R_1_A', '4QOZ_1_A']","['Histone3', 'Histone3']","['26321', '26321']","['Protein-RNA Complex', 'Protein-RNA Complex']",134,579,CCAAAGGCUCUUUUCAGAGCCACCCA,26,0.2198983510190159,0.2198983510190159,2
+['4TUW_1_C'],['Histone3'],['52096'],['Protein-RNA Complex'],905,579,GGCCAAAGGCCCUUUUCAGGGCCACCCC,28,0.0,0.0,1
+['6V4X_1_Z-Y'],['Histone3'],['02872'],['Protein-RNA Complex'],731,332,UUACAGCUCUUUUAGAAUUUGUCUAGUCACUGAAUCAGAUAAAGAGCUGUAA,52,0.0,0.0,1
+['4L8R_1_D'],['Histone3'],['26321'],['Protein-RNA Complex'],29,794,CUCUUUUCAGAGCCACCCA,19,0.0,0.0,1

@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['7WII_1_V', '7WIE_1_V', '7WI9_1_V', '7WIF_1_V', '7WIB_1_V']","['folE', 'folE', 'folE', 'folE', 'folE']","['52535', '52535', '52535', '52535', '52535']","['Solo RNA', 'Solo RNA', 'Solo RNA', 'Solo RNA', 'Solo RNA']",750,302,GCGUGGUCCGUUCAACUCGUUCCUCGAAAGAGGAACUACGGGAGACGCC,49,0.3583174287335892,0.3444099416214376,5

@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+['6CU1_1_A'],['YrlA'],['75310'],['Solo RNA'],503,216,GGUGGCUCACAUUUGUUGCGGGUUCGAGACCCGUCAGAGCGAAAGCUCUGUAGCUCAAUGGUAGAGCGGUGUAGUCACC,79,0.0,0.0,1

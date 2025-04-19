@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['7YR6_1_A', '7YR7_1_A']","['PrrB_RsmZ', 'PrrB_RsmZ']","['unknown', '99332']","['unknown', 'Protein-RNA Complex']",385,140,GCGUACAGGGAACACGCAACCCCGAAGGAUCGGGGAAGGGACGUCGCCAGGGAGGCGAUUCCAUCAGGAUGAUGACGAGGGACUGAAGAGUGGGCGGGGUAAUACCCCGCCCCUUUUU,118,2.901454945275542,2.901454945275542,2

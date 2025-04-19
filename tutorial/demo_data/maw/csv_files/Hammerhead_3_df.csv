@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['2QUS_1_B', '2QUS_1_A']","['Hammerhead_3', 'Hammerhead_3']","['40252', '40252']","['Solo RNA', 'Solo RNA']",619,252,GGAGCCCUGUCACCGGAUGUGCUUUCCGGUCUGAUGAGUCCGUGAGGACAAAACAGGGCUCCCGAAUU,68,1.6144261828352031,1.6144261828352031,2

@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['6UES_1_A', '6UET_1_A', '6WLR_9_A', '6WLQ_3_A']","['SAM-IV', 'SAM-IV', 'SAM-IV', 'SAM-IV']","['88210', 'unknown', 'unknown', 'unknown']","['Solo RNA', 'unknown', 'unknown', 'unknown']",375,139,GGUCAUGAGUGCCAGCGUCAAGCCCCGGCUUGCUGGCCGGCAACCCUCCAACCGCGGUGGGGUGCCCCGGGUGAUGACCAGGUUGAGUAGCCGUGACGGCUACGCGGCAAGCGCGGGUC,119,2.6727266820629567,2.696074117879472,4

@@ -30,13 +30,7 @@ from src.constants import (
     PROJECT_PATH,
     RMSD_THRESHOLD,
     TM_THRESHOLD,
-    GDT_THRESHOLD,
-    BEAM_WIDTH,
-    BEAM_BRANCH,
-    SAMPLING_STRATEGY,
-    TOP_K,
-    TOP_P,
-    MIN_P
+    GDT_THRESHOLD
 )
 
 
@@ -51,7 +45,13 @@ def evaluate(
             'recovery', 'perplexity', 'sc_score_eternafold', 
             'sc_score_ribonanzanet', 'sc_score_rhofold'
         ],
-        save_designs=False
+        save_designs=False,
+        sampling_strategy="min_p",
+        sampling_value=0.05,
+        beam_width=2,
+        beam_branch=6,
+        max_temperature=0.5,
+        temperature_factor=0.01
     ):
     """
     Run evaluation suite for trained RNA inverse folding model on a dataset.
@@ -74,13 +74,17 @@ def evaluate(
 
     Args:
         model: trained RNA inverse folding model
-        dataset: dataset to <evaluate on
+        dataset: dataset to evaluate on
         n_samples: number of predicted samples/sequences per data point 
         temperature: sampling temperature
         device: device to run evaluation on
         model_name: name of model/dataset for plotting (default: 'eval')
         metrics: list of metrics to compute
         save_designs: whether to save designs as fasta with metrics
+        sampling_strategy: strategy for sampling ("min_p", "top_k", "top_p")
+        sampling_value: value for sampling strategy
+        beam_width: number of beams to maintain during search
+        beam_branch: number of samples to get from sampling strategy
     
     Returns: Dictionary with the following keys:
         df: DataFrame with metrics and metadata per residue per sample for analysis and plotting
@@ -167,9 +171,18 @@ def evaluate(
             data = dataset.featurizer(raw_data).to(device)
 
             # sample n_samples from model for single data point: n_samples x seq_len
-            samples, logits = model.sample(data, n_samples, temperature, return_logits=True,
-                beam_width=BEAM_WIDTH, beam_branch=BEAM_BRANCH, sampling_strategy=SAMPLING_STRATEGY,
-                top_k=TOP_K, top_p=TOP_P, min_p=MIN_P)
+            samples, logits = model.sample(
+                data,
+                n_samples,
+                temperature,
+                return_logits=True,
+                beam_width=beam_width,
+                beam_branch=beam_branch,
+                sampling_strategy=sampling_strategy,
+                sampling_value=sampling_value,
+                max_temperature=max_temperature,
+                temperature_factor=temperature_factor
+            )
             samples_list.append(samples.cpu().numpy())
             
             # perplexity per sample: n_samples x 1

@@ -12,8 +12,8 @@
 
 ✍️ New to 3D RNA modelling? Here's a curated reading + watch list for beginners: [Resources](https://www.chaitjo.com/post/rna-modelling-and-design/)
 
-📄 For more details on the methodology, see the accompanying paper: ['gRNAde: Geometric Deep Learning for 3D RNA inverse design'](https://arxiv.org/abs/2305.14749)
-> Chaitanya K. Joshi, Arian R. Jamasb, Ramon Viñas, Charles Harris, Simon Mathis, Alex Morehead, and Pietro Liò. gRNAde: Geometric Deep Learning for 3D RNA inverse design. *ICML Computational Biology Workshop, 2023.*
+📄 For more details on the methodology, see the accompanying ICLR paper: ['gRNAde: Geometric Deep Learning for 3D RNA inverse design'](https://arxiv.org/abs/2305.14749)
+> Chaitanya K. Joshi, Arian R. Jamasb, Ramon Viñas, Charles Harris, Simon Mathis, Alex Morehead, and Pietro Liò. gRNAde: Geometric Deep Learning for 3D RNA inverse design. *International Conference on Learning Representations 2025.*
 >
 >[PDF](https://arxiv.org/abs/2305.14749) | [Tweet](https://twitter.com/chaitjo/status/1662118334412800001) | [Slides](https://www.chaitjo.com/publication/joshi-2023-grnade/gRNAde_slides_CASP_RNA_SIG.pdf)
 
@@ -241,16 +241,15 @@ The precise procedure for creating the splits (which can be used to modify and c
 ## Citation
 
 ```
-@article{joshi2024grnade,
-  title={gRNAde: Geometric Deep Learning for 3D RNA inverse design},
+@inproceedings{joshi2025grnade,
+  title={g{RNA}de: Geometric Deep Learning for 3D RNA inverse design},
   author={Joshi, Chaitanya K and Jamasb, Arian R and Vi{\~n}as, Ramon and Harris, Charles and Mathis, Simon V and Morehead, Alex and Anand, Rishabh and Li{\`o}, Pietro},
-  journal={bioRxiv},
-  year={2024},
-  publisher={Cold Spring Harbor Laboratory Preprints}
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2025},
 }
 
 @incollection{joshi2024grnade,
-  title={gRNAde: A Geometric Deep Learning pipeline for 3D RNA inverse design},
+  title={g{RNA}de: A Geometric Deep Learning pipeline for 3D RNA inverse design},
   author={Joshi, Chaitanya K and Li{\`o}, Pietro},
   booktitle={RNA Design: Methods and Protocols},
   pages={121--135},

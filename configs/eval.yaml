@@ -16,7 +16,7 @@ save:
 
 # Data configurations
 data_path:
-  value: "/rds/user/jaf98/hpc-work/geometric-rna-design/data/" # prev: "./data/"
+  value: "/rds/user/ml2169/hpc-work/geometric-rna-design/data/" # prev: "./data/"
   desc: Data directory (preprocessed and raw)
 radius:
   value: 4.5
@@ -40,7 +40,7 @@ max_nodes_batch:
   value: 3000
   desc: Maximum number of nodes in batch
 max_nodes_sample:
-  value: 5000
+  value: 500
   desc: Maximum number of nodes in batches with single samples (ie. maximum RNA length)
 
 # Splitting configurations
@@ -104,7 +104,7 @@ val_every:
 
 # Evaluation configurations
 model_path:
-  value: '/home/jaf98/rds/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_max_nodes_500_das.h5'
+  value: '/home/ml2169/rds/hpc-work/geometric-rna-design/checkpoints/gRNAde_ARv1_max_nodes_500_das.h5'
   desc: Path to model checkpoint for evaluation or reloading
 evaluate:
   value: True
@@ -115,3 +115,23 @@ n_samples:
 temperature:
   value: 0.1
   desc: Sampling temperature for evaluating recovery
+
+# Sampling strategy configurations
+sampling_strategy:
+  value: "min_p"
+  desc: Sampling strategy for sequence generation (categorical/top_k/top_p/min_p)
+sampling_value:
+  value: 0.05
+  desc: Value for sampling strategy
+beam_width:
+  value: 2
+  desc: Number of beams to maintain during search
+beam_branch:
+  value: 6
+  desc: Number of samples to get from sampling strategy
+max_temperature:
+  value: 0.5
+  desc: Maximum temperature for sampling
+temperature_factor:
+  value: 0.01
+  desc: Factor to increase temperature by

@@ -1,0 +1,4 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['2CZJ_1_F', '2CZJ_1_H', '2CZJ_1_D', '2CZJ_1_B']","['tmRNA', 'tmRNA', 'tmRNA', 'tmRNA']","['39150', '39150', '39150', '39150']","['Protein-RNA Complex', 'Protein-RNA Complex', 'Protein-RNA Complex', 'Protein-RNA Complex']",676,280,GGGGGUGAAACGGUCUCGACAGGGGUUCGCCUUUGGACGUGGGCGACUCCCACCACCUCC,60,1.5639818851601268,1.591001331168433,4
+['1P6V_1_D'],['tmRNA'],['47370'],['Protein-RNA Complex'],48,395,UCGACGGGGACUUCGGUCCUCGGA,24,0.0,0.0,1
+['1P6V_1_B'],['tmRNA'],['47370'],['Protein-RNA Complex'],543,395,GAUUCGACGGGGACUUCGGUCCUCGGACGCGGGUUCGAUUCCCGC,45,0.0,0.0,1

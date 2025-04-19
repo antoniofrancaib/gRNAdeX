@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['3LWQ_1_D', '3HJW_1_D', '3LWP_1_D', '3LWR_1_D', '3LWV_1_D', '3LWO_1_D']","['Pab160', 'Pab160', 'Pab160', 'Pab160', 'Pab160', 'Pab160']","['39651', '39651', '39651', '39651', '39651', '39651']","['Protein-RNA Complex', 'Protein-RNA Complex', 'Protein-RNA Complex', 'Protein-RNA Complex', 'Protein-RNA Complex', 'Protein-RNA Complex']",689,307,GGGCCACGGAAACCGCGCGCGGUGAUCAAUGAGCCGCGUUCGCUCCCGUGGCCCACAA,58,0.6705019075826889,0.6718444807496008,6

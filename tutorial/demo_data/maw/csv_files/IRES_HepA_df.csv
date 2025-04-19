@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['6MWN_1_A', '6MWN_1_B']","['IRES_HepA', 'IRES_HepA']","['60628', '60628']","['Protein-RNA Complex', 'Protein-RNA Complex']",456,190,GCAAACAUCAUUUGGCCUUAAAUGGGAUUCUGUGAGAGGGGAUCCCUCCAUUGACAGCUGGACUGUUCUUUGGGGCCUUAUGUGGUGUUUG,91,1.0655986216406903,1.0655986216406903,2

@@ -1,0 +1,3 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+['4C9D_1_C'],['CRISPR-DR31'],['88374'],['Protein-RNA Complex'],1,1044,AGCCUCGUAGAG,12,0.0,0.0,1
+['4C9D_1_D'],['CRISPR-DR31'],['88374'],['Protein-RNA Complex'],1,1044,AAGCCUCGUAGAG,13,0.0,0.0,1

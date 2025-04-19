@@ -1,0 +1,2 @@
+id_list,rfam_list,eq_class_list,type_list,cluster_seqid0.8,cluster_structsim0.45,sequence,length,mean_rmsd,median_rmsd,num_structures
+"['3Q3Z_1_A', '3Q3Z_1_V']","['c-di-GMP-II', 'c-di-GMP-II']","['65073', '65073']","['Solo RNA', 'Solo RNA']",566,229,CGCGGAAACAAUGAUGAAUGGGUUUAAAUUGGGCACUUGACUCAUUUUGAGUUAGUAGUGCAACCGACCGUGCU,74,1.560314577753144,1.560314577753144,2

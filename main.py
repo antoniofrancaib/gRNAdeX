@@ -60,7 +60,15 @@ def main(config, device):
             device, 
             model_name="test",
             metrics=['recovery', 'perplexity', 'sc_score_eternafold', 'sc_score_rhofold'],
-            save_designs=True
+            save_designs=True,
+            sampling_strategy=config.sampling_strategy,
+            top_k_sampling=config.top_k_sampling,
+            top_p_sampling=config.top_p_sampling,
+            min_p_sampling=config.min_p_sampling,
+            beam_width=config.beam_width,
+            beam_branch=config.beam_branch,
+            max_temperature=config.max_temperature,
+            temperature_factor=config.temperature_factor
         )
         
         """df, samples_list, recovery_list, perplexity_list, \
@@ -227,19 +235,23 @@ def get_model(config):
         'ARv2' : AutoregressiveMultiGNNv2,
         'NARv1': NonAutoregressiveMultiGNNv1,
     }[config.model]
-    
-    return model_class(
-        node_in_dim = tuple(config.node_in_dim),
-        node_h_dim = tuple(config.node_h_dim), 
-        edge_in_dim = tuple(config.edge_in_dim),
-        edge_h_dim = tuple(config.edge_h_dim), 
-        num_layers=config.num_layers,
-        drop_rate = config.drop_rate,
-        out_dim = config.out_dim,
-        attention_heads = config.attention_heads,
-        attention_dropout = config.attention_dropout
-    )
 
+    args = {
+            'node_in_dim': tuple(config.node_in_dim),
+            'node_h_dim': tuple(config.node_h_dim), 
+            'edge_in_dim': tuple(config.edge_in_dim),
+            'edge_h_dim': tuple(config.edge_h_dim), 
+            'num_layers': config.num_layers,
+            'drop_rate': config.drop_rate,
+            'out_dim': config.out_dim
+            }
+    
+    if config.model == 'ARv2':
+        # Add extra args for expressive model
+        args['attention_heads'] = config.attention_heads
+        args['attention_dropout'] = config.attention_dropout
+
+    return model_class(**args)
 
 def set_seed(seed=0, device_type='cpu'):
     """

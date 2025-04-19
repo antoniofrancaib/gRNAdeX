@@ -6,7 +6,7 @@
 
 ####### SBATCH directives begin here ###############################
 #SBATCH -J gRNAde_eval_gpu              # Job name
-#SBATCH -A MLMI-jaf98-SL2-GPU          # Example account for GPU jobs
+#SBATCH -A MLMI-ml2169-SL2-GPU          # Example account for GPU jobs
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4              # e.g. 4 CPUs (adjust as needed)
@@ -19,7 +19,7 @@
 ####### SBATCH directives end here ###############################
 
 # Application options and environment
-options="--config configs/eval.yaml --evaluate True --tags hpc_csd3 --expt_name rna_eval_filt_baseline"
+options="--config configs/eval.yaml --evaluate True --tags hpc_csd3 --expt_name sampling_strategies --sampling_strategy min_p --beam_width 4 --beam_branch 6"
 
 # Environment setup
 . /etc/profile.d/modules.sh
@@ -27,7 +27,7 @@ module purge
 module load rhel8/default-amp      # Adjust to your HPC environment
 
 source /home/$USER/.bashrc
-source /home/jaf98//miniforge3/bin/activate
+source /home/ml2169//miniforge3/bin/activate
 mamba activate rna             # The environment with PyTorch+PyG & your deps
 
 # Python script to run

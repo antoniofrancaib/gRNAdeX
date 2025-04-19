@@ -6,6 +6,7 @@ import random
 import argparse
 import numpy as np
 from typing import Optional
+import yaml
 
 import torch
 import torch.nn.functional as F
@@ -16,19 +17,19 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from src.data.featurizer import RNAGraphFeaturizer
-from src.models import AutoregressiveMultiGNNv1
+from src.models import AutoregressiveMultiGNNv1, AutoregressiveMultiGNNv2, NonAutoregressiveMultiGNNv1
 from src.data.data_utils import get_backbone_coords
 from src.evaluator import edit_distance, self_consistency_score_eternafold
 from src.constants import (
     NUM_TO_LETTER, 
     RNA_ATOMS, 
     FILL_VALUE,
-    PROJECT_PATH
+    PROJECT_PATH,
+    RNA_CORR
 )
 
-
 # Model checkpoint paths corresponding to data split and maximum no. of conformers
-CHECKPOINT_PATH = {
+CHECKPOINT_PATH_GRNADE = {
     'all': {
         1: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv1_1state_all.h5"),
         2: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv1_2state_all.h5"),
@@ -49,7 +50,21 @@ CHECKPOINT_PATH = {
     }
 }
 
-# Default model hyperparameters (do not change)
+# Reference point for gRNAde
+CHECKPOINT_PATH_GRNADE = {
+    'das': {
+        1: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv1_1state_max_nodes_500_das.h5")
+    }
+}
+
+# Reference point for gRNAdeX
+CHECKPOINT_PATH_GRNADEX = {
+    'das': {
+        1: os.path.join(PROJECT_PATH, "checkpoints/gRNAde_ARv2_1state_max_nodes_500_das.h5")
+    }
+}
+
+# Default model hyperparameters for gRNAdeX (do not change)
 VERSION = 0.3
 RADIUS = 0.0
 TOP_K = 32
@@ -65,7 +80,15 @@ DROP_RATE = 0.5
 OUT_DIM = 4
 DEFAULT_N_SAMPLES = 16
 DEFAULT_TEMPERATURE = 0.1
-
+ATTENTION_HEADS = 4
+ATTENTION_DROPOUT = 0.1
+SAMPLING_STRATEGY = "min_p"
+SAMPLING_VALUE = 0.05
+BEAM_WIDTH = 2
+BEAM_BRANCH = 6
+MAX_TEMPERATURE = 0.5
+TEMPERATURE_FACTOR = 0.01
+MODEL_TYPE = "ARv2"
 
 class gRNAde(object):
     """
@@ -86,6 +109,7 @@ class gRNAde(object):
             split: Optional[str] = "all",
             max_num_conformers: Optional[int] = 1,
             gpu_id: Optional[int] = 0,
+            model_type: Optional[str] = "ARv2",
         ):
 
         # Set version
@@ -93,8 +117,12 @@ class gRNAde(object):
         print(f"Instantiating gRNAde v{self.version}")
 
         # Set maximum number of conformers
-        if max_num_conformers > max(list(CHECKPOINT_PATH[split].keys())):
-            max_num_conformers = max(list(CHECKPOINT_PATH[split].keys()))
+        # Initialise model
+        print(f"    Initialising GNN encoder-decoder model {model_type}")
+        self.select_model(model_type)
+        
+        if max_num_conformers > max(list(self.checkpoint[split].keys())):
+            max_num_conformers = max(list(self.checkpoint[split].keys()))
             print(f"    Invalid max_num_conformers. Setting to maximum value: {max_num_conformers}")
         self.split = split
         self.max_num_conformers = max_num_conformers
@@ -116,19 +144,8 @@ class gRNAde(object):
             noise_scale = NOISE_SCALE
         )
 
-        # Initialise model
-        print(f"    Initialising GNN encoder-decoder model")
-        self.model = AutoregressiveMultiGNNv1(
-            node_in_dim = NODE_IN_DIM,
-            node_h_dim = NODE_H_DIM, 
-            edge_in_dim = EDGE_IN_DIM,
-            edge_h_dim = EDGE_H_DIM, 
-            num_layers = NUM_LAYERS,
-            drop_rate = DROP_RATE,
-            out_dim = OUT_DIM
-        )
         # Load model checkpoint
-        self.model_path = CHECKPOINT_PATH[split][max_num_conformers]
+        self.model_path = self.checkpoint[split][max_num_conformers]
         print(f"    Loading model checkpoint: {self.model_path}")
         self.model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
 
@@ -138,14 +155,66 @@ class gRNAde(object):
 
         print(f"Finished initialising gRNAde v{self.version}\n")
 
+    def select_model(self, model_type):
+        model_params = {
+                "node_in_dim": NODE_IN_DIM,
+                "node_h_dim": NODE_H_DIM, 
+                "edge_in_dim": EDGE_IN_DIM,
+                "edge_h_dim": EDGE_H_DIM, 
+                "num_layers": NUM_LAYERS,
+                "drop_rate": DROP_RATE,
+                "out_dim": OUT_DIM
+                }
+
+        if model_type == "ARv1":
+            self.model = AutoregressiveMultiGNNv1(
+                **model_params
+            )
+            self.checkpoint = CHECKPOINT_PATH_GRNADE
+
+        elif model_type == "ARv2":
+            self.model = AutoregressiveMultiGNNv2(
+                **model_params,
+                attention_heads=ATTENTION_HEADS,
+                attention_dropout=ATTENTION_DROPOUT
+            )
+            self.checkpoint = CHECKPOINT_PATH_GRNADEX
+
+        elif model_type == "NARv1":
+            self.model = NonAutoregressiveMultiGNNv1(
+                **model_params
+            )
+            self.checkpoint = CHECKPOINT_PATH_GRNADE
+        else:
+            raise ValueError(f"Invalid model type: {model_type}")
+
+    def load_nullomers_from_file(self, nullomers_filepath: str):
+        """
+        Load nullomers from a file.
+        """
+        # load nullomer .fasta.out file excluding header and getting all elements as a list
+        # nullomers is a list of strings, each string is a nullomer
+        #TODO: add more checks here for file format
+        with open(nullomers_filepath, 'r') as file:
+            avoid_sequences = file.read().splitlines()[1:] # exclude header
+        return avoid_sequences
+    
     def design_from_pdb_file(
             self, 
-            pdb_filepath: str,
+            pdb_filepath: str,  
             output_filepath: Optional[str] = None, 
+            nullomers_filepath: Optional[str] = None,
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0
+            seed: Optional[int] = 0,
+            sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+            sampling_value: Optional[float] = SAMPLING_VALUE,
+            beam_width: Optional[int] = BEAM_WIDTH,
+            beam_branch: Optional[int] = BEAM_BRANCH,
+            max_temperature: Optional[float] = MAX_TEMPERATURE,
+            temperature_factor: Optional[float] = TEMPERATURE_FACTOR,
+            avoid_sequences: Optional[list] = None
         ):
         """
         Design RNA sequences for a PDB file, i.e. fixed backbone re-design
@@ -161,7 +230,10 @@ class gRNAde(object):
                 and underscores (e.g. "AUG___") where letters are fixed 
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
-        
+            sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
+            sampling_value (float): value for sampling strategy
+            beam_width (int): number of beams to maintain during search
+            beam_branch (int): number of samples to get from sampling strategy
         Returns:
             sequences (List[SeqRecord]): designed sequences in fasta format
             samples (Tensor): designed sequences with shape `(n_samples, seq_len)`
@@ -170,16 +242,42 @@ class gRNAde(object):
             sc_score (Tensor): global self consistency score per sample with shape `(n_samples, 1)`
         """
         featurized_data, raw_data = self.featurizer.featurize_from_pdb_file(pdb_filepath)
-        return self.design(raw_data, featurized_data, output_filepath, n_samples, temperature, partial_seq, seed)
+        # load nullomers if provided
+        if nullomers_filepath is not None:
+            avoid_sequences = self.load_nullomers_from_file(nullomers_filepath)
+        return self.design(
+            raw_data,
+            featurized_data,
+            output_filepath,
+            n_samples,
+            temperature,
+            partial_seq,
+            seed,
+            sampling_strategy,
+            sampling_value,
+            beam_width,
+            beam_branch,
+            max_temperature,
+            temperature_factor,
+            avoid_sequences,
+        )
 
     def design_from_directory(
             self,
             directory_filepath: str,
             output_filepath: Optional[str] = None, 
+            nullomers_filepath: Optional[str] = None,
             n_samples: Optional[int] = DEFAULT_N_SAMPLES,
             temperature: Optional[float] = DEFAULT_TEMPERATURE,
             partial_seq: Optional[str] = None,
-            seed: Optional[int] = 0
+            seed: Optional[int] = 0,
+            sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+            sampling_value: Optional[float] = SAMPLING_VALUE,
+            beam_width: Optional[int] = BEAM_WIDTH,
+            beam_branch: Optional[int] = BEAM_BRANCH,
+            max_temperature: Optional[float] = MAX_TEMPERATURE,
+            temperature_factor: Optional[float] = TEMPERATURE_FACTOR,
+            avoid_sequences: Optional[list] = None
         ):
         """
         Design RNA sequences for directory of PDB files corresponding to the 
@@ -196,7 +294,10 @@ class gRNAde(object):
                 and underscores (e.g. "AUG___") where letters are fixed 
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
-        
+            sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
+            sampling_value (float): value for sampling strategy
+            beam_width (int): number of beams to maintain during search
+            beam_branch (int): number of samples to get from sampling strategy
         Returns:
             sequences (List[SeqRecord]): designed sequences in fasta format
             samples (Tensor): designed sequences with shape `(n_samples, seq_len)`
@@ -209,7 +310,25 @@ class gRNAde(object):
             if pdb_filepath.endswith(".pdb"):
                 pdb_filelist.append(os.path.join(directory_filepath, pdb_filepath))
         featurized_data, raw_data = self.featurizer.featurize_from_pdb_filelist(pdb_filelist)
-        return self.design(raw_data, featurized_data, output_filepath, n_samples, temperature, partial_seq, seed)
+        # load nullomers if provided
+        if nullomers_filepath is not None:
+            avoid_sequences = self.load_nullomers_from_file(nullomers_filepath)
+        return self.design(
+            raw_data,
+            featurized_data,
+            output_filepath,
+            n_samples,
+            temperature,
+            partial_seq,
+            seed,
+            sampling_strategy,
+            sampling_value,
+            beam_width,
+            beam_branch,
+            max_temperature,
+            temperature_factor,
+            avoid_sequences,
+        )
 
     @torch.no_grad()
     def design(
@@ -220,7 +339,14 @@ class gRNAde(object):
         n_samples: Optional[int] = DEFAULT_N_SAMPLES,
         temperature: Optional[float] = DEFAULT_TEMPERATURE,
         partial_seq: Optional[str] = None,
-        seed: Optional[int] = 0
+        seed: Optional[int] = 0,
+        sampling_strategy: Optional[str] = SAMPLING_STRATEGY,
+        sampling_value: Optional[float] = SAMPLING_VALUE,
+        beam_width: Optional[int] = BEAM_WIDTH,
+        beam_branch: Optional[int] = BEAM_BRANCH,
+        max_temperature: Optional[float] = MAX_TEMPERATURE,
+        temperature_factor: Optional[float] = TEMPERATURE_FACTOR,
+        avoid_sequences: Optional[list] = None,
     ):
         """
         Design RNA sequences from raw data.
@@ -241,6 +367,10 @@ class gRNAde(object):
                 and underscores (e.g. "AUG___") where letters are fixed 
                 and underscores represent designable positions.
             seed (int): random seed for reproducibility
+            sampling_strategy (str): strategy for sampling ("min_p", "top_k", "top_p")
+            sampling_value (float): value for sampling strategy
+            beam_width (int): number of beams to maintain during search
+            beam_branch (int): number of samples to get from sampling strategy
         
         Returns:
             sequences (List[SeqRecord]): designed sequences in fasta format
@@ -277,7 +407,7 @@ class gRNAde(object):
 
         # transfer data to device
         featurized_data = featurized_data.to(self.device)
-
+        
         # create logit bias matrix if partial sequence is provided
         if partial_seq is not None:
             # convert partial sequence to tensor
@@ -296,9 +426,22 @@ class gRNAde(object):
         else:
             logit_bias = None
         
+        print('Avoiding sequences:', avoid_sequences)
         # sample n_samples from model for single data point: n_samples x seq_len
         samples, logits = self.model.sample(
-            featurized_data, n_samples, temperature, logit_bias, return_logits=True)
+            featurized_data,
+            n_samples,
+            temperature,
+            logit_bias=logit_bias,
+            return_logits=True,
+            sampling_strategy=sampling_strategy,
+            sampling_value=sampling_value,
+            beam_width=beam_width,
+            beam_branch=beam_branch,
+            max_temperature=max_temperature,
+            temperature_factor=temperature_factor,
+            avoid_sequences=avoid_sequences
+        )
 
         # perplexity per sample: n_samples x 1
         n_nodes = logits.shape[1]
@@ -317,6 +460,7 @@ class gRNAde(object):
             raw_data['sec_struct_list'], 
             featurized_data.mask_coords.cpu().numpy()
         )
+        print('sec_struct_list:', raw_data['sec_struct_list'])
 
         # collate designed sequences in fasta format
         sequences = [
@@ -540,7 +684,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--temperature', 
         dest='temperature', 
-        default=0.2, 
+        default=DEFAULT_TEMPERATURE, 
         type=float,
         help="Temperature for sampling"
     )
@@ -564,8 +708,65 @@ if __name__ == "__main__":
         default=0, 
         type=int,
         help="GPU ID to use for inference \
-            (defaults to cpu if no GPU is available)"
+            (defaults to cpu if no GPU is avaiºlable)"
     )
+    parser.add_argument(
+        '--sampling_strategy',
+        dest='sampling_strategy',
+        default=SAMPLING_STRATEGY,
+        type=str,
+        help="Strategy for sampling (min_p/top_k/top_p)"
+    )
+    parser.add_argument(
+        '--sampling_value',
+        dest='sampling_value',
+        default=SAMPLING_VALUE,
+        type=float,
+        help="Sampling value for sampling strategy"
+    )
+    parser.add_argument(
+        '--beam_width',
+        dest='beam_width',
+        default=BEAM_WIDTH,
+        type=int,
+        help="Number of beams to maintain during search"
+    )
+    parser.add_argument(
+        '--beam_branch',
+        dest='beam_branch',
+        default=BEAM_BRANCH,
+        type=int,
+        help="Number of samples to get from sampling strategy"
+    )
+    parser.add_argument(
+        '--max_temperature',
+        dest='max_temperature',
+        default=MAX_TEMPERATURE,
+        type=float,
+        help="Maximum temperature for sampling"
+    )
+    parser.add_argument(
+        '--temperature_factor',
+        dest='temperature_factor',
+        default=TEMPERATURE_FACTOR,
+        type=float,
+        help="Factor to increase temperature by"
+    )
+    parser.add_argument(
+        '--model_type',
+        dest='model_type',
+        default=MODEL_TYPE,
+        type=str,
+        help="Model type (ARv1/ARv2/NARv1)"
+    )
+    parser.add_argument(
+        '--nullomers_filepath',
+        dest='nullomers_filepath',
+        default=None,
+        type=str,
+        help="Filepath to nullomers fasta file"
+    )
+
     args, unknown = parser.parse_known_args()
 
     if args.pdb_filepath is None and args.directory_filepath is None:
@@ -574,7 +775,8 @@ if __name__ == "__main__":
     g = gRNAde(
         split=args.split,
         max_num_conformers=args.max_num_conformers, 
-        gpu_id=args.gpu_id
+        gpu_id=args.gpu_id,
+        model_type=args.model_type
     )
 
     if args.pdb_filepath is not None:
@@ -584,7 +786,14 @@ if __name__ == "__main__":
             n_samples=args.n_samples,
             temperature=args.temperature,
             partial_seq=args.partial_seq,
-            seed=args.seed
+            seed=args.seed,
+            sampling_strategy=args.sampling_strategy,
+            sampling_value=args.sampling_value,
+            beam_width=args.beam_width,
+            beam_branch=args.beam_branch,
+            max_temperature=args.max_temperature,
+            temperature_factor=args.temperature_factor,
+            nullomers_filepath=args.nullomers_filepath
         )
     elif args.directory_filepath is not None:
         sequences, samples, logits, recovery_sample, sc_score = g.design_from_directory(
@@ -593,7 +802,14 @@ if __name__ == "__main__":
             n_samples=args.n_samples,
             temperature=args.temperature,
             partial_seq=args.partial_seq,
-            seed=args.seed
+            seed=args.seed,
+            sampling_strategy=args.sampling_strategy,
+            sampling_value=args.sampling_value,
+            beam_width=args.beam_width,
+            beam_branch=args.beam_branch,
+            max_temperature=args.max_temperature,
+            temperature_factor=args.temperature_factor,
+            nullomers_filepath=args.nullomers_filepath
         )
 
     for seq in sequences:
